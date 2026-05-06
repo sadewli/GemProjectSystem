@@ -1,0 +1,179 @@
+[2026-03-04 06:37:57] === New Request Started ===
+[2026-03-04 06:37:57] DB Host: localhost
+[2026-03-04 06:37:57] DB Name: erav_multioffset
+[2026-03-04 06:37:57] DB User: root
+[2026-03-04 06:37:57] Database connected successfully
+[2026-03-04 06:37:57] Received Parameters - Company ID: 1, Branch ID: 2, Project ID: 0
+[2026-03-04 06:37:57] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:37:57] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:37:57] Total records found: 0
+[2026-03-04 06:37:57] SSP returned 0 records
+[2026-03-04 06:37:57] WARNING: No data returned from SSP
+[2026-03-04 06:37:57] Response sent: null
+[2026-03-04 06:38:00] === New Request Started ===
+[2026-03-04 06:38:00] DB Host: localhost
+[2026-03-04 06:38:00] DB Name: erav_multioffset
+[2026-03-04 06:38:00] DB User: root
+[2026-03-04 06:38:00] Database connected successfully
+[2026-03-04 06:38:00] Received Parameters - Company ID: 1, Branch ID: 2, Project ID: 0
+[2026-03-04 06:38:00] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:38:00] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:38:00] Total records found: 0
+[2026-03-04 06:38:00] SSP returned 0 records
+[2026-03-04 06:38:00] WARNING: No data returned from SSP
+[2026-03-04 06:38:00] Response sent: null
+[2026-03-04 06:38:30] === New Request Started ===
+[2026-03-04 06:38:30] DB Host: localhost
+[2026-03-04 06:38:30] DB Name: erav_multioffset
+[2026-03-04 06:38:30] DB User: root
+[2026-03-04 06:38:30] Database connected successfully
+[2026-03-04 06:38:30] Received Parameters - Company ID: 1, Branch ID: 2, Project ID: 0
+[2026-03-04 06:38:30] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:38:30] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:38:30] Total records found: 0
+[2026-03-04 06:38:30] SSP returned 0 records
+[2026-03-04 06:38:30] WARNING: No data returned from SSP
+[2026-03-04 06:38:30] Response sent: null
+[2026-03-04 06:39:05] === New Request Started ===
+[2026-03-04 06:39:05] DB Host: localhost
+[2026-03-04 06:39:05] DB Name: erav_multioffset
+[2026-03-04 06:39:05] DB User: root
+[2026-03-04 06:39:05] Database connected successfully
+[2026-03-04 06:39:05] Received Parameters - Company ID: 1, Branch ID: 2, Project ID: 0
+[2026-03-04 06:39:05] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:39:05] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 2
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:39:05] Total records found: 0
+[2026-03-04 06:39:05] SSP returned 0 records
+[2026-03-04 06:39:05] WARNING: No data returned from SSP
+[2026-03-04 06:39:05] Response sent: null
+[2026-03-04 06:41:25] === New Request Started ===
+[2026-03-04 06:41:25] DB Host: localhost
+[2026-03-04 06:41:25] DB Name: erav_multioffset
+[2026-03-04 06:41:25] DB User: root
+[2026-03-04 06:41:25] Database connected successfully
+[2026-03-04 06:41:25] Received Parameters - Company ID: 1, Branch ID: 1, Project ID: 0
+[2026-03-04 06:41:25] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:41:25] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:41:25] Total records found: 2
+[2026-03-04 06:41:25] SSP returned 0 records
+[2026-03-04 06:41:25] WARNING: No data returned from SSP
+[2026-03-04 06:41:25] Response sent: null
+[2026-03-04 06:41:31] === New Request Started ===
+[2026-03-04 06:41:31] DB Host: localhost
+[2026-03-04 06:41:31] DB Name: erav_multioffset
+[2026-03-04 06:41:31] DB User: root
+[2026-03-04 06:41:31] Database connected successfully
+[2026-03-04 06:41:31] Received Parameters - Company ID: 1, Branch ID: 1, Project ID: 5
+[2026-03-04 06:41:31] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:41:31] Added project filter: Project ID = 5
+[2026-03-04 06:41:31] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2) AND `ap`.`tbl_projects_idtbl_projects` = 5
+[2026-03-04 06:41:31] Total records found: 2
+[2026-03-04 06:41:31] SSP returned 0 records
+[2026-03-04 06:41:31] WARNING: No data returned from SSP
+[2026-03-04 06:41:31] Response sent: null
+[2026-03-04 06:41:33] === New Request Started ===
+[2026-03-04 06:41:33] DB Host: localhost
+[2026-03-04 06:41:33] DB Name: erav_multioffset
+[2026-03-04 06:41:33] DB User: root
+[2026-03-04 06:41:33] Database connected successfully
+[2026-03-04 06:41:33] Received Parameters - Company ID: 1, Branch ID: 1, Project ID: 5
+[2026-03-04 06:41:33] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:41:33] Added project filter: Project ID = 5
+[2026-03-04 06:41:33] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2) AND `ap`.`tbl_projects_idtbl_projects` = 5
+[2026-03-04 06:41:33] Total records found: 2
+[2026-03-04 06:41:33] SSP returned 0 records
+[2026-03-04 06:41:33] WARNING: No data returned from SSP
+[2026-03-04 06:41:33] Response sent: null
+[2026-03-04 06:41:36] === New Request Started ===
+[2026-03-04 06:41:36] DB Host: localhost
+[2026-03-04 06:41:36] DB Name: erav_multioffset
+[2026-03-04 06:41:36] DB User: root
+[2026-03-04 06:41:36] Database connected successfully
+[2026-03-04 06:41:36] Received Parameters - Company ID: 1, Branch ID: 1, Project ID: 5
+[2026-03-04 06:41:36] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:41:36] Added project filter: Project ID = 5
+[2026-03-04 06:41:36] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2) AND `ap`.`tbl_projects_idtbl_projects` = 5
+[2026-03-04 06:41:36] Total records found: 2
+[2026-03-04 06:41:36] SSP returned 0 records
+[2026-03-04 06:41:36] WARNING: No data returned from SSP
+[2026-03-04 06:41:36] Response sent: null
+[2026-03-04 06:48:47] === New Request Started ===
+[2026-03-04 06:48:47] DB Host: localhost
+[2026-03-04 06:48:47] DB Name: erav_multioffset
+[2026-03-04 06:48:47] DB User: root
+[2026-03-04 06:48:47] Database connected successfully
+[2026-03-04 06:48:47] Received Parameters - Company ID: 1, Branch ID: 1, Project ID: 0
+[2026-03-04 06:48:47] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:48:47] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:48:47] Total records found: 2
+[2026-03-04 06:48:47] SSP returned 0 records
+[2026-03-04 06:48:47] WARNING: No data returned from SSP
+[2026-03-04 06:48:47] Response sent: null
+[2026-03-04 06:57:56] === New Request Started ===
+[2026-03-04 06:57:56] DB Host: localhost
+[2026-03-04 06:57:56] DB Name: erav_multioffset
+[2026-03-04 06:57:56] DB User: root
+[2026-03-04 06:57:56] Database connected successfully
+[2026-03-04 06:57:56] Received Parameters - Company ID: 1, Branch ID: 1, Project ID: 0
+[2026-03-04 06:57:56] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:57:56] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 06:57:56] Total records found: 2
+[2026-03-04 06:57:56] SSP returned 0 records
+[2026-03-04 06:57:56] WARNING: No data returned from SSP
+[2026-03-04 06:57:56] Response sent: null
+[2026-03-04 07:01:06] === New Request Started ===
+[2026-03-04 07:01:06] DB Host: localhost
+[2026-03-04 07:01:06] DB Name: erav_multioffset
+[2026-03-04 07:01:06] DB User: root
+[2026-03-04 07:01:06] Database connected successfully
+[2026-03-04 07:01:06] Received Parameters - Company ID: 1, Branch ID: 1, Project ID: 0
+[2026-03-04 07:01:06] Base WHERE condition: `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 07:01:06] Check SQL: SELECT COUNT(*) as total FROM `tbl_additional_purchases` AS `ap` WHERE `ap`.`tbl_company_idtbl_company` = 1 
+               AND `ap`.`tbl_company_branch_idtbl_company_branch` = 1
+               AND `ap`.`status` IN (1, 2)
+[2026-03-04 07:01:06] Total records found: 2
+[2026-03-04 07:01:06] SSP returned 0 records
+[2026-03-04 07:01:06] WARNING: No data returned from SSP
+[2026-03-04 07:01:06] Response sent: null
