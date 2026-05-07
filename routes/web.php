@@ -52,7 +52,7 @@ Route::get('Master/Grade', [MasterController::class, 'grade']);
 Route::get('Master/OriginTreatment', [MasterController::class, 'origin_treatment']);
 Route::get('Master/StorageLocation', [MasterController::class, 'storage_location']);
 
-Route::get('Inventory/MyInventory', [InventoryController::class, 'myinventory']);
+Route::get('Inventory/MyInventory', [InventoryController::class, 'myinventory'])->name('inventory.myinventory');
 
 Route::get('Distributor/GRN', [DistributorGRNController::class, 'index'])->name('distributor.grn');
 Route::get('Distributor/GRN/list', [DistributorGRNController::class, 'list'])->name('distributor.grn.list');
@@ -63,3 +63,23 @@ Route::post('Distributor/GRN/view', [DistributorGRNController::class, 'view'])->
 Route::post('Distributor/GRN/updateStatus', [DistributorGRNController::class, 'updateStatus'])->name('distributor.grn.updatestatus');
 Route::post('Distributor/GRN/transferStock', [DistributorGRNController::class, 'transferStock'])->name('distributor.grn.transferstock');
 Route::post('Distributor/GRN/delete', [DistributorGRNController::class, 'delete'])->name('distributor.grn.delete');
+
+// Product Code
+Route::prefix('productcode')->name('productcode.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Inventory\productcode::class, 'index'])->name('index');
+});
+
+// Negative Inventory Routes
+Route::prefix('negativeinventory')->name('negativeinventory.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Inventory\negativeinventory::class, 'index'])->name('index');
+    });
+
+// Archived Routes
+Route::prefix('archived')->name('archived.')->group(function () {
+
+    Route::get('/', [\App\Http\Controllers\Inventory\archived::class, 'index'])->name('index');
+    Route::get('/{id}',           [\App\Http\Controllers\Inventory\archived::class, 'show'])   ->name('show');
+    Route::patch('/{id}/restore', [\App\Http\Controllers\Inventory\archived::class, 'restore'])->name('restore');
+});
+
+

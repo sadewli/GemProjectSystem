@@ -11,7 +11,7 @@
     .tab-btn.active { color: #2563eb !important; border-bottom-color: #2563eb !important; }
     .tab-content { display: none; }
     .tab-content.active { display: block !important; }
-    
+
     /* Custom scrollbar for modal body */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -27,7 +27,7 @@
         text-transform: uppercase;
         letter-spacing: 0.025em;
     }
-    
+
     .form-control {
         height: 42px;
         border-radius: 12px !important;
@@ -35,7 +35,7 @@
         font-size: 14px !important;
         transition: all 0.2s !important;
     }
-    
+
     .form-control:focus {
         border-color: #3b82f6 !important;
         box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
@@ -62,14 +62,14 @@
 {{-- ===== CREATE NEW PRODUCT MODAL ===== --}}
 <div id="createGemstoneModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6" style="background:rgba(0,0,0,0.5); z-index: 9999;">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl flex flex-col h-[95vh] relative overflow-hidden">
-        
+
         {{-- Modal Header --}}
         <div class="px-6 py-4 flex-shrink-0 bg-[#f8fafc] rounded-t-xl">
             <div class="flex justify-between items-start">
                 <button type="button" id="closeGemstoneModalBtn" class="text-slate-500 hover:text-slate-700 transition-colors p-1 -ml-1">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
-                <a href="/gemstone/show" class="text-slate-500 hover:text-slate-800 transition-colors bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm inline-flex items-center justify-center">
+                <a href="/fullpage/show" class="text-slate-500 hover:text-slate-800 transition-colors bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm inline-flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
                 </a>
             </div>
@@ -93,10 +93,10 @@
         <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
             <form id="createGemstoneForm" action="#" method="POST">
                 @csrf
-                
+
                 {{-- ================= TAB 1: QUICK VIEW ================= --}}
                 <div id="tab-quick-view" class="tab-content block px-6 py-6 pb-20">
-                    
+
                     {{-- Upload Box --}}
                     <div class="w-[120px] h-[120px] bg-[#f1f5f9] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors mb-6 border border-transparent">
                         <svg class="w-8 h-8 text-blue-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@
 
                     {{-- Section: Product attributes --}}
                     <div class="section-header !mt-0">Product attributes</div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
                         {{-- SKU --}}
                         <div>
@@ -440,7 +440,7 @@
 
                     {{-- Section: Purchasing details --}}
                     <div class="section-header">Purchasing details</div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 mb-6">
                         {{-- Supplier name --}}
                         <div>
@@ -589,7 +589,7 @@
                         Costing module
                         <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mb-3">
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Cost/unit</label>
@@ -713,7 +713,7 @@
 
                     <div class="mt-4 flex justify-between items-center text-[13px] text-slate-600">
                         <div class="flex items-center gap-2">
-                            Show 
+                            Show
                             <div class="relative searchable-dropdown inline-block" id="ddShowEntriesWrapper">
                                 <input type="hidden" name="show_entries" id="ddShowEntriesHidden" value="10">
                                 <button type="button" id="ddShowEntriesBtn" class="border border-slate-300 rounded-md px-2 py-1 focus:outline-none bg-white flex items-center gap-2">
@@ -761,7 +761,7 @@
 {{-- ===== JAVASCRIPT FOR MODAL & DROPDOWNS ===== --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        
+
         // --- Modal Toggle Logic ---
         const modal = document.getElementById('createGemstoneModal');
         const openBtn = document.getElementById('openGemstoneModalBtn');
@@ -795,7 +795,7 @@
                     b.classList.remove('active');
                     b.classList.add('text-slate-500');
                 });
-                
+
                 // Hide all tab contents using Tailwind's 'hidden' class
                 tabContents.forEach(c => {
                     c.classList.add('hidden');
@@ -805,7 +805,7 @@
                 // Set active state on clicked button
                 btn.classList.add('active');
                 btn.classList.remove('text-slate-500');
-                
+
                 // Show targeted tab content using Tailwind's 'block' class
                 const target = document.querySelector(btn.dataset.target);
                 if (target) {
@@ -819,7 +819,7 @@
         function setupSearchableDropdown(wrapperId) {
             const wrapper = document.getElementById(wrapperId);
             if (!wrapper) return;
-            
+
             const btn = wrapper.querySelector('button');
             const panel = wrapper.querySelector('.hidden.absolute');
             const hidden = wrapper.querySelector('input[type="hidden"]');
@@ -830,16 +830,16 @@
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const isOpen = !panel.classList.contains('hidden');
-                
+
                 // Close all other panels
                 document.querySelectorAll('.searchable-dropdown .hidden.absolute').forEach(p => {
                     if (p !== panel && p.parentElement.classList.contains('searchable-dropdown')) {
                         p.classList.add('hidden');
                     }
                 });
-                
+
                 panel.classList.toggle('hidden', isOpen);
-                
+
                 if (!isOpen && search) {
                     search.value = '';
                     filterOptions('');
@@ -864,7 +864,7 @@
             wrapper.addEventListener('click', function (e) {
                 const opt = e.target.closest('.dd-option');
                 if (!opt) return;
-                
+
                 hidden.value = opt.getAttribute('data-value');
                 label.textContent = opt.getAttribute('data-label');
                 label.classList.remove('text-slate-400');
@@ -898,11 +898,11 @@
             fileInput.type = 'file';
             fileInput.className = 'hidden';
             box.appendChild(fileInput);
-            
+
             box.addEventListener('click', (e) => {
                 if(e.target !== fileInput) fileInput.click();
             });
-            
+
             fileInput.addEventListener('change', (e) => {
                 if(e.target.files.length > 0) {
                     const span = box.querySelector('span');
@@ -930,14 +930,14 @@
                     const partnersDiv = children[children.length - 3].cloneNode(true);
                     const ownershipDiv = children[children.length - 2].cloneNode(true);
                     const profitDiv = children[children.length - 1].cloneNode(true);
-                    
+
                     const btnContainer = profitDiv.querySelector('.flex.mt-2');
                     if(btnContainer) btnContainer.remove();
-                    
+
                     partnersDiv.querySelector('input').value = '';
                     ownershipDiv.querySelector('input').value = '';
                     profitDiv.querySelector('input').value = '';
-                    
+
                     grid.appendChild(partnersDiv);
                     grid.appendChild(ownershipDiv);
                     grid.appendChild(profitDiv);
@@ -954,7 +954,7 @@
                     const clone = grid.cloneNode(true);
                     clone.querySelectorAll('input').forEach(i => i.value = '');
                     grid.parentElement.insertBefore(clone, addCostBtn.parentElement);
-                    
+
                     // re-bind calc
                     const inputs = clone.querySelectorAll('input');
                     if(inputs.length >= 2) {
@@ -971,11 +971,11 @@
 
         // --- Pricing Calculations ---
         const weightInput = document.querySelector('input[placeholder*="Weight e.g."]');
-        
+
         function bindCalc(unitPlaceholder, totalPlaceholder) {
             const unitInput = document.querySelector(`input[placeholder="${unitPlaceholder}"]`);
             const totalInput = document.querySelector(`input[placeholder="${totalPlaceholder}"]`);
-            
+
             if (unitInput && totalInput && weightInput) {
                 const calc = () => {
                     const w = parseFloat(weightInput.value) || 0;
