@@ -7,8 +7,6 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/css/inventory/my_inventory/show.css',
-                'resources/js/inventory/my_inventory/show.js',
             ],
             refresh: true,
         }),

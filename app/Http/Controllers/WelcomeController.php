@@ -24,8 +24,8 @@ class WelcomeController extends Controller
         $company_id = $request->input('company_id');
 
         if (empty($company_id) || !is_numeric($company_id)) {
-            return response()->json([ 
-                'status' => 'error', 
+            return response()->json([
+                'status' => 'error',
                 'message' => 'Invalid company ID'
             ], 400);
         }

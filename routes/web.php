@@ -53,6 +53,8 @@ Route::get('Master/OriginTreatment', [MasterController::class, 'origin_treatment
 Route::get('Master/StorageLocation', [MasterController::class, 'storage_location']);
 
 Route::get('Inventory/MyInventory', [InventoryController::class, 'myinventory'])->name('inventory.myinventory');
+Route::get('Inventory/MemoIn', [\App\Http\Controllers\inventory\memoin::class, 'index'])->name('inventory.memoin');
+Route::get('inventory/memoin', [\App\Http\Controllers\inventory\memoin::class, 'index']);
 
 Route::get('Distributor/GRN', [DistributorGRNController::class, 'index'])->name('distributor.grn');
 Route::get('Distributor/GRN/list', [DistributorGRNController::class, 'list'])->name('distributor.grn.list');
@@ -72,14 +74,35 @@ Route::prefix('productcode')->name('productcode.')->group(function () {
 // Negative Inventory Routes
 Route::prefix('negativeinventory')->name('negativeinventory.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Inventory\negativeinventory::class, 'index'])->name('index');
-    });
+});
 
 // Archived Routes
 Route::prefix('archived')->name('archived.')->group(function () {
 
     Route::get('/', [\App\Http\Controllers\Inventory\archived::class, 'index'])->name('index');
-    Route::get('/{id}',           [\App\Http\Controllers\Inventory\archived::class, 'show'])   ->name('show');
+    Route::get('/{id}', [\App\Http\Controllers\Inventory\archived::class, 'show'])->name('show');
     Route::patch('/{id}/restore', [\App\Http\Controllers\Inventory\archived::class, 'restore'])->name('restore');
 });
 
+// CRM Routes
+Route::prefix('crm')->name('crm.')->group(function () {
 
+    Route::get('/contacts', [\App\Http\Controllers\crm\ContactsController::class, 'index'])
+        ->name('contacts.index');
+
+    Route::get('/contacts/import', [\App\Http\Controllers\crm\ContactsController::class, 'import'])
+        ->name('contacts.import');
+
+    Route::get('/companies', [\App\Http\Controllers\crm\CompaniesController::class, 'index'])
+        ->name('companies.index');
+
+    Route::get('/companies/import', [\App\Http\Controllers\crm\CompaniesController::class, 'import'])
+        ->name('companies.import');
+
+    // Dummy routes to prevent blade errors since project is only UI for now
+    Route::post('/contacts', function() { return back(); })->name('contacts.store');
+    Route::post('/companies', function() { return back(); })->name('companies.store');
+    Route::get('/companies/create', function() { return back(); })->name('companies.create');
+    Route::get('/companies/{id}', function() { return back(); })->name('companies.show');
+
+});
