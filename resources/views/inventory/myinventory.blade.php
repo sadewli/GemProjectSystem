@@ -30,7 +30,7 @@
 
     .form-control {
         height: 42px;
-        border-radius: 12px !important;
+        border-radius: 6px !important;
         border: 1px solid #e2e8f0 !important;
         font-size: 14px !important;
         transition: all 0.2s !important;
@@ -61,15 +61,15 @@
 
 {{-- ===== CREATE NEW PRODUCT MODAL ===== --}}
 <div id="createGemstoneModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6" style="background:rgba(0,0,0,0.5); z-index: 9999;">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl flex flex-col h-[95vh] relative overflow-hidden">
+    <div class="bg-white rounded-md shadow-2xl w-full max-w-5xl flex flex-col h-[95vh] relative overflow-hidden">
 
         {{-- Modal Header --}}
-        <div class="px-6 py-4 flex-shrink-0 bg-[#f8fafc] rounded-t-xl">
+        <div class="px-6 py-4 flex-shrink-0 bg-[#f8fafc] rounded-t-md">
             <div class="flex justify-between items-start">
                 <button type="button" id="closeGemstoneModalBtn" class="text-slate-500 hover:text-slate-700 transition-colors p-1 -ml-1">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
-                <a href="/fullpage/show" class="text-slate-500 hover:text-slate-800 transition-colors bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm inline-flex items-center justify-center">
+                <a href="/fullpage/show" class="text-slate-500 hover:text-slate-800 transition-colors bg-white p-2.5 rounded-md border border-slate-200 shadow-sm inline-flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
                 </a>
             </div>
@@ -98,7 +98,7 @@
                 <div id="tab-quick-view" class="tab-content block px-6 py-6 pb-20">
 
                     {{-- Upload Box --}}
-                    <div class="w-[120px] h-[120px] bg-[#f1f5f9] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors mb-6 border border-transparent">
+                    <div class="w-[120px] h-[120px] bg-[#f1f5f9] rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors mb-6 border border-transparent">
                         <svg class="w-8 h-8 text-blue-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -122,7 +122,7 @@
                                     <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>
-                                    <div id="ddSkuPrefixPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                    <div id="ddSkuPrefixPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                         <ul id="ddSkuPrefixList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                             <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Prefix" data-label="Prefix">Prefix</li>
                                         </ul>
@@ -143,7 +143,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddVarietyPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddVarietyPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
                                         <input type="text" id="ddVarietySearch" placeholder="Search..." class="form-control !h-9 px-3">
                                     </div>
@@ -167,7 +167,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddSubCategoryPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddSubCategoryPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddSubCategoryList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Unspecified" data-label="Unspecified">Unspecified</li>
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="Natural" data-label="Natural">Natural</li>
@@ -187,11 +187,11 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Dimensions (mm.)</label>
                             <div class="flex items-center gap-2">
-                                <input type="text" placeholder="L" class="form-control px-3 text-center !rounded-xl">
+                                <input type="text" placeholder="L" class="form-control px-3 text-center !rounded-md">
                                 <span class="text-slate-600 font-medium text-[13px]">x</span>
-                                <input type="text" placeholder="W" class="form-control px-3 text-center !rounded-xl">
+                                <input type="text" placeholder="W" class="form-control px-3 text-center !rounded-md">
                                 <span class="text-slate-600 font-medium text-[13px]">x</span>
-                                <input type="text" placeholder="H" class="form-control px-3 text-center !rounded-xl">
+                                <input type="text" placeholder="H" class="form-control px-3 text-center !rounded-md">
                             </div>
                         </div>
 
@@ -208,7 +208,7 @@
                                     <div class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none">
                                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>
-                                    <div id="ddWeightUnitPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                    <div id="ddWeightUnitPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                         <ul id="ddWeightUnitList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                             <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="ct" data-label="ct">ct</li>
                                             <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="g" data-label="g">g</li>
@@ -229,7 +229,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddColorPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddColorPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
                                         <input type="text" id="ddColorSearch" placeholder="Search..." class="form-control !h-9 px-3">
                                     </div>
@@ -253,7 +253,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddShapePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddShapePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
                                         <input type="text" id="ddShapeSearch" placeholder="Search..." class="form-control !h-9 px-3">
                                     </div>
@@ -276,7 +276,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddCuttingPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddCuttingPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddCuttingList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select cutting type">Select cutting type</li>
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="step" data-label="Step">Step</li>
@@ -297,7 +297,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddColorGradePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddColorGradePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddColorGradeList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select color grade">Select color grade</li>
                                     </ul>
@@ -316,7 +316,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddClarityPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddClarityPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddClarityList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select clarity grade">Select clarity grade</li>
                                     </ul>
@@ -335,7 +335,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddCutGradePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddCutGradePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddCutGradeList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select cut grade">Select cut grade</li>
                                     </ul>
@@ -354,7 +354,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddOriginPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddOriginPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
                                         <input type="text" id="ddOriginSearch" placeholder="Search..." class="form-control !h-9 px-3">
                                     </div>
@@ -376,7 +376,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddTreatmentPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddTreatmentPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
                                         <input type="text" id="ddTreatmentSearch" placeholder="Search..." class="form-control !h-9 px-3">
                                     </div>
@@ -398,7 +398,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddStoragePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddStoragePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddStorageList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select storage location">Select storage location</li>
                                     </ul>
@@ -417,7 +417,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddTraysPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddTraysPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddTraysList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select trays/boxes#">Select trays/boxes#</li>
                                     </ul>
@@ -430,7 +430,7 @@
                     <div class="mt-6 mb-1.5">
                         <label class="block text-[13px] text-slate-700">Lab certificate</label>
                     </div>
-                    <div class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm mb-6">
+                    <div class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm mb-6">
                         <svg class="w-6 h-6 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 0v2m0-2h2m-2 0H10"></path>
@@ -453,7 +453,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddSupplierPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddSupplierPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddSupplierList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select Supplier ref/name">Select Supplier ref/name</li>
                                     </ul>
@@ -478,7 +478,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddOwnershipPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddOwnershipPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddOwnershipList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select Ownership Type">Select Ownership Type</li>
                                     </ul>
@@ -518,7 +518,7 @@
                                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                     </div>
                                 </div>
-                                <button type="button" class="p-1.5 text-blue-800 hover:bg-slate-100 rounded-lg">
+                                <button type="button" class="p-1.5 text-blue-800 hover:bg-slate-100 rounded-md">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                 </button>
                             </div>
@@ -538,7 +538,7 @@
                     {{-- Section: Documents --}}
                     <div class="mb-6">
                         <label class="block text-[14px] font-semibold text-slate-800 mb-3">Documents</label>
-                        <div class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm">
+                        <div class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm">
                             <svg class="w-6 h-6 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 0v2m0-2h2m-2 0H10"></path>
@@ -550,7 +550,7 @@
                     {{-- Section: Traceability info --}}
                     <div class="mb-2">
                         <label class="block text-[14px] font-semibold text-slate-800 mb-3">Traceability info</label>
-                        <div class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm">
+                        <div class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm">
                             <svg class="w-6 h-6 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 0v2m0-2h2m-2 0H10"></path>
@@ -573,7 +573,7 @@
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="ddPricingUnitPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                <div id="ddPricingUnitPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddPricingUnitList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Weight" data-label="Weight">Weight</li>
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="Quantity" data-label="Quantity">Quantity</li>
@@ -609,7 +609,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end mb-6">
-                        <button type="button" class="px-4 py-2 bg-[#f1f5f9] text-[13px] text-slate-800 font-medium rounded-lg hover:bg-slate-200">Add cost</button>
+                        <button type="button" class="px-4 py-2 bg-[#f1f5f9] text-[13px] text-slate-800 font-medium rounded-md hover:bg-slate-200">Add cost</button>
                     </div>
 
                     {{-- Selling prices --}}
@@ -669,7 +669,7 @@
                             <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                 <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </div>
-                            <div id="ddFilterPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                            <div id="ddFilterPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                 <ul id="ddFilterList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                     <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Filter" data-label="Filter">Filter</li>
                                 </ul>
@@ -678,13 +678,13 @@
 
                         <div class="flex">
                             <input type="text" placeholder="Search" class="form-control !rounded-r-none !border-r-0 w-64 px-3">
-                            <button type="button" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-r-xl h-[42px] flex items-center justify-center">
+                            <button type="button" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-r-md h-[42px] flex items-center justify-center">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </button>
                         </div>
                     </div>
 
-                    <div class="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                    <div class="border border-slate-100 rounded-md overflow-hidden shadow-sm">
                         <table class="w-full text-left text-[13px]">
                             <thead class="bg-[#f8fafc] text-slate-800 font-semibold border-b border-slate-200">
                                 <tr>
@@ -720,7 +720,7 @@
                                     <span id="ddShowEntriesLabel" class="truncate text-slate-800">10</span>
                                     <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
-                                <div id="ddShowEntriesPanel" class="hidden absolute z-50 bottom-full mb-1 left-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden min-w-[80px]">
+                                <div id="ddShowEntriesPanel" class="hidden absolute z-50 bottom-full mb-1 left-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden min-w-[80px]">
                                     <ul id="ddShowEntriesList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2 text-[13px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="10" data-label="10">10</li>
                                         <li class="dd-option flex items-center px-4 py-2 text-[13px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="25" data-label="25">25</li>
@@ -744,13 +744,13 @@
 
         {{-- Modal Footer --}}
         <div class="px-6 py-4 border-t border-slate-200 bg-white flex justify-end gap-3 flex-shrink-0 z-10">
-            <button type="button" id="cancelGemstoneModalBtn" class="px-6 py-2.5 text-[14px] font-medium text-rose-500 bg-white border border-rose-300 rounded-xl hover:bg-rose-50 transition-colors">
+            <button type="button" id="cancelGemstoneModalBtn" class="px-6 py-2.5 text-[14px] font-medium text-rose-500 bg-white border border-rose-300 rounded-md hover:bg-rose-50 transition-colors">
                 Cancel
             </button>
-            <button type="button" class="px-6 py-2.5 text-[14px] font-medium text-slate-800 bg-[#f1f5f9] border border-slate-200 rounded-xl hover:bg-slate-200 transition-colors">
+            <button type="button" class="px-6 py-2.5 text-[14px] font-medium text-slate-800 bg-[#f1f5f9] border border-slate-200 rounded-md hover:bg-slate-200 transition-colors">
                 Create and add another
             </button>
-            <button type="submit" form="createGemstoneForm" class="px-8 py-2.5 text-[14px] font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-800 transition-colors shadow-sm active:scale-95">
+            <button type="submit" form="createGemstoneForm" class="px-8 py-2.5 text-[14px] font-medium text-white bg-blue-700 rounded-md hover:bg-blue-800 transition-colors shadow-sm active:scale-95">
                 Create
             </button>
         </div>

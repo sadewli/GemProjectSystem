@@ -53,8 +53,6 @@ Route::get('Master/OriginTreatment', [MasterController::class, 'origin_treatment
 Route::get('Master/StorageLocation', [MasterController::class, 'storage_location']);
 
 Route::get('Inventory/MyInventory', [InventoryController::class, 'myinventory'])->name('inventory.myinventory');
-Route::get('Inventory/MemoIn', [\App\Http\Controllers\inventory\memoin::class, 'index'])->name('inventory.memoin');
-Route::get('inventory/memoin', [\App\Http\Controllers\inventory\memoin::class, 'index']);
 
 Route::get('Distributor/GRN', [DistributorGRNController::class, 'index'])->name('distributor.grn');
 Route::get('Distributor/GRN/list', [DistributorGRNController::class, 'list'])->name('distributor.grn.list');
@@ -66,6 +64,8 @@ Route::post('Distributor/GRN/updateStatus', [DistributorGRNController::class, 'u
 Route::post('Distributor/GRN/transferStock', [DistributorGRNController::class, 'transferStock'])->name('distributor.grn.transferstock');
 Route::post('Distributor/GRN/delete', [DistributorGRNController::class, 'delete'])->name('distributor.grn.delete');
 
+
+//Inventory Routes
 // Product Code
 Route::prefix('productcode')->name('productcode.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Inventory\productcode::class, 'index'])->name('index');
@@ -84,15 +84,40 @@ Route::prefix('archived')->name('archived.')->group(function () {
     Route::patch('/{id}/restore', [\App\Http\Controllers\Inventory\archived::class, 'restore'])->name('restore');
 });
 
+//Memo in routes
+Route::prefix('memoin')->name('memoin.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\inventory\memoin::class, 'index'])->name('index');
+    Route::get('/{id}', [\App\Http\Controllers\inventory\memoin::class, 'show'])->name('show');
+    Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\memoin::class, 'restore'])->name('restore');
+});
+
+//Inventory List    
+Route::prefix('inventorylist')->name('inventorylist.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\inventory\inventorylist::class, 'index'])->name('index');
+    Route::get('/{id}', [\App\Http\Controllers\inventory\inventorylist::class, 'show'])->name('show');
+    Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\inventorylist::class, 'restore'])->name('restore');
+});
+
+//Inventory Adjustment
+Route::prefix('inventoryadjustment')->name('inventoryadjustment.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'index'])->name('index');
+    Route::get('/{id}', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'show'])->name('show');
+    Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'restore'])->name('restore');
+});
+
+
+
 // CRM Routes
 Route::prefix('crm')->name('crm.')->group(function () {
 
+    //Contact Routes
     Route::get('/contacts', [\App\Http\Controllers\crm\ContactsController::class, 'index'])
         ->name('contacts.index');
 
     Route::get('/contacts/import', [\App\Http\Controllers\crm\ContactsController::class, 'import'])
         ->name('contacts.import');
 
+    //Companies Routes
     Route::get('/companies', [\App\Http\Controllers\crm\CompaniesController::class, 'index'])
         ->name('companies.index');
 
@@ -100,9 +125,17 @@ Route::prefix('crm')->name('crm.')->group(function () {
         ->name('companies.import');
 
     // Dummy routes to prevent blade errors since project is only UI for now
-    Route::post('/contacts', function() { return back(); })->name('contacts.store');
-    Route::post('/companies', function() { return back(); })->name('companies.store');
-    Route::get('/companies/create', function() { return back(); })->name('companies.create');
-    Route::get('/companies/{id}', function() { return back(); })->name('companies.show');
+    Route::post('/contacts', function () {
+        return back();
+    })->name('contacts.store');
+    Route::post('/companies', function () {
+        return back();
+    })->name('companies.store');
+    Route::get('/companies/create', function () {
+        return back();
+    })->name('companies.create');
+    Route::get('/companies/{id}', function () {
+        return back();
+    })->name('companies.show');
 
 });

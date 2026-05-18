@@ -12,11 +12,11 @@
 }
 .entriestable-row .overflow-x-auto::-webkit-scrollbar-track {
     background: #f1f5f9;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 .entriestable-row .overflow-x-auto::-webkit-scrollbar-thumb {
     background: #cbd5e1;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 .entriestable-row .overflow-x-auto::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
@@ -51,7 +51,7 @@
 }
 .custom-gray-select.bootstrap-select .dropdown-menu {
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 6px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     padding: 8px 0;
 }
@@ -74,10 +74,10 @@
     </div>
 
     <!-- Filter Card -->
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm w-full mb-10 relative z-20">
+    <div class="bg-white border border-gray-200 rounded-md shadow-sm w-full mb-10 relative z-20">
 
         <!-- Filter Header -->
-        <div class="bg-[#f8fafc] border-b border-gray-200 px-4 py-3 rounded-t-lg flex items-center">
+        <div class="bg-[#f8fafc] border-b border-gray-200 px-4 py-3 rounded-t-md flex items-center">
             <svg class="w-[18px] h-[18px] text-[#2563eb] mr-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
             </svg>
@@ -122,37 +122,37 @@
                             <ul class="py-1 overflow-y-auto flex-1 max-h-[200px]" id="statusOptionsList">
                                 <li>
                                     <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors group">
-                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" value="all" checked>
+                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded-md focus:ring-blue-500 cursor-pointer" value="all" checked>
                                         <span class="ml-3 text-[13px] text-gray-700 group-hover:text-blue-700 option-text">All</span>
                                     </label>
                                 </li>
                                 <li>
                                     <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors group">
-                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" value="4">
+                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded-md focus:ring-blue-500 cursor-pointer" value="4">
                                         <span class="ml-3 text-[13px] text-gray-700 group-hover:text-blue-700 option-text">Sold</span>
                                     </label>
                                 </li>
                                 <li>
                                     <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors group">
-                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" value="2">
+                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded-md focus:ring-blue-500 cursor-pointer" value="2">
                                         <span class="ml-3 text-[13px] text-gray-700 group-hover:text-blue-700 option-text">Deleted</span>
                                     </label>
                                 </li>
                                 <li>
                                     <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors group">
-                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" value="6">
+                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded-md focus:ring-blue-500 cursor-pointer" value="6">
                                         <span class="ml-3 text-[13px] text-gray-700 group-hover:text-blue-700 option-text">Transformed</span>
                                     </label>
                                 </li>
                                 <li>
                                     <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors group">
-                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" value="9">
+                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded-md focus:ring-blue-500 cursor-pointer" value="9">
                                         <span class="ml-3 text-[13px] text-gray-700 group-hover:text-blue-700 option-text">Merged</span>
                                     </label>
                                 </li>
                                 <li>
                                     <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors group">
-                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" value="16">
+                                        <input type="checkbox" class="status-cb w-4 h-4 text-blue-600 border-gray-300 rounded-md focus:ring-blue-500 cursor-pointer" value="16">
                                         <span class="ml-3 text-[13px] text-gray-700 group-hover:text-blue-700 option-text">In Jewelry</span>
                                     </label>
                                 </li>
@@ -205,7 +205,7 @@
 
     @if($archivedItems->isEmpty())
     <!-- Empty State -->
-    <div id="noData" class="w-full flex flex-col items-center justify-center pt-16 pb-24 relative z-10 bg-white rounded-lg border border-gray-100 mt-4">
+    <div id="noData" class="w-full flex flex-col items-center justify-center pt-16 pb-24 relative z-10 bg-white rounded-md border border-gray-100 mt-4">
         <div class="mb-6 bg-gray-50 p-6 rounded-full">
             <svg class="w-16 h-16 text-gray-300" width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
@@ -216,10 +216,10 @@
             No archived products found. When items are archived, they will appear here. You can filter by status or date above to refine your results.
         </p>
         <div class="flex items-center gap-4">
-            <a href="javascript:void(0)" onclick="history.back()" class="inline-flex items-center px-6 py-[10px] border border-[#cbd5e1] text-[#334155] bg-white rounded-[8px] hover:bg-gray-50 transition-all font-semibold text-[13px] no-underline shadow-sm active:scale-95">
+            <a href="javascript:void(0)" onclick="history.back()" class="inline-flex items-center px-6 py-[10px] border border-[#cbd5e1] text-[#334155] bg-white rounded-md hover:bg-gray-50 transition-all font-semibold text-[13px] no-underline shadow-sm active:scale-95">
                 Return to inventory
             </a>
-            <a href="/gemstone/show" class="inline-flex items-center px-6 py-[10px] bg-[#2563eb] text-white rounded-[8px] hover:bg-blue-700 transition-all font-semibold text-[13px] no-underline shadow-sm active:scale-95">
+            <a href="/gemstone/show" class="inline-flex items-center px-6 py-[10px] bg-[#2563eb] text-white rounded-md hover:bg-blue-700 transition-all font-semibold text-[13px] no-underline shadow-sm active:scale-95">
                 View all inventory
             </a>
         </div>
@@ -227,11 +227,11 @@
     @else
     <!-- Table Container -->
     <div id="table-container" class="w-full relative z-10">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto w-full">
+        <div class="bg-white rounded-md shadow-sm border border-gray-200 overflow-x-auto w-full">
             <table id="archived-table" class="min-w-full text-left text-sm whitespace-nowrap w-full">
                 <thead>
                     <tr class="bg-[#f8fafc] text-gray-600 text-xs font-bold border-b border-gray-200">
-                        <th class="px-4 py-3 w-10"><input type="checkbox" id="cb-select-all" class="rounded border-gray-300"></th>
+                        <th class="px-4 py-3 w-10"><input type="checkbox" id="cb-select-all" class="rounded-md border-gray-300"></th>
                         <th class="px-4 py-3">Item #</th>
                         <th class="px-4 py-3">Image</th>
                         <th class="px-4 py-3">Status</th>

@@ -15,12 +15,12 @@
 }
 .overflow-x-auto::-webkit-scrollbar-track {
     background: #f1f5f9;
-    border-radius: 8px;
+    border-radius: 6px;
     margin: 0 16px;
 }
 .overflow-x-auto::-webkit-scrollbar-thumb {
     background: #cbd5e1;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 .overflow-x-auto::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Filter Card -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 mb-6 shadow-sm">
+        <div class="bg-white rounded-md border border-slate-200 p-5 mb-6 shadow-sm">
             <div class="flex items-center gap-2 mb-4">
                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -68,7 +68,7 @@
 
                         <!-- Trigger button -->
                         <button type="button" id="productCategoryDropdownBtn"
-                            class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm text-slate-700 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                            class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm text-slate-700 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                             <span id="productCategoryDropdownLabel" class="truncate">Select</span>
                         </button>
                         <!-- Chevron icon -->
@@ -80,7 +80,7 @@
 
                         <!-- Dropdown panel -->
                         <div id="productCategoryDropdownPanel"
-                            class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                            class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                             <!-- Search box -->
                             <div class="p-2 border-b border-slate-100">
                                 <input type="text" id="productCategorySearchInput" placeholder="Search category..."
@@ -114,7 +114,7 @@
 
                         <!-- Trigger button -->
                         <button type="button" id="varietyDropdownBtn"
-                            class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm text-slate-700 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                            class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm text-slate-700 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                             <span id="varietyDropdownLabel" class="truncate">Select</span>
                         </button>
                         <!-- Chevron icon -->
@@ -126,7 +126,7 @@
 
                         <!-- Dropdown panel -->
                         <div id="varietyDropdownPanel"
-                            class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                            class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                             <!-- Search box -->
                             <div class="p-2 border-b border-slate-100">
                                 <input type="text" id="varietySearchInput" placeholder="Search variety..."
@@ -150,11 +150,11 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Creation date range:</label>
                     <div class="flex items-center gap-2">
                         <input type="date"
-                            class="pc-filter-input w-full bg-white border border-slate-300 text-slate-700 py-2.5 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm hover:border-blue-400 transition-colors"
+                            class="pc-filter-input w-full bg-white border border-slate-300 text-slate-700 py-2.5 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm hover:border-blue-400 transition-colors"
                             placeholder="From">
                         <span class="text-slate-400 font-medium">-</span>
                         <input type="date"
-                            class="pc-filter-input w-full bg-white border border-slate-300 text-slate-700 py-2.5 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm hover:border-blue-400 transition-colors"
+                            class="pc-filter-input w-full bg-white border border-slate-300 text-slate-700 py-2.5 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm hover:border-blue-400 transition-colors"
                             placeholder="To">
                     </div>
                 </div>
@@ -168,7 +168,7 @@
 
                         <!-- Trigger button -->
                         <button type="button" id="creatorDropdownBtn"
-                            class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm text-slate-700 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                            class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm text-slate-700 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                             <span id="creatorDropdownLabel" class="truncate">Select</span>
                         </button>
                         <!-- Chevron icon -->
@@ -180,7 +180,7 @@
 
                         <!-- Dropdown panel -->
                         <div id="creatorDropdownPanel"
-                            class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                            class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                             <!-- Search box -->
                             <div class="p-2 border-b border-slate-100">
                                 <input type="text" id="creatorSearchInput" placeholder="Search creator..."
@@ -206,7 +206,7 @@
                 <!-- Buttons -->
                 <div class="col-span-1 md:col-span-4 flex justify-end gap-3 mt-2">
                     <button type="button" id="btn-filter-reset"
-                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-blue-700 bg-white border border-blue-600 rounded-xl hover:bg-blue-50 transition-colors">
+                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-blue-700 bg-white border border-blue-600 rounded-md hover:bg-blue-50 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -214,7 +214,7 @@
                         Reset
                     </button>
                     <button type="button" id="btn-filter-apply"
-                        class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-sm transition-colors">
+                        class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 shadow-sm transition-colors">
                         Apply
                     </button>
                 </div>
@@ -222,11 +222,11 @@
         </div>
 
         <!-- Scanned Results (Hidden) -->
-        <div id="scanned-results" class="hidden bg-white rounded-xl shadow-sm p-5 border border-slate-200 mb-6">
+        <div id="scanned-results" class="hidden bg-white rounded-md shadow-sm p-5 border border-slate-200 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h6 class="text-[14px] font-semibold text-slate-800">Scanned/typed results</h6>
                 <button type="button" id="btn-clear-scans"
-                    class="text-[13px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">Clear
+                    class="text-[13px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors">Clear
                     All</button>
             </div>
             <div class="h-px bg-slate-200 w-full mb-4"></div>
@@ -234,7 +234,7 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden">
 
             <!-- Tabs -->
             <div class="relative flex border-b border-slate-200 bg-white">
@@ -258,14 +258,14 @@
                 <div class="p-4 flex flex-wrap items-center justify-between border-b border-slate-100 bg-white gap-4">
                     <div class="flex items-center gap-3">
                         <button
-                            class="px-4 py-2 text-[13px] font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors">
+                            class="px-4 py-2 text-[13px] font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-md hover:bg-slate-100 transition-colors">
                             Manage Columns
                         </button>
                     </div>
 
                     <div class="flex items-center gap-3">
                         <div
-                            class="relative w-80 shadow-sm rounded-lg overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-500 transition-all flex">
+                            class="relative w-80 shadow-sm rounded-md overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-500 transition-all flex">
                             <input type="text" id="main-search-input" placeholder="e.g. Product code, SKU, Variety, Weight"
                                 class="w-full pl-4 pr-10 py-2 border-none text-[13px] focus:outline-none focus:ring-0">
                             <button id="main-search-btn"
@@ -277,7 +277,7 @@
                             </button>
                         </div>
                         <button id="btn-scan-sku"
-                            class="p-2 text-slate-500 border border-slate-200 bg-white rounded-lg hover:bg-slate-50 hover:text-slate-800 transition-colors shadow-sm tooltip"
+                            class="p-2 text-slate-500 border border-slate-200 bg-white rounded-md hover:bg-slate-50 hover:text-slate-800 transition-colors shadow-sm tooltip"
                             title="Scan SKU's to search">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -323,7 +323,7 @@
                             <tr>
                                 <th class="px-5 py-3.5 font-semibold w-24">
                                     <input type="checkbox" id="cb-select-all"
-                                        class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 align-middle mr-2">
+                                        class="w-4 h-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 align-middle mr-2">
                                     All
                                 </th>
                                 <th class="px-5 py-3.5 font-semibold">
@@ -421,7 +421,7 @@
 
                 <!-- Pagination Footer -->
                 <div
-                    class="px-5 py-3 border-t border-slate-200 flex items-center justify-between bg-white text-[13px] text-slate-600 rounded-b-xl">
+                    class="px-5 py-3 border-t border-slate-200 flex items-center justify-between bg-white text-[13px] text-slate-600 rounded-b-md">
                     <div class="flex items-center gap-2"><span>Show</span>
                         <div class="relative">
                             <select
@@ -457,7 +457,7 @@
             <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm pc-modal-backdrop"></div>
 
             <!-- Modal Content -->
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl relative z-10 transform scale-95 opacity-0 transition-all duration-200"
+            <div class="bg-white rounded-md shadow-2xl w-full max-w-xl relative z-10 transform scale-95 opacity-0 transition-all duration-200"
                 id="scan-sku-modal-content">
                 <!-- Header -->
                 <div class="flex items-center justify-between p-6 pb-4">
@@ -472,7 +472,7 @@
 
                 <!-- Body -->
                 <div class="p-6 pt-0">
-                    <div class="bg-[#FFF8EE] border-l-4 border-[#D97706] p-4 rounded-r-lg mb-5">
+                    <div class="bg-[#FFF8EE] border-l-4 border-[#D97706] p-4 rounded-r-md mb-5">
                         <p class="text-sm text-slate-800 leading-relaxed">
                             <span class="font-bold">Note:</span> Please scan or type your SKU number within the field. Also,
                             please make sure your barcode scanner is configured to return after scanning.
@@ -480,18 +480,18 @@
                     </div>
 
                     <input type="text" id="scan-sku-input"
-                        class="w-full bg-white border border-slate-300 text-slate-800 py-2.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                        class="w-full bg-white border border-slate-300 text-slate-800 py-2.5 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
                         placeholder="">
                 </div>
 
                 <!-- Footer -->
                 <div class="p-6 pt-0 flex items-center gap-3">
                     <button type="button"
-                        class="pc-modal-close px-5 py-2 text-sm font-semibold text-red-500 bg-white border border-red-500 rounded-lg hover:bg-red-50 transition-colors">
+                        class="pc-modal-close px-5 py-2 text-sm font-semibold text-red-500 bg-white border border-red-500 rounded-md hover:bg-red-50 transition-colors">
                         Cancel
                     </button>
                     <button type="button" id="btn-scan-submit"
-                        class="px-6 py-2 text-sm font-semibold text-white bg-[#2563eb] rounded-lg hover:bg-blue-700 shadow-sm transition-colors">
+                        class="px-6 py-2 text-sm font-semibold text-white bg-[#2563eb] rounded-md hover:bg-blue-700 shadow-sm transition-colors">
                         Search
                     </button>
                 </div>
@@ -553,7 +553,7 @@
     const btnFilterReset = document.getElementById('btn-filter-reset');
     if (btnFilterReset) {
         btnFilterReset.addEventListener('click', () => {
-            const filterContainer = btnFilterReset.closest('.bg-white.rounded-2xl');
+            const filterContainer = btnFilterReset.closest('.bg-white.rounded-md');
             if (filterContainer) {
                 const inputs = filterContainer.querySelectorAll('input, select');
                 inputs.forEach(input => {
@@ -602,7 +602,7 @@
 
                 // Create Tag
                 const tag = document.createElement('div');
-                tag.className = 'inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg border border-slate-200';
+                tag.className = 'inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-sm font-medium rounded-md border border-slate-200';
                 tag.innerHTML = `
                     <span>${val}</span>
                     <button type="button" class="text-slate-400 hover:text-red-500 transition-colors remove-tag-btn">
@@ -654,7 +654,7 @@
 
                 // Create Tag
                 const tag = document.createElement('div');
-                tag.className = 'inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg border border-slate-200';
+                tag.className = 'inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-sm font-medium rounded-md border border-slate-200';
                 tag.innerHTML = `
                     <span>Search: ${val}</span>
                     <button type="button" class="text-slate-400 hover:text-red-500 transition-colors remove-tag-btn">

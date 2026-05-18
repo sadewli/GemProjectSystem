@@ -22,21 +22,21 @@
             <h1 class="text-2xl font-bold text-primary-700 tracking-tight">Companies</h1>
             <div class="flex items-center gap-3">
                 <button type="button" id="openCreateModal"
-                    class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition-all duration-150 active:scale-95">
+                    class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-4 py-2.5 rounded-md shadow-sm transition-all duration-150 active:scale-95">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Create new
                 </button>
                 <a href="{{ route('crm.companies.import') }}"
-                    class="inline-flex items-center gap-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-150">
+                    class="inline-flex items-center gap-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium px-4 py-2.5 rounded-md transition-all duration-150">
                     Import Companies
                 </a>
             </div>
         </div>
 
         {{-- ===== FILTER SECTION ===== --}}
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 p-5">
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm mb-5 p-5">
             <div class="flex items-center gap-2 mb-4">
                 <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -55,7 +55,7 @@
                             <input type="hidden" name="company_type" id="companyTypeHidden"
                                 value="{{ request('company_type') }}">
                             <button type="button" id="companyTypeBtn"
-                                class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border-2 border-slate-200 rounded-xl bg-white focus:outline-none focus:border-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border-2 border-slate-200 rounded-md bg-white focus:outline-none focus:border-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                 <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -76,7 +76,7 @@
                             </div>
                             {{-- Dropdown panel with gap --}}
                             <div id="companyTypePanel"
-                                class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                 <ul id="companyTypeList" class="py-1">
                                     <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ !request('company_type') ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
                                         data-value="" data-label="Select company type">Select company type</li>
@@ -106,7 +106,7 @@
                         <div class="relative" id="statusWrapper">
                             <input type="hidden" name="status" id="statusHidden" value="{{ request('status') }}">
                             <button type="button" id="statusBtn"
-                                class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border-2 border-slate-200 rounded-xl bg-white focus:outline-none focus:border-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border-2 border-slate-200 rounded-md bg-white focus:outline-none focus:border-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                 <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -126,7 +126,7 @@
                                 </svg>
                             </div>
                             <div id="statusPanel"
-                                class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                 <ul id="statusList" class="py-1">
                                     <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ !request('status') ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
                                         data-value="" data-label="Select status">Select status</li>
@@ -154,7 +154,7 @@
 
                                 {{-- Trigger button --}}
                                 <button type="button" id="ownerDropdownBtn"
-                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border-2 border-slate-200 rounded-xl bg-white focus:outline-none focus:border-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border-2 border-slate-200 rounded-md bg-white focus:outline-none focus:border-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                     <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -184,7 +184,7 @@
 
                                 {{-- Dropdown panel --}}
                                 <div id="ownerDropdownPanel"
-                                    class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                                    class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
 
                                     {{-- Search box --}}
                                     <div class="p-2 border-b border-slate-100">
@@ -214,14 +214,14 @@
                         {{-- Reset + Apply --}}
                         <div class="flex items-end gap-2">
                             <a href="{{ route('crm.companies.index') }}" title="Reset filters"
-                                class="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-lg bg-white text-slate-500 hover:text-primary-600 hover:border-primary-300 transition-all duration-150">
+                                class="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-md bg-white text-slate-500 hover:text-primary-600 hover:border-primary-300 transition-all duration-150">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                 </svg>
                             </a>
                             <button type="submit"
-                                class="px-5 h-10 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg transition-all duration-150 active:scale-95">
+                                class="px-5 h-10 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-md transition-all duration-150 active:scale-95">
                                 Apply
                             </button>
                         </div>
@@ -231,17 +231,17 @@
         </div>
 
         {{-- ===== TABLE SECTION ===== --}}
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
 
             {{-- Table Toolbar --}}
             <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
                 <div class="flex items-center gap-3">
                     <button
-                        class="inline-flex items-center gap-2 border border-slate-200 text-slate-600 text-sm font-medium px-3.5 py-2 rounded-lg hover:bg-slate-50 transition-all duration-150">
+                        class="inline-flex items-center gap-2 border border-slate-200 text-slate-600 text-sm font-medium px-3.5 py-2 rounded-md hover:bg-slate-50 transition-all duration-150">
                         Manage Columns
                     </button>
                     <button title="Export"
-                        class="w-9 h-9 flex items-center justify-center border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all duration-150">
+                        class="w-9 h-9 flex items-center justify-center border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all duration-150">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -253,9 +253,9 @@
                 <div class="relative">
                     <input type="text" name="search" form="filterForm" value="{{ request('search') }}"
                         placeholder="Search e.g. name, ref, etc"
-                        class="w-64 pl-4 pr-10 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-slate-400">
+                        class="w-64 pl-4 pr-10 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-slate-400">
                     <button type="submit" form="filterForm"
-                        class="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center bg-primary-600 text-white rounded-r-lg hover:bg-primary-700 transition-colors">
+                        class="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center bg-primary-600 text-white rounded-r-md hover:bg-primary-700 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
@@ -271,7 +271,7 @@
                         <tr class="bg-slate-50 border-b border-slate-100">
                             <th class="w-10 px-4 py-3">
                                 <input type="checkbox"
-                                    class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer">
+                                    class="w-4 h-4 rounded-md border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer">
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Name</th>
@@ -302,7 +302,7 @@
                             <tr class="hover:bg-slate-50 transition-colors duration-100 group">
                                 <td class="px-4 py-3.5">
                                     <input type="checkbox"
-                                        class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer">
+                                        class="w-4 h-4 rounded-md border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer">
                                 </td>
                                 <td class="px-4 py-3.5">
                                     <a href="{{ route('crm.companies.show', $company->id) }}"
@@ -368,7 +368,7 @@
                 <div class="flex items-center gap-2 text-sm text-slate-500">
                     <span>Show</span>
                     <select name="per_page" form="filterForm" onchange="document.getElementById('filterForm').submit()"
-                        class="border border-slate-200 rounded-lg px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        class="border border-slate-200 rounded-md px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500">
                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
                         <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
                         <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
@@ -387,12 +387,12 @@
                 <div class="flex items-center gap-1">
                     @if(isset($companies) && method_exists($companies, 'previousPageUrl'))
                         <a href="{{ $companies->previousPageUrl() }}"
-                            class="px-3 py-1.5 text-sm rounded-lg {{ $companies->onFirstPage() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
+                            class="px-3 py-1.5 text-sm rounded-md {{ $companies->onFirstPage() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
                             Previous
                         </a>
 
                         @foreach($companies->getUrlRange(1, $companies->lastPage()) as $page => $url)
-                                <a href="{{ $url }}" class="w-8 h-8 flex items-center justify-center text-sm rounded-lg transition-colors
+                                <a href="{{ $url }}" class="w-8 h-8 flex items-center justify-center text-sm rounded-md transition-colors
                                                                                                                                   {{ $page == $companies->currentPage()
                             ? 'bg-primary-600 text-white font-semibold'
                             : 'text-slate-600 hover:bg-slate-200' }}">
@@ -401,7 +401,7 @@
                         @endforeach
 
                         <a href="{{ $companies->nextPageUrl() }}"
-                            class="px-3 py-1.5 text-sm rounded-lg {{ !$companies->hasMorePages() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
+                            class="px-3 py-1.5 text-sm rounded-md {{ !$companies->hasMorePages() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
                             Next
                         </a>
                     @endif
@@ -414,7 +414,7 @@
     <div id="createCompanyModal" class="fixed inset-0 z-50 hidden items-center justify-center"
         style="background:rgba(0,0,0,0.45);">
 
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col" style="max-height:90vh;">
+        <div class="bg-white rounded-md shadow-2xl w-full max-w-2xl mx-4 flex flex-col" style="max-height:90vh;">
 
             {{-- Modal Header --}}
             <div class="flex items-center justify-between px-7 pt-6 pb-4 flex-shrink-0">
@@ -434,7 +434,7 @@
                     @csrf
 
                     {{-- ---- Company Information ---- --}}
-                    <div class="bg-slate-50 rounded-xl px-5 py-3 mb-5">
+                    <div class="bg-slate-50 rounded-md px-5 py-3 mb-5">
                         <h3 class="text-sm font-bold text-slate-700">Company information</h3>
                     </div>
 
@@ -446,7 +446,7 @@
                                 Company name<span class="text-red-500">*</span>:
                             </label>
                             <input type="text" name="name" placeholder="Enter company name"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         {{-- Reference --}}
@@ -454,7 +454,7 @@
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Reference #:</label>
                             <input type="text" name="reference" readonly
                                 value="Comp-101"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-2xl bg-slate-50 text-slate-700 focus:outline-none cursor-default">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md bg-slate-50 text-slate-700 focus:outline-none cursor-default">
                         </div>
 
                         {{-- Company Type --}}
@@ -463,7 +463,7 @@
                             <div class="relative" id="modalCompanyTypeWrapper">
                                 <input type="hidden" name="company_type" id="modalCompanyTypeHidden" value="">
                                 <button type="button" id="modalCompanyTypeBtn"
-                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                     <span id="modalCompanyTypeLabel" class="truncate">All</span>
                                 </button>
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -474,7 +474,7 @@
                                     </svg>
                                 </div>
                                 <div id="modalCompanyTypePanel"
-                                    class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                                    class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul class="py-1 max-h-48 overflow-y-auto">
                                         <li class="modal-option-company_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 bg-blue-600 text-white font-semibold"
                                             data-value="" data-label="All">All</li>
@@ -495,7 +495,7 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Email:</label>
                             <input type="email" name="email" placeholder="Enter email"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         {{-- Phone --}}
@@ -505,7 +505,7 @@
                                 <div class="relative w-32 flex-shrink-0" id="modalPhoneCodeWrapper">
                                     <input type="hidden" name="phone_code" id="modalPhoneCodeHidden" value="">
                                     <button type="button" id="modalPhoneCodeBtn"
-                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                         <span id="modalPhoneCodeLabel" class="truncate">🇱🇰 +94</span>
                                     </button>
                                     <div class="absolute inset-y-0 right-2 flex items-center pointer-events-none">
@@ -516,10 +516,10 @@
                                         </svg>
                                     </div>
                                     <div id="modalPhoneCodePanel"
-                                        class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden w-36">
+                                        class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden w-36">
                                         <div class="p-2 border-b border-slate-100">
                                             <input type="text" id="modalPhoneCodeSearch" placeholder="Search..."
-                                                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 autocomplete="off">
                                         </div>
                                         <ul id="modalPhoneCodeList" class="py-1 max-h-48 overflow-y-auto w-full">
@@ -543,7 +543,7 @@
                                     </div>
                                 </div>
                                 <input type="text" name="phone" placeholder="Phone"
-                                    class="flex-1 px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="flex-1 px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                         </div>
 
@@ -553,14 +553,14 @@
                                 Profile image: <span class="text-slate-400 font-normal">(Max file size is 1MB)</span>
                             </label>
                             <input type="file" name="profile_image" accept="image/*"
-                                class="w-full text-sm text-slate-500 border border-slate-200 rounded-lg file:mr-3 file:py-2 file:px-3 file:rounded-l-lg file:border-0 file:text-sm file:font-medium file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer">
+                                class="w-full text-sm text-slate-500 border border-slate-200 rounded-md file:mr-3 file:py-2 file:px-3 file:rounded-l-md file:border-0 file:text-sm file:font-medium file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer">
                         </div>
 
                         {{-- Website (full width) --}}
                         <div class="col-span-2">
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Website</label>
                             <input type="url" name="website" placeholder="Enter website URL"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         {{-- Status (hidden, default active) --}}
@@ -569,7 +569,7 @@
                     </div>
 
                     {{-- ---- Address ---- --}}
-                    <div class="bg-slate-50 rounded-xl px-5 py-3 mb-5">
+                    <div class="bg-slate-50 rounded-md px-5 py-3 mb-5">
                         <h3 class="text-sm font-bold text-slate-700">Address</h3>
                     </div>
 
@@ -578,25 +578,25 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Attention:</label>
                             <input type="text" name="attention" placeholder="Enter attention"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         <div>
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Address (line 1):</label>
                             <input type="text" name="address_line1" placeholder="Add address line 1"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         <div>
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Address (line 2):</label>
                             <input type="text" name="address_line2" placeholder="Add address line 2"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         <div>
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Address (line 3):</label>
                             <input type="text" name="address_line3" placeholder="Add address line 3"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         <div>
@@ -604,7 +604,7 @@
                             <div class="relative" id="modalCountryWrapper">
                                 <input type="hidden" name="country" id="modalCountryHidden" value="">
                                 <button type="button" id="modalCountryBtn"
-                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                     <span id="modalCountryLabel" class="truncate">Choose country</span>
                                 </button>
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -615,10 +615,10 @@
                                     </svg>
                                 </div>
                                 <div id="modalCountryPanel"
-                                    class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                                    class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
                                         <input type="text" id="modalCountrySearch" placeholder="Search..."
-                                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             autocomplete="off">
                                     </div>
                                     <ul id="modalCountryList" class="py-1 max-h-48 overflow-y-auto">
@@ -650,7 +650,7 @@
                             <div class="relative" id="modalStateWrapper">
                                 <input type="hidden" name="state" id="modalStateHidden" value="">
                                 <button type="button" id="modalStateBtn"
-                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                    class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                     <span id="modalStateLabel" class="truncate">Choose state</span>
                                 </button>
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -661,10 +661,10 @@
                                     </svg>
                                 </div>
                                 <div id="modalStatePanel"
-                                    class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                                    class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
                                         <input type="text" id="modalStateSearch" placeholder="Search..."
-                                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             autocomplete="off">
                                     </div>
                                     <ul id="modalStateList" class="py-1 max-h-48 overflow-y-auto">
@@ -691,12 +691,12 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Postal code:</label>
                             <input type="text" name="postal_code" placeholder="Add postal code"
-                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         <div class="flex items-center gap-2 pt-5">
                             <input type="checkbox" id="useDeliveryAddress" name="use_delivery_address"
-                                class="w-4 h-4 rounded border-slate-300 text-blue-600 cursor-pointer">
+                                class="w-4 h-4 rounded-md border-slate-300 text-blue-600 cursor-pointer">
                             <label for="useDeliveryAddress" class="text-sm font-semibold text-slate-700 cursor-pointer">
                                 Use as delivery address
                             </label>
@@ -712,29 +712,29 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Attention:</label>
                                 <input type="text" name="del_attention" placeholder="Enter attention"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Address (line 1):</label>
                                 <input type="text" name="del_address_line1" placeholder="Add address line 1"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Address (line 2):</label>
                                 <input type="text" name="del_address_line2" placeholder="Add address line 2"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Address (line 3):</label>
                                 <input type="text" name="del_address_line3" placeholder="Add address line 3"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Country:</label>
                                 <div class="relative" id="modalDelCountryWrapper">
                                     <input type="hidden" name="del_country" id="modalDelCountryHidden" value="">
                                     <button type="button" id="modalDelCountryBtn"
-                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                         <span id="modalDelCountryLabel" class="truncate">Choose country</span>
                                     </button>
                                     <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -1138,7 +1138,7 @@
                                 <div class="relative" id="modalDelStateWrapper">
                                     <input type="hidden" name="del_state" id="modalDelStateHidden" value="">
                                     <button type="button" id="modalDelStateBtn"
-                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                         <span id="modalDelStateLabel" class="truncate">Choose state</span>
                                     </button>
                                     <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -1149,10 +1149,10 @@
                                         </svg>
                                     </div>
                                     <div id="modalDelStatePanel"
-                                        class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                                        class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                         <div class="p-2 border-b border-slate-100">
                                             <input type="text" id="modalDelStateSearch" placeholder="Search..."
-                                                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 autocomplete="off">
                                         </div>
                                         <ul id="modalDelStateList" class="py-1 max-h-48 overflow-y-auto">
@@ -1174,17 +1174,17 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Postal code:</label>
                                 <input type="text" name="del_postal_code" placeholder="Add postal code"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
 
                         </div>
                     </div>
 
                     {{-- ---- People (contacts) ---- --}}
-                    <div class="bg-slate-50 rounded-xl px-5 py-3 mb-5 flex items-center justify-between">
+                    <div class="bg-slate-50 rounded-md px-5 py-3 mb-5 flex items-center justify-between">
                         <h3 class="text-sm font-bold text-slate-700">People (contacts)</h3>
                         <button type="button" id="addContactBtn"
-                            class="text-xs font-medium px-3 py-1.5 border border-slate-300 rounded-lg bg-white hover:bg-slate-50 text-slate-700 transition-colors">
+                            class="text-xs font-medium px-3 py-1.5 border border-slate-300 rounded-md bg-white hover:bg-slate-50 text-slate-700 transition-colors">
                             Add contact
                         </button>
                     </div>
@@ -1195,24 +1195,24 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">First name:</label>
                                 <input type="text" name="contacts[0][first_name]" placeholder="Add first name"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Last name:</label>
                                 <input type="text" name="contacts[0][last_name]" placeholder="Add last name"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Email:</label>
                                 <input type="email" name="contacts[0][email]" placeholder="Add email"
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Role:</label>
                                 <div class="relative" id="modalContacts0RoleWrapper">
                                     <input type="hidden" name="contacts[0][role]" id="modalContacts0RoleHidden" value="">
                                     <button type="button" id="modalContacts0RoleBtn"
-                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                         <span id="modalContacts0RoleLabel" class="truncate">Select role</span>
                                     </button>
                                     <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -1223,7 +1223,7 @@
                                         </svg>
                                     </div>
                                     <div id="modalContacts0RolePanel"
-                                        class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                                        class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                         <ul class="py-1 max-h-48 overflow-y-auto">
                                             <li class="modal-option-contacts0role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 bg-blue-600 text-white font-semibold"
                                                 data-value="" data-label="Select role">Select role</li>
@@ -1243,7 +1243,7 @@
                             </div>
                             <div class="col-span-2 flex items-center gap-2">
                                 <input type="checkbox" id="primaryContact0" name="contacts[0][primary]"
-                                    class="w-4 h-4 rounded border-slate-300 text-blue-600 cursor-pointer">
+                                    class="w-4 h-4 rounded-md border-slate-300 text-blue-600 cursor-pointer">
                                 <label for="primaryContact0" class="text-sm font-bold text-slate-700 cursor-pointer">
                                     Primary contact
                                 </label>
@@ -1257,16 +1257,16 @@
             {{-- Modal Footer --}}
             <div class="flex items-center justify-between px-7 py-4 border-t border-slate-100 flex-shrink-0">
                 <button type="button" id="cancelCreateModal"
-                    class="px-5 py-2.5 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors">
+                    class="px-5 py-2.5 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors">
                     Cancel
                 </button>
                 <div class="flex items-center gap-3">
                     <button type="button" id="createAndAddAnother"
-                        class="px-5 py-2.5 text-sm font-medium text-slate-700 border border-slate-300 rounded-lg bg-white hover:bg-slate-50 transition-colors">
+                        class="px-5 py-2.5 text-sm font-medium text-slate-700 border border-slate-300 rounded-md bg-white hover:bg-slate-50 transition-colors">
                         Create and add another
                     </button>
                     <button type="button" id="createCompanyBtn"
-                        class="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-colors">
+                        class="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors">
                         Create
                     </button>
                 </div>
@@ -1348,23 +1348,23 @@
                                         <div>
                                             <label class="block text-xs font-medium text-slate-600 mb-1.5">First name:</label>
                                             <input type="text" name="contacts[${idx}][first_name]" placeholder="Add first name"
-                                                   class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                   class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Last name:</label>
                                             <input type="text" name="contacts[${idx}][last_name]" placeholder="Add last name"
-                                                   class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                   class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-slate-600 mb-1.5">Email:</label>
                                             <input type="email" name="contacts[${idx}][email]" placeholder="Add email"
-                                                   class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                   class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         </div>
                                         <div>
                                                 <div class="relative" id="modalContacts${idx}RoleWrapper">
                                                 <input type="hidden" name="contacts[${idx}][role]" id="modalContacts${idx}RoleHidden" value="">
                                                 <button type="button" id="modalContacts${idx}RoleBtn"
-                                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
+                                                        class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                                     <span id="modalContacts${idx}RoleLabel" class="truncate">Select role</span>
                                                 </button>
                                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -1373,7 +1373,7 @@
                                                     </svg>
                                                 </div>
                                                 <div id="modalContacts${idx}RolePanel"
-                                                     class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                                                     class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                                     <ul class="py-1 max-h-48 overflow-y-auto">
                                                         <li class="modal-option-contacts${idx}role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 bg-blue-600 text-white font-semibold" data-value="" data-label="Select role">Select role</li>
                                                         <li class="modal-option-contacts${idx}role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 " data-value="manager" data-label="Manager">Manager</li>
@@ -1388,7 +1388,7 @@
                                         <div class="col-span-2 flex items-center justify-between">
                                             <div class="flex items-center gap-2">
                                                 <input type="checkbox" id="primaryContact${idx}" name="contacts[${idx}][primary]"
-                                                       class="w-4 h-4 rounded border-slate-300 text-blue-600 cursor-pointer">
+                                                       class="w-4 h-4 rounded-md border-slate-300 text-blue-600 cursor-pointer">
                                                 <label for="primaryContact${idx}" class="text-sm font-bold text-slate-700 cursor-pointer">
                                                     Primary contact
                                                 </label>

@@ -25,9 +25,9 @@
             <div class="flex-1 flex flex-col gap-6 min-w-0">
 
                 {{-- ---- Import Type Card ---- --}}
-                <div class="bg-white rounded-xl shadow-sm border border-slate-100">
+                <div class="bg-white rounded-md shadow-sm border border-slate-100">
                     {{-- Blue top bar --}}
-                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-xl"></div>
+                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-md"></div>
 
                     <div class="p-6">
                         <h2 class="text-base font-bold text-primary-600 mb-5">Import type</h2>
@@ -44,7 +44,7 @@
                             <input type="hidden" id="uploadTypeHidden" name="upload_type" value="">
 
                             <button type="button" id="uploadTypeBtn"
-                                class="w-full flex items-center justify-between px-4 py-3 text-sm border border-slate-200 rounded-xl bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all duration-150 shadow-sm">
+                                class="w-full flex items-center justify-between px-4 py-3 text-sm border border-slate-200 rounded-md bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all duration-150 shadow-sm">
                                 <div class="flex items-center gap-2.5">
                                     <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -62,14 +62,14 @@
                             </button>
 
                             <div id="uploadTypePanel"
-                                class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                                class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-md shadow-xl z-50 overflow-hidden">
                                 <ul class="py-2 px-2">
-                                    <li class="upload-type-option flex items-center px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="upload-type-option flex items-center px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="create" data-label="Create new companies">Create new companies</li>
-                                    <li class="upload-type-option flex items-center px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="upload-type-option flex items-center px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="update" data-label="Update existing companies">Update existing companies
                                     </li>
-                                    <li class="upload-type-option flex items-center px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="upload-type-option flex items-center px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="both" data-label="Create &amp; update companies">Create &amp; update
                                         companies</li>
                                 </ul>
@@ -81,7 +81,7 @@
                         <div id="fileUploadArea" class="hidden mt-6">
                             <label class="block text-xs font-medium text-slate-600 mb-2">Upload file</label>
                             <div id="dropZone"
-                                class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                                class="border-2 border-dashed border-slate-300 rounded-md p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer">
                                 <svg class="w-10 h-10 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -97,7 +97,7 @@
 
                             {{-- File selected preview --}}
                             <div id="filePreview"
-                                class="hidden mt-3 flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                class="hidden mt-3 flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
                                 <svg class="w-8 h-8 text-green-600 flex-shrink-0" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -118,7 +118,7 @@
 
                             <div class="mt-4 flex justify-end">
                                 <button type="button" id="uploadBtn"
-                                    class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-md shadow-sm transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                     disabled>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -132,8 +132,8 @@
                 </div>
 
                 {{-- ---- Upload History Card ---- --}}
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
-                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-xl"></div>
+                <div class="bg-white rounded-md shadow-sm overflow-hidden border border-slate-100">
+                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-md"></div>
 
                     <div class="p-6">
                         <h2 class="text-base font-bold text-primary-600 mb-5">Upload history</h2>
@@ -142,9 +142,9 @@
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-2">
                                 <input type="text" id="historySearch" placeholder="search"
-                                    class="w-44 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-44 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <button type="button"
-                                    class="w-9 h-9 flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+                                    class="w-9 h-9 flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white rounded-md transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
@@ -156,7 +156,7 @@
                                 <span>Show</span>
                                 <div class="relative">
                                     <select id="historyPerPage"
-                                        class="pl-2 pr-7 py-1.5 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer">
+                                        class="pl-2 pr-7 py-1.5 text-sm border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer">
                                         <option value="5">5</option>
                                         <option value="10">10</option>
                                         <option value="25">25</option>
@@ -178,11 +178,11 @@
                             <table class="w-full text-sm">
                                 <thead>
                                     <tr class="bg-slate-100">
-                                        <th class="text-left px-4 py-3 font-semibold text-slate-600 rounded-l-lg">Type</th>
+                                        <th class="text-left px-4 py-3 font-semibold text-slate-600 rounded-l-md">Type</th>
                                         <th class="text-left px-4 py-3 font-semibold text-slate-600">File name</th>
                                         <th class="text-left px-4 py-3 font-semibold text-slate-600">Summary</th>
                                         <th class="text-left px-4 py-3 font-semibold text-slate-600">Date</th>
-                                        <th class="text-left px-4 py-3 font-semibold text-slate-600 rounded-r-lg">Action
+                                        <th class="text-left px-4 py-3 font-semibold text-slate-600 rounded-r-md">Action
                                         </th>
                                     </tr>
                                 </thead>
@@ -203,7 +203,7 @@
                                 <span>Show</span>
                                 <div class="relative">
                                     <select
-                                        class="pl-2 pr-7 py-1.5 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none appearance-none cursor-pointer">
+                                        class="pl-2 pr-7 py-1.5 text-sm border border-slate-200 rounded-md bg-white focus:outline-none appearance-none cursor-pointer">
                                         <option value="5">5</option>
                                         <option value="10">10</option>
                                         <option value="25">25</option>
@@ -236,8 +236,8 @@
             <div class="w-80 flex-shrink-0 flex flex-col gap-6">
 
                 {{-- ---- Download Template Card ---- --}}
-                <div class="bg-white rounded-xl shadow-sm border border-slate-100">
-                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-xl"></div>
+                <div class="bg-white rounded-md shadow-sm border border-slate-100">
+                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-md"></div>
 
                     <div class="p-6">
                         <h2 class="text-base font-bold text-primary-600 mb-5">Download template</h2>
@@ -252,7 +252,7 @@
                             </div>
                             {{-- Spreadsheet thumbnail --}}
                             <div
-                                class="w-20 h-16 flex-shrink-0 bg-slate-100 rounded-lg border border-slate-200 overflow-hidden flex items-center justify-center">
+                                class="w-20 h-16 flex-shrink-0 bg-slate-100 rounded-md border border-slate-200 overflow-hidden flex items-center justify-center">
                                 <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                         d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
@@ -268,7 +268,7 @@
 
                             {{-- Trigger button --}}
                             <button type="button" id="templateDropdownBtn"
-                                class="w-full flex items-center justify-between px-4 py-3 text-sm border border-slate-200 rounded-xl bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all duration-150 shadow-sm">
+                                class="w-full flex items-center justify-between px-4 py-3 text-sm border border-slate-200 rounded-md bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all duration-150 shadow-sm">
                                 <div class="flex items-center gap-2.5">
                                     <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -287,28 +287,28 @@
 
                             {{-- Dropdown panel — floats below, does NOT push card content --}}
                             <div id="templateDropdownPanel"
-                                class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                                class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-md shadow-xl z-50 overflow-hidden">
                                 <ul class="max-h-64 overflow-y-auto py-2 px-2" id="templateOptionsList">
 
                                     {{-- Products --}}
                                     <li class="px-3 py-1.5 text-xs font-bold text-primary-600 uppercase tracking-widest">
                                         Products</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="gemstone" data-label="Gemstone">Gemstone</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="rough_specimen" data-label="Rough &amp; Specimen">Rough &amp; Specimen
                                     </li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="diamond" data-label="Diamond">Diamond</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="jewelry" data-label="Jewelry">Jewelry</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="gemstones_on_jewelry" data-label="Gemstones on jewelry">Gemstones on
                                         jewelry</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="diamonds_on_jewelry" data-label="Diamonds on jewelry">Diamonds on
                                         jewelry</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="jewelry_components" data-label="Jewelry components">Jewelry components
                                     </li>
 
@@ -316,24 +316,24 @@
                                     <li
                                         class="px-3 py-1.5 text-xs font-bold text-primary-600 uppercase tracking-widest border-t border-slate-100 mt-1 pt-2.5">
                                         Contacts</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="companies" data-label="Companies">Companies</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="contacts" data-label="Contacts">Contacts</li>
 
                                     {{-- Accounting documents --}}
                                     <li
                                         class="px-3 py-1.5 text-xs font-bold text-primary-600 uppercase tracking-widest border-t border-slate-100 mt-1 pt-2.5">
                                         Accounting documents</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="customer_invoices" data-label="Customer Invoices">Customer Invoices</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="purchase_orders" data-label="Purchase Orders">Purchase Orders</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="customer_memos" data-label="Customer Memos">Customer Memos</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="supplier_memos" data-label="Supplier Memos">Supplier Memos</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="transfer_documents" data-label="Transfer Documents">Transfer Documents
                                     </li>
 
@@ -341,23 +341,23 @@
                                     <li
                                         class="px-3 py-1.5 text-xs font-bold text-primary-600 uppercase tracking-widest border-t border-slate-100 mt-1 pt-2.5">
                                         Production</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="reassortment" data-label="Re-assortment">Re-assortment</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="cutting_one_to_one" data-label="Cutting (One to One)">Cutting (One to
                                         One)</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="cutting_multiple" data-label="Cutting (Multiple to Multiple)">Cutting
                                         (Multiple to Multiple)</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="recutting_one_to_one" data-label="Re-cutting (One to One)">Re-cutting
                                         (One to One)</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="recutting_multiple" data-label="Re-cutting (Multiple to Multiple)">
                                         Re-cutting (Multiple to Multiple)</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="product_transfer" data-label="Product transfer">Product transfer</li>
-                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-lg transition-colors duration-100"
+                                    <li class="template-option flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer rounded-md transition-colors duration-100"
                                         data-value="treatment" data-label="Treatment">Treatment</li>
 
                                 </ul>
@@ -368,7 +368,7 @@
                         {{-- Download button (shown when template selected) --}}
                         <div id="downloadBtnWrapper" class="hidden mt-3">
                             <button type="button" id="downloadTemplateBtn"
-                                class="w-full inline-flex items-center justify-center gap-2 border border-primary-600 text-primary-600 hover:bg-primary-50 text-sm font-semibold px-4 py-2.5 rounded-lg transition-all duration-150">
+                                class="w-full inline-flex items-center justify-center gap-2 border border-primary-600 text-primary-600 hover:bg-primary-50 text-sm font-semibold px-4 py-2.5 rounded-md transition-all duration-150">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -380,8 +380,8 @@
                 </div>
 
                 {{-- ---- Support Card ---- --}}
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
-                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-xl"></div>
+                <div class="bg-white rounded-md shadow-sm overflow-hidden border border-slate-100">
+                    <div class="h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-md"></div>
 
                     <div class="p-6">
                         <h2 class="text-base font-bold text-primary-600 mb-5">Support</h2>
@@ -401,7 +401,7 @@
                         </p>
 
                         <a href="mailto:cs@thegemexhibit.com"
-                            class="block w-full text-center px-4 py-2.5 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                            class="block w-full text-center px-4 py-2.5 text-sm font-medium text-slate-700 border border-slate-200 rounded-md bg-slate-50 hover:bg-slate-100 transition-colors">
                             Email us
                         </a>
                     </div>
