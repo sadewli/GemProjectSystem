@@ -5,10 +5,13 @@
     $menuprivilegearray = $menuaccess ?? [];
 
     if (!function_exists('menucheck')) {
-        function menucheck($arraymenu, $menuID) {
-            if(!is_array($arraymenu) && !is_object($arraymenu)) return 0;
+        function menucheck($arraymenu, $menuID)
+        {
+            if (!is_array($arraymenu) && !is_object($arraymenu))
+                return 0;
             foreach ($arraymenu as $array) {
-                if ($array->menuid == $menuID && $array->access_status == 1) return 1;
+                if ($array->menuid == $menuID && $array->access_status == 1)
+                    return 1;
             }
             return 0;
         }
@@ -16,30 +19,33 @@
 @endphp
 <!-- Website - www.codingnepalweb.com -->
 <html lang="en" dir="ltr">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title><?= (isset($page_stitle)) ? $page_stitle : ' ShapeUP - By Erav Technology' ?></title>
-    <link rel="icon" type="image/x-icon" href="{{url('/images/hrm.png')}}" /> 
+    <link rel="icon" type="image/x-icon" href="{{url('/images/hrm.png')}}" />
     <!-- Styles -->
-    <link href="{{ url('/css/styles.css') }}" rel="stylesheet"/>
-    <link href="{{ url('/css/custom_styles.css') }}" rel="stylesheet"/>
-    <link href="{{ url('/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet"/>
-    <link href="{{ url('/css/full_calendar.min.css') }}" rel="stylesheet"/>
-    <link href="{{ url('/css/font/flaticon.css') }}" rel="stylesheet"/>
+    <link href="{{ url('/css/styles.css') }}" rel="stylesheet" />
+    <link href="{{ url('/css/custom_styles.css') }}" rel="stylesheet" />
+    <link href="{{ url('/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" />
+    <link href="{{ url('/css/full_calendar.min.css') }}" rel="stylesheet" />
+    <link href="{{ url('/css/font/flaticon.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url('/css/fontawesome/css/all.min.css') }}">
 
-    <link href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" rel="stylesheet"/>
+    <link href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.24.1/feather.min.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <script data-search-pseudo-elements defer
+        src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.24.1/feather.min.js"
+        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- <link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css" rel="stylesheet"/> -->
 
-    <style> 
+    <style>
         .calendar {
             width: 310px;
             border-radius: 6px;
@@ -47,6 +53,7 @@
             background: #fff;
             /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); */
         }
+
         @media (max-width: 575.98px) {
             .calendar {
                 width: 310px;
@@ -183,19 +190,22 @@
 
         .no-underline {
             text-decoration: none;
-            color: inherit; 
+            color: inherit;
             font-weight: bold;
         }
+
         .no-underline:hover {
             text-decoration: none;
             color: inherit;
         }
+
         .custom-table {
             border-collapse: collapse;
             width: 100%;
         }
 
-        .custom-table th, .custom-table td {
+        .custom-table th,
+        .custom-table td {
             text-align: center;
             font-size: 24px;
             padding: 20px;
@@ -205,23 +215,27 @@
             background-color: #fafbfd;
             color: #000;
         }
+
         .custom-table th:not(:first-child) {
             background-color: #87CEEB;
             color: #000;
         }
 
         .custom-table td:nth-child(2) {
-            background-color: #32CD32; /* Green */
+            background-color: #32CD32;
+            /* Green */
             color: #000;
         }
 
         .custom-table td:nth-child(3) {
-            background-color: #FFA500; /* Orange */
+            background-color: #FFA500;
+            /* Orange */
             color: #000;
         }
 
         .custom-table td:nth-child(4) {
-            background-color: #FF6347; /* Red */
+            background-color: #FF6347;
+            /* Red */
             color: #000;
         }
 
@@ -257,347 +271,347 @@
             background-image: -moz-linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
             background-image: -webkit-linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
             background-image: linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
-                border-radius: 25px 25px 0 0;
-                top: 0;
-                left: 0;
-            }
+            border-radius: 25px 25px 0 0;
+            top: 0;
+            left: 0;
+        }
 
-            .image {
-                position: relative;
-                height: 150px;
-                width: 150px;
-                background-color: white;
-                padding: 3px;
-                border-radius: 50%;
-                margin-bottom: 10px;
-                margin-left: auto;
-                margin-right: auto;
-            }
+        .image {
+            position: relative;
+            height: 150px;
+            width: 150px;
+            background-color: white;
+            padding: 3px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-            .image .profile-image {
-                height: 100%;
-                width: 100%;
-                border-radius: 50%;
-                border: 3px solid white;
-            }
+        .image .profile-image {
+            height: 100%;
+            width: 100%;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
 
-            .card-profile .text-data {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
+        .card-profile .text-data {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-            .text-data .name {
-                font-size: 23px;
-                font-weight: 600;
-                margin-bottom: 5px;
-            }
+        .text-data .name {
+            font-size: 23px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
 
-            .text-data .job {
-                font-size: 15px;
-                font-weight: 550;
-            }
+        .text-data .job {
+            font-size: 15px;
+            font-weight: 550;
+        }
 
-            .dotted-join {
-                display: flex;
-                justify-content: space-between;
-                position: relative;
-                padding-bottom: 4px;
-            }
+        .dotted-join {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding-bottom: 4px;
+        }
 
-            .dotted-join::after {
-                content: '';
-                position: absolute;
-                bottom: 10px;
-                left: 0;
-                right: 0;
-                border-bottom: 2px dotted #ccc;
-                z-index: 0;
-            }
+        .dotted-join::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            border-bottom: 2px dotted #ccc;
+            z-index: 0;
+        }
 
-            .dotted-join > span:first-child {
-                background: white;
-                padding-right: 4px;
-                z-index: 1;
-                position: relative;
-            }
+        .dotted-join>span:first-child {
+            background: white;
+            padding-right: 4px;
+            z-index: 1;
+            position: relative;
+        }
 
-            .dotted-join > span:last-child {
-                background: white;
-                padding-left: 4px;
-                z-index: 1;
-                position: relative;
-            }
+        .dotted-join>span:last-child {
+            background: white;
+            padding-left: 4px;
+            z-index: 1;
+            position: relative;
+        }
 
-            a,
-            a:hover,
-            a:focus,
-            a:active {
-                text-decoration: none;
-            }
+        a,
+        a:hover,
+        a:focus,
+        a:active {
+            text-decoration: none;
+        }
 
-            .about-us-bg {
-                background-position: right;
-                background-repeat: no-repeat;
-                -webkit-background-size: contain;
-                background-size: contain;
-            }
+        .about-us-bg {
+            background-position: right;
+            background-repeat: no-repeat;
+            -webkit-background-size: contain;
+            background-size: contain;
+        }
 
-            .section-common-space {
-                padding: 100px 0;
-            }
+        .section-common-space {
+            padding: 100px 0;
+        }
 
-            .section-header-v2 .section-title {
-                text-transform: initial;
-                margin-bottom: 30px;
-                font-size: 36px;
-                color: #1c1c1c;
-            }
+        .section-header-v2 .section-title {
+            text-transform: initial;
+            margin-bottom: 30px;
+            font-size: 36px;
+            color: #1c1c1c;
+        }
 
-            /*==================   ABOUT US  ==================*/
-            .tabbed-about-us .tab-pane {
-                margin-bottom: 80px;
-                display: none;
-                border: none;
-            }
+        /*==================   ABOUT US  ==================*/
+        .tabbed-about-us .tab-pane {
+            margin-bottom: 80px;
+            display: none;
+            border: none;
+        }
 
-            .tabbed-about-us .tab-content>.tab-pane {
-                border: none;
-            }
+        .tabbed-about-us .tab-content>.tab-pane {
+            border: none;
+        }
 
-            .tabbed-about-us .tab-pane.active {
-                display: block;
-                -webkit-animation: fadeIn .5s ease-in-out .15s both;
-                animation: fadeIn .5s ease-in-out .15s both;
-            }
+        .tabbed-about-us .tab-pane.active {
+            display: block;
+            -webkit-animation: fadeIn .5s ease-in-out .15s both;
+            animation: fadeIn .5s ease-in-out .15s both;
+        }
 
-            .tabbed-about-us .img-wrapper {
-                position: relative;
-                min-height: 400px;
-            }
+        .tabbed-about-us .img-wrapper {
+            position: relative;
+            min-height: 400px;
+        }
 
-            .tabbed-about-us .img-wrapper img {
-                -webkit-box-shadow: 0px 40px 70px 0px rgba(0, 0, 0, 0.22);
-                box-shadow: 0px 40px 70px 0px rgba(0, 0, 0, 0.22);
-            }
+        .tabbed-about-us .img-wrapper img {
+            -webkit-box-shadow: 0px 40px 70px 0px rgba(0, 0, 0, 0.22);
+            box-shadow: 0px 40px 70px 0px rgba(0, 0, 0, 0.22);
+        }
 
-            .tabbed-about-us .img-wrapper .img-one {
-                position: absolute;
-                top: 0;
-                left: 0;
-                display: none;
-            }
+        .tabbed-about-us .img-wrapper .img-one {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
 
-            .tabbed-about-us .img-wrapper .img-two {
-                position: absolute;
-                top: 120px;
-                left: 138px;
-                display: none;
-            }
+        .tabbed-about-us .img-wrapper .img-two {
+            position: absolute;
+            top: 120px;
+            left: 138px;
+            display: none;
+        }
 
-            .tabbed-about-us .img-wrapper .img-three {
-                position: absolute;
-                top: 40px;
-                left: 345px;
-                display: none;
-            }
+        .tabbed-about-us .img-wrapper .img-three {
+            position: absolute;
+            top: 40px;
+            left: 345px;
+            display: none;
+        }
 
-            .tabbed-about-us .tab-pane.active .img-one {
-                display: block;
-                -webkit-animation: fadeIn .5s ease-in-out .15s both;
-                animation: fadeIn .5s ease-in-out .15s both;
-            }
+        .tabbed-about-us .tab-pane.active .img-one {
+            display: block;
+            -webkit-animation: fadeIn .5s ease-in-out .15s both;
+            animation: fadeIn .5s ease-in-out .15s both;
+        }
 
-            .tabbed-about-us .tab-pane.active .img-two {
-                display: block;
-                -webkit-animation: fadeIn .5s ease-in-out .50s both;
-                animation: fadeIn .5s ease-in-out .50s both;
-            }
+        .tabbed-about-us .tab-pane.active .img-two {
+            display: block;
+            -webkit-animation: fadeIn .5s ease-in-out .50s both;
+            animation: fadeIn .5s ease-in-out .50s both;
+        }
 
-            .tabbed-about-us .tab-pane.active .img-three {
-                display: block;
-                -webkit-animation: fadeIn .5s ease-in-out .85s both;
-                animation: fadeIn .5s ease-in-out .85s both;
-            }
+        .tabbed-about-us .tab-pane.active .img-three {
+            display: block;
+            -webkit-animation: fadeIn .5s ease-in-out .85s both;
+            animation: fadeIn .5s ease-in-out .85s both;
+        }
 
-            .tabbed-about-us .details-wrapper {
-                padding-left: 30px;
-            }
+        .tabbed-about-us .details-wrapper {
+            padding-left: 30px;
+        }
 
-            .tabbed-about-us .details .title {
-                text-transform: uppercase;
-                color: #1c1c1c;
-                margin-bottom: 50px;
-            }
+        .tabbed-about-us .details .title {
+            text-transform: uppercase;
+            color: #1c1c1c;
+            margin-bottom: 50px;
+        }
 
-            .tabbed-about-us .details p {
-                margin-bottom: 30px;
-            }
+        .tabbed-about-us .details p {
+            margin-bottom: 30px;
+        }
 
-            .tabbed-about-us .details p:last-child {
-                margin-bottom: 0;
-            }
+        .tabbed-about-us .details p:last-child {
+            margin-bottom: 0;
+        }
 
-            .tabbed-about-us .work-progress {
-                margin-top: 60px;
-            }
+        .tabbed-about-us .work-progress {
+            margin-top: 60px;
+        }
 
-            .tabbed-about-us .tabs-nav {
-                padding: 30px 0 25px;
-                border: none;
-                text-align: center;
-                border-radius: 4px;
-                
-            }
+        .tabbed-about-us .tabs-nav {
+            padding: 30px 0 25px;
+            border: none;
+            text-align: center;
+            border-radius: 4px;
 
-            .tabbed-about-us .tabs-nav li {
-                display: inline-block;
-                text-transform: uppercase;
-                text-align: center;
-                margin-right: 130px;
-                position: relative;
-               
-            }
+        }
 
-            .tabbed-about-us .tabs-nav li:last-child {
-                margin-right: 0;
-            }
+        .tabbed-about-us .tabs-nav li {
+            display: inline-block;
+            text-transform: uppercase;
+            text-align: center;
+            margin-right: 130px;
+            position: relative;
 
-            .tabbed-about-us .tabs-nav li * {
-                color: #666666;
-                border-radius: 1.35rem;
-            }
+        }
 
-            .tabbed-about-us .tabs-nav li span.icon {
-                display: block;
-                font-size: 20px;
-                padding-bottom: 5px;
-                -webkit-transition: .3s;
-                transition: .3s;
-            }
+        .tabbed-about-us .tabs-nav li:last-child {
+            margin-right: 0;
+        }
 
-            .tabbed-about-us .tabs-nav li:after {
-                content: "";
-                position: absolute;
-                bottom: -25px;
-                left: 0;
-                width: 0;
-                height: 2px;
-                -webkit-transition: .3s;
-                transition: .3s;
-            }
+        .tabbed-about-us .tabs-nav li * {
+            color: #666666;
+            border-radius: 1.35rem;
+        }
 
-            .tabbed-about-us .tabs-nav li.active:after {
-                width: 100%;
-            }
+        .tabbed-about-us .tabs-nav li span.icon {
+            display: block;
+            font-size: 20px;
+            padding-bottom: 5px;
+            -webkit-transition: .3s;
+            transition: .3s;
+        }
 
-            /* ABOUT US VARAITONS **************************/
-            /*about-us-bg*/
-            .about-us-bg {
-                background-position: right;
-                background-repeat: no-repeat;
-                -webkit-background-size: contain;
-                background-size: contain;
-            }
+        .tabbed-about-us .tabs-nav li:after {
+            content: "";
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            -webkit-transition: .3s;
+            transition: .3s;
+        }
 
-            .about-us-bg .section-header-v2 {
-                margin-bottom: 90px;
-            }
+        .tabbed-about-us .tabs-nav li.active:after {
+            width: 100%;
+        }
 
-            /*tabbed-about-us-v2*/
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav {
-                background-color: transparent;
-                padding: 0;
-            }
+        /* ABOUT US VARAITONS **************************/
+        /*about-us-bg*/
+        .about-us-bg {
+            background-position: right;
+            background-repeat: no-repeat;
+            -webkit-background-size: contain;
+            background-size: contain;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li {
-                display: table;
-                margin-right: 30px;
-                margin-bottom: 30px;
-                background-color: #e9ecef;
-                width: 134px;
-                height: 93px;
-                float: left;
-                border-radius: 2px;
-                -webkit-transition: .3s;
-                transition: .3s;
-                border-radius: 1.35rem;
-            }
+        .about-us-bg .section-header-v2 {
+            margin-bottom: 90px;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li>a {
-                display: table-cell;
-                vertical-align: middle;
-                position: relative;
-                z-index: 10;
-            }
+        /*tabbed-about-us-v2*/
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav {
+            background-color: transparent;
+            padding: 0;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .details-wrapper {
-                padding-left: 0;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li {
+            display: table;
+            margin-right: 30px;
+            margin-bottom: 30px;
+            background-color: #e9ecef;
+            width: 134px;
+            height: 93px;
+            float: left;
+            border-radius: 2px;
+            -webkit-transition: .3s;
+            transition: .3s;
+            border-radius: 1.35rem;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .details p {
-                font-size: 18px;
-                font-weight: 300;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li>a {
+            display: table-cell;
+            vertical-align: middle;
+            position: relative;
+            z-index: 10;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .bgcolor-major-gradient-overlay {
-                z-index: 1;
-                opacity: 0;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .details-wrapper {
+            padding-left: 0;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li:hover .bgcolor-major-gradient-overlay,
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active .bgcolor-major-gradient-overlay {
-                opacity: 1;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .details p {
+            font-size: 18px;
+            font-weight: 300;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li:hover *,
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active * {
-                color: #fff;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .bgcolor-major-gradient-overlay {
+            z-index: 1;
+            opacity: 0;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li:hover,
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active {
-                -webkit-box-shadow: 0px 25px 55px 0px rgba(0, 0, 0, 0.21), 0px 16px 28px 0px rgba(0, 0, 0, 0.22);
-                box-shadow: 0px 25px 55px 0px rgba(0, 0, 0, 0.21), 0px 16px 28px 0px rgba(0, 0, 0, 0.22);
-            }
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li:hover .bgcolor-major-gradient-overlay,
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active .bgcolor-major-gradient-overlay {
+            opacity: 1;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active:hover:after,
-            .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active:after {
-                display: none;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li:hover *,
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active * {
+            color: #fff;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .work-progress {
-                margin-top: 40px;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li:hover,
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active {
+            -webkit-box-shadow: 0px 25px 55px 0px rgba(0, 0, 0, 0.21), 0px 16px 28px 0px rgba(0, 0, 0, 0.22);
+            box-shadow: 0px 25px 55px 0px rgba(0, 0, 0, 0.21), 0px 16px 28px 0px rgba(0, 0, 0, 0.22);
+        }
 
-            /*------ End of about us  ------*/
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active:hover:after,
+        .tabbed-about-us-v2.tabbed-about-us .tabs-nav li.active:after {
+            display: none;
+        }
 
-            .bgcolor-major-gradient-overlay,
-            .bgcolor-major-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 10;
-                -webkit-transition: .3s;
-                transition: .3s;
-            }
+        .tabbed-about-us-v2.tabbed-about-us .work-progress {
+            margin-top: 40px;
+        }
 
-            .tabbed-about-us-v2.tabbed-about-us .work-progress .circle>span {
-                color: #f3474b;
-            }
+        /*------ End of about us  ------*/
+
+        .bgcolor-major-gradient-overlay,
+        .bgcolor-major-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            -webkit-transition: .3s;
+            transition: .3s;
+        }
+
+        .tabbed-about-us-v2.tabbed-about-us .work-progress .circle>span {
+            color: #f3474b;
+        }
 
 
-            .tabbed-about-us .tabs-nav li:hover *,
-            .tabbed-about-us .tabs-nav li.active * {
-                color: #f3474b;
-            }
+        .tabbed-about-us .tabs-nav li:hover *,
+        .tabbed-about-us .tabs-nav li.active * {
+            color: #f3474b;
+        }
 
-            .bgcolor-major-gradient-overlay {
-                background-image: -moz-linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
-                background-image: -webkit-linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
-                background-image: linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
+        .bgcolor-major-gradient-overlay {
+            background-image: -moz-linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
+            background-image: -webkit-linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
+            background-image: linear-gradient(135deg, rgba(26, 198, 217, 0.9) 0%, rgba(18, 145, 162, 0.9) 100%);
         }
 
         /* Large Devices, Wide Screens */
@@ -753,7 +767,9 @@
             }
         }
 
-        .tabbed-about-us .tab-pane ol, ul, dl {
+        .tabbed-about-us .tab-pane ol,
+        ul,
+        dl {
             margin-top: 0;
             margin-bottom: 0;
         }
@@ -762,7 +778,7 @@
             display: flex;
             align-items: center;
         }
-        
+
         .phone-icon {
             display: flex;
             align-items: center;
@@ -775,150 +791,150 @@
             margin-right: 15px;
             font-size: 18px;
         }
-        
+
         .phone-content {
             display: flex;
             flex-direction: column;
         }
-        
+
         .phone-label {
             font-size: 12px;
             color: #6c757d;
             margin-bottom: 3px;
             font-weight: 500;
         }
-        
+
         .phone-number {
             font-size: 14px;
             color: #343a40;
             font-weight: 600;
         }
-  
-    .offcanvas {
-        position: fixed;
-        bottom: 0;
-        z-index: 1050;
-        display: flex;
-        flex-direction: column;
-        max-width: 100%;
-        visibility: hidden;
-        background-color: #fff;
-        background-clip: padding-box;
-        outline: 0;
-        transition: transform 0.3s ease-in-out;
-    }
 
-    .offcanvas-end {
-        top: 0;
-        right: 0;
-        width: 400px;
-        border-left: 1px solid rgba(0, 0, 0, 0.2);
-        transform: translateX(100%);
-    }
+        .offcanvas {
+            position: fixed;
+            bottom: 0;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            visibility: hidden;
+            background-color: #fff;
+            background-clip: padding-box;
+            outline: 0;
+            transition: transform 0.3s ease-in-out;
+        }
 
-    .offcanvas.show {
-        transform: none;
-        visibility: visible;
-    }
-    .offcanvas.hiding {
-    transform: translateX(100%);
-    visibility: hidden;
-}
-
-    .offcanvas-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1040;
-        width: 100vw;
-        height: 100vh;
-        background-color: #000;
-    }
-
-    .offcanvas-backdrop.fade {
-        opacity: 0;
-    }
-
-    .offcanvas-backdrop.show {
-        opacity: 0.5;
-    }
-
-    .offcanvas-backdrop.fading {
-        opacity: 0;
-    }
-
-    .offcanvas-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #dee2e6;
-        background-color: #f8f9fa;
-    }
-
-    .offcanvas-title {
-        margin-bottom: 0;
-        line-height: 1.5;
-        font-size: 1.25rem;
-        color: #343a40;
-    }
-
-    .btn-close {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0.5rem;
-        opacity: 0.7;
-        transition: opacity 0.15s ease-in-out;
-    }
-
-    .btn-close:hover {
-        opacity: 1;
-    }
-
-    .offcanvas-body {
-        flex-grow: 1;
-        padding: 1.5rem;
-        overflow-y: auto;
-    }
-
-    .list-unstyled {
-        padding-left: 0;
-        list-style: none;
-    }
-
-    @media (max-width: 575.98px) {
         .offcanvas-end {
-            width: 100%;
+            top: 0;
+            right: 0;
+            width: 400px;
+            border-left: 1px solid rgba(0, 0, 0, 0.2);
+            transform: translateX(100%);
+        }
+
+        .offcanvas.show {
+            transform: none;
+            visibility: visible;
+        }
+
+        .offcanvas.hiding {
+            transform: translateX(100%);
+            visibility: hidden;
+        }
+
+        .offcanvas-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1040;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+        }
+
+        .offcanvas-backdrop.fade {
+            opacity: 0;
+        }
+
+        .offcanvas-backdrop.show {
+            opacity: 0.5;
+        }
+
+        .offcanvas-backdrop.fading {
+            opacity: 0;
         }
 
         .offcanvas-header {
-            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            background-color: #f8f9fa;
+        }
+
+        .offcanvas-title {
+            margin-bottom: 0;
+            line-height: 1.5;
+            font-size: 1.25rem;
+            color: #343a40;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.15s ease-in-out;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
         }
 
         .offcanvas-body {
-            padding: 1rem;
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
         }
-    }
 
-    .select2-container * {
-        font-family: inherit !important;
-        font-size: 14px !important;
-        font-weight: normal !important;
-        text-transform: none !important;
-        text-decoration: none !important;
-    }
+        .list-unstyled {
+            padding-left: 0;
+            list-style: none;
+        }
 
-    .select2-container--default .select2-results__option {
-    text-transform: none !important;
-    text-decoration: none !important;
-    }
-    
+        @media (max-width: 575.98px) {
+            .offcanvas-end {
+                width: 100%;
+            }
+
+            .offcanvas-header {
+                padding: 1rem;
+            }
+
+            .offcanvas-body {
+                padding: 1rem;
+            }
+        }
+
+        .select2-container * {
+            font-family: inherit !important;
+            font-size: 14px !important;
+            font-weight: normal !important;
+            text-transform: none !important;
+            text-decoration: none !important;
+        }
+
+        .select2-container--default .select2-results__option {
+            text-transform: none !important;
+            text-decoration: none !important;
+        }
     </style>
-    
-    @php if(Session::get('usertype') == 'Employee'){ @endphp
+
+    @php if (Session::get('usertype') == 'Employee') { @endphp
     <style>
-        .home-section{
+        .home-section {
             position: relative;
             background: #E4E9F7;
             min-height: 100vh;
@@ -927,8 +943,9 @@
             width: 100%;
             transition: all 0.5s ease;
         }
+
         @media (max-width: 575.98px) {
-            .home-section{
+            .home-section {
                 position: relative;
                 background: #E4E9F7;
                 min-height: 100vh;
@@ -939,6 +956,7 @@
                 /* z-index: 2; */
             }
         }
+
         .select2-container * {
             font-family: inherit !important;
             font-size: 14px !important;
@@ -955,15 +973,17 @@
     @php } @endphp
 
     @yield('style')
-  </head>
-  <body class="nav-fixed">
+</head>
+
+<body class="nav-fixed">
     <div id="app">
         <nav class="topnav navbar navbar-expand shadow navbar-light topnavbarcolor" id="sidenavAccordion">
             <a class="navbar-brand font-weight-bold" href="{{ url('/home') }}" style="color: white; font-size: 24px;">
-                <i class="fas fa-pallet mr-2"></i>Pallet
+                <i class="fas fa-pallet mr-2"></i>Ceylon Center Gem
             </a>
             @unless(Session::get('usertype') == 'Employee')
-                <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 mr-lg-2" id="sidebarToggle" href="#"><i class="fas fa-bars text-light"></i></button>
+                <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 mr-lg-2" id="sidebarToggle" href="#"><i
+                        class="fas fa-bars text-light"></i></button>
                 {{-- @include('layouts.breadcrumblist') --}}
             @endunless
             <ul class="navbar-nav align-items-center ml-auto">
@@ -974,14 +994,16 @@
                 @else
                     <li class="nav-item dropdown no-caret mr-3 dropdown-user">
                         <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage"
-                           href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true"
-                           aria-expanded="false">
-                            <img class="img-fluid" src="{{ asset('images/user.jpg') }}" onerror="this.src='{{ asset('images/man.png') }}'" alt="Employee Photo"/>
+                            href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <img class="img-fluid" src="{{ asset('images/user.jpg') }}"
+                                onerror="this.src='{{ asset('images/man.png') }}'" alt="Employee Photo" />
                         </a>
                         <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up"
-                             aria-labelledby="navbarDropdownUserImage">
+                            aria-labelledby="navbarDropdownUserImage">
                             <h6 class="dropdown-header d-flex align-items-center">
-                                <img class="dropdown-user-img" src="{{ asset('images/user.jpg') }}" onerror="this.src='{{ asset('images/man.png') }}'" alt="Employee Photo"/>
+                                <img class="dropdown-user-img" src="{{ asset('images/user.jpg') }}"
+                                    onerror="this.src='{{ asset('images/man.png') }}'" alt="Employee Photo" />
                                 <div class="dropdown-user-details">
                                     <div class="dropdown-user-details-name"> {{ Session::get('name', 'User') }}</div>
                                     <div class="dropdown-user-details-email">{{ Session::get('username', 'Staff') }}</div>
@@ -991,7 +1013,7 @@
                             <a class="dropdown-item" href="#">
                                 <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                                 Reset Password
-			                </a>
+                            </a>
                             <a class="dropdown-item" href="{{ url('User/Useraccount') }}">
                                 <div class="dropdown-item-icon"><i data-feather="user"></i></div>
                                 Account
@@ -1007,9 +1029,9 @@
         </nav>
         <div id="layoutSidenav">
             @unless(Session::get('usertype') == 'Employee')
-            <div>
-                @include('layouts.side_bar')
-            </div>
+                <div>
+                    @include('layouts.side_bar')
+                </div>
             @endunless
             <div id="layoutSidenav_content">
                 <section class="home-section">
@@ -1017,8 +1039,8 @@
                     <footer class="footer mt-auto footer-light">
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col-md-6 small">Copyright &copy;  ShapeUP  V3.0 <?php echo date('Y') ?>
-                                    Made  by <a href="https://www.erav.lk" target="_blank">eRAV
+                                <div class="col-md-6 small">Copyright &copy; ShapeUP V3.0 <?php echo date('Y') ?>
+                                    Made by <a href="https://www.erav.lk" target="_blank">eRAV
                                         technologies</a>
                                 </div>
                                 <div class="col-md-6 text-md-right small">
@@ -1033,190 +1055,193 @@
             </div>
         </div>
     </div>
-<!-- Scripts -->
-<script src="{{ url('/js/app.js') }}"></script>
-<script src="{{ url('/js/jquery-3.4.1.min.js') }}"></script>
-<script src="{{ url('/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ url('/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ url('/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ url('/js/scripts.js') }}"></script>
-<script src="{{ url('/js/moment.js') }}"></script>
-<script src="{{ url('/js/bootstrap-datetimepicker.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js"></script>
+    <!-- Scripts -->
+    <script src="{{ url('/js/app.js') }}"></script>
+    <script src="{{ url('/js/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ url('/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ url('/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url('/js/scripts.js') }}"></script>
+    <script src="{{ url('/js/moment.js') }}"></script>
+    <script src="{{ url('/js/bootstrap-datetimepicker.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js"></script>
 
-<!--script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    <!--script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js" ></script>
 <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script-->
 
-<!--script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+    <!--script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.24.1/feather.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-core.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js" crossorigin="anonymous"></script-->
-{{-- <script src="{{ asset('/js/scripts.js') }}"></script> --}}
-{{--    <script src="{{ asset('/js/bootstrap-datetimepicker.js') }}"></script>--}}
+    {{--
+    <script src="{{ asset('/js/scripts.js') }}"></script> --}}
+    {{--
+    <script src="{{ asset('/js/bootstrap-datetimepicker.js') }}"></script>--}}
 
 
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ url('/js/jspdf.umd.js') }}"></script>
-<script src="{{ url('/js/jspdf.plugin.autotable.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url('/js/jspdf.umd.js') }}"></script>
+    <script src="{{ url('/js/jspdf.plugin.autotable.min.js') }}"></script>
 
-<script>
-    $(function () {
-        var isEmployee = {{ Session::get('usertype') == 'Employee' ? 'true' : 'false' }};
-        
-        function toggleSidebar() {
-            // $('#sidebar').toggleClass('open', $(window).width() >= 992);
-            $('body').toggleClass('sidenav-toggled', $(window).width() >= 992);
-        }
+    <script>
+        $(function () {
+            var isEmployee = {{ Session::get('usertype') == 'Employee' ? 'true' : 'false' }};
 
-        if(isEmployee==false){
-            toggleSidebar(); // run on page load
+            function toggleSidebar() {
+                // $('#sidebar').toggleClass('open', $(window).width() >= 992);
+                $('body').toggleClass('sidenav-toggled', $(window).width() >= 992);
+            }
 
-            $(window).on('resize', toggleSidebar); // run on resize
+            if (isEmployee == false) {
+                toggleSidebar(); // run on page load
 
-            $('#sidebarToggle').on('click', function (e) {
-                e.preventDefault();
-                // if ($(window).width() < 992) {
+                $(window).on('resize', toggleSidebar); // run on resize
+
+                $('#sidebarToggle').on('click', function (e) {
+                    e.preventDefault();
+                    // if ($(window).width() < 992) {
                     $('#sidebar').toggleClass('open');
                     $('body').toggleClass('sidenav-toggled');
-                // }
-            });
-        }
-        else{
-            $('body').toggleClass('sidenav-toggled', $(window).width() >= 992);
-        }
-    });
-    $(document).ready(function(){
-        window.scripturl = '{{ url('/scripts') }}';
-    });
-    $.extend(true, $.fn.dataTable.defaults, {
-        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-        pageLength: 50  // Force 25 entries per page
-    });
-
-    function Otherconfirmation(title){
-        return Swal.fire({
-            title: "Are you sure?",
-            text: title,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Confirm",
-            customClass: {
-                confirmButton: 'btn btn-primary',
-                cancelButton: 'btn btn-danger'
+                    // }
+                });
             }
-        }).then((result) => {
-            return result.isConfirmed;
+            else {
+                $('body').toggleClass('sidenav-toggled', $(window).width() >= 992);
+            }
         });
-    }
+        $(document).ready(function () {
+            window.scripturl = '{{ url('/scripts') }}';
+        });
+        $.extend(true, $.fn.dataTable.defaults, {
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            pageLength: 50  // Force 25 entries per page
+        });
 
-    function action(data) {
-        if(data!=''){
-            var obj=JSON.parse(data);
-            var icon, title;
-
-            if(obj.type=='success'){icon='success'; title=obj.message;}
-            else if(obj.type=='primary'){icon='success'; title=obj.message;}
-            else if(obj.type=='warning'){icon='warning'; title=obj.message;}
-            else if(obj.type=='danger'){icon='error'; title=obj.message;}
-
-            Swal.fire({
-                position: "top-end",
-                icon: icon,
-                title: title,
-                showConfirmButton: false,
-                timer: 2500
+        function Otherconfirmation(title) {
+            return Swal.fire({
+                title: "Are you sure?",
+                text: title,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Confirm",
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-danger'
+                }
+            }).then((result) => {
+                return result.isConfirmed;
             });
         }
-    }
 
-    function actionreload(data) {
-        if(data!=''){
-            var obj=JSON.parse(data);
-            var icon, title;
+        function action(data) {
+            if (data != '') {
+                var obj = JSON.parse(data);
+                var icon, title;
 
-            if(obj.type=='success'){icon='success'; title=obj.message;}
-            else if(obj.type=='primary'){icon='success'; title=obj.message;}
-            else if(obj.type=='warning'){icon='warning'; title=obj.message;}
-            else if(obj.type=='danger'){icon='error'; title=obj.message;}
+                if (obj.type == 'success') { icon = 'success'; title = obj.message; }
+                else if (obj.type == 'primary') { icon = 'success'; title = obj.message; }
+                else if (obj.type == 'warning') { icon = 'warning'; title = obj.message; }
+                else if (obj.type == 'danger') { icon = 'error'; title = obj.message; }
 
-            Swal.fire({
-                position: "top-end",
-                icon: icon,
-                title: title,
-                showConfirmButton: false,
-                timer: 2500
-            }).then(() => {
-                window.location.reload();
-            });
+                Swal.fire({
+                    position: "top-end",
+                    icon: icon,
+                    title: title,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+            }
         }
-    }
 
-      $(document).ready(function () {
-       // Offcanvas toggle functionality
-       $('[data-toggle="offcanvas"]').on('click', function () {
-           var target = $(this).data('target');
-           $(target).toggleClass('show');
-           $('body').toggleClass('offcanvas-open');
+        function actionreload(data) {
+            if (data != '') {
+                var obj = JSON.parse(data);
+                var icon, title;
 
-           // Add backdrop
-           if ($(target).hasClass('show')) {
-               $('<div class="offcanvas-backdrop fade show"></div>').appendTo('body');
-           } else {
-               $('.offcanvas-backdrop').remove();
-           }
-       });
+                if (obj.type == 'success') { icon = 'success'; title = obj.message; }
+                else if (obj.type == 'primary') { icon = 'success'; title = obj.message; }
+                else if (obj.type == 'warning') { icon = 'warning'; title = obj.message; }
+                else if (obj.type == 'danger') { icon = 'error'; title = obj.message; }
 
-       // Close offcanvas when clicking on backdrop
-       $(document).on('click', '.offcanvas-backdrop', function () {
-           $('.offcanvas').removeClass('show');
-           $('body').removeClass('offcanvas-open');
-           $(this).remove();
-       });
+                Swal.fire({
+                    position: "top-end",
+                    icon: icon,
+                    title: title,
+                    showConfirmButton: false,
+                    timer: 2500
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        }
 
-       // Close offcanvas when clicking on close button
-       $('[data-dismiss="offcanvas"]').on('click', function () {
-           var target = $(this).closest('.offcanvas');
-           target.removeClass('show');
-           $('body').removeClass('offcanvas-open');
-           $('.offcanvas-backdrop').remove();
-       });
-      $('#btn-reset').on('click', function() {
-        $('#formFilter')[0].reset();
-        $('#company').val(null).trigger('change');
-         $('#department').val(null).trigger('change');
-        $('#employee').val(null).trigger('change');
-         $('#location').val(null).trigger('change');
-    });
-   });
-   function closeOffcanvasSmoothly(offcanvasId = '#offcanvasRight') {
-       const offcanvas = $(offcanvasId);
-       const backdrop = $('.offcanvas-backdrop');
+        $(document).ready(function () {
+            // Offcanvas toggle functionality
+            $('[data-toggle="offcanvas"]').on('click', function () {
+                var target = $(this).data('target');
+                $(target).toggleClass('show');
+                $('body').toggleClass('offcanvas-open');
 
-       // Add hiding class to trigger reverse animation
-       offcanvas.addClass('hiding');
-       backdrop.addClass('fading');
+                // Add backdrop
+                if ($(target).hasClass('show')) {
+                    $('<div class="offcanvas-backdrop fade show"></div>').appendTo('body');
+                } else {
+                    $('.offcanvas-backdrop').remove();
+                }
+            });
 
-       // Remove elements after animation completes
-       setTimeout(() => {
-           offcanvas.removeClass('show hiding');
-           backdrop.remove();
-           $('body').removeClass('offcanvas-open');
-       }, 900); // Match this with your CSS transition duration
-   }
-</script>
+            // Close offcanvas when clicking on backdrop
+            $(document).on('click', '.offcanvas-backdrop', function () {
+                $('.offcanvas').removeClass('show');
+                $('body').removeClass('offcanvas-open');
+                $(this).remove();
+            });
 
-@yield('script')
-  </body>
+            // Close offcanvas when clicking on close button
+            $('[data-dismiss="offcanvas"]').on('click', function () {
+                var target = $(this).closest('.offcanvas');
+                target.removeClass('show');
+                $('body').removeClass('offcanvas-open');
+                $('.offcanvas-backdrop').remove();
+            });
+            $('#btn-reset').on('click', function () {
+                $('#formFilter')[0].reset();
+                $('#company').val(null).trigger('change');
+                $('#department').val(null).trigger('change');
+                $('#employee').val(null).trigger('change');
+                $('#location').val(null).trigger('change');
+            });
+        });
+        function closeOffcanvasSmoothly(offcanvasId = '#offcanvasRight') {
+            const offcanvas = $(offcanvasId);
+            const backdrop = $('.offcanvas-backdrop');
+
+            // Add hiding class to trigger reverse animation
+            offcanvas.addClass('hiding');
+            backdrop.addClass('fading');
+
+            // Remove elements after animation completes
+            setTimeout(() => {
+                offcanvas.removeClass('show hiding');
+                backdrop.remove();
+                $('body').removeClass('offcanvas-open');
+            }, 900); // Match this with your CSS transition duration
+        }
+    </script>
+
+    @yield('script')
+</body>
+
 </html>
