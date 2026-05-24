@@ -52,7 +52,6 @@ Route::get('Master/Grade', [MasterController::class, 'grade']);
 Route::get('Master/OriginTreatment', [MasterController::class, 'origin_treatment']);
 Route::get('Master/StorageLocation', [MasterController::class, 'storage_location']);
 
-Route::get('Inventory/MyInventory', [InventoryController::class, 'myinventory'])->name('inventory.myinventory');
 
 Route::get('Distributor/GRN', [DistributorGRNController::class, 'index'])->name('distributor.grn');
 Route::get('Distributor/GRN/list', [DistributorGRNController::class, 'list'])->name('distributor.grn.list');
@@ -91,7 +90,7 @@ Route::prefix('memoin')->name('memoin.')->group(function () {
     Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\memoin::class, 'restore'])->name('restore');
 });
 
-//Inventory List    
+//Inventory List
 Route::prefix('inventorylist')->name('inventorylist.')->group(function () {
     Route::get('/', [\App\Http\Controllers\inventory\inventorylist::class, 'index'])->name('index');
     Route::get('/{id}', [\App\Http\Controllers\inventory\inventorylist::class, 'show'])->name('show');
@@ -105,7 +104,11 @@ Route::prefix('inventoryadjustment')->name('inventoryadjustment.')->group(functi
     Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'restore'])->name('restore');
 });
 
-
+Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(function () {
+    Route::get('/', [InventoryController::class, 'myinventory'])->name('index');
+    Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
+    Route::get('/new', [InventoryController::class, 'show'])->name('new');
+});
 
 // CRM Routes
 Route::prefix('crm')->name('crm.')->group(function () {
