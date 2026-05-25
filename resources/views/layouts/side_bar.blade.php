@@ -127,8 +127,13 @@
             <span class="tooltip">Inventory</span>
             <div class="collapse" id="collapseInventory" data-parent="#sidebar">
                 <nav class="sidenav-menu-nested nav accordion">
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/MyInventory') }}">My
-                        Inventory</a>
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/MyInventory') }}">My Inventory</a>
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/productcode') }}">Product Code</a>
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/negativeinventory') }}">Negative Inventory</a>
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/archived') }}">Archived</a>
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/memoin') }}">Memo In</a>
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/inventorylist') }}">Inventory List</a>
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/inventoryadjustment') }}">Inventory Adjustment</a>
                 </nav>
             </div>
         </li>
@@ -220,8 +225,13 @@
                 </a>
                 <div class="collapse" id="collapseInventoryMobile" data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/MyInventory') }}">My
-                            Inventory</a>
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/MyInventory') }}">My Inventory</a>
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/productcode') }}">Product Code</a>
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/negativeinventory') }}">Negative Inventory</a>
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/archived') }}">Archived</a>
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/memoin') }}">Memo In</a>
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/inventorylist') }}">Inventory List</a>
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900" href="{{ url('Inventory/inventoryadjustment') }}">Inventory Adjustment</a>
                     </nav>
                 </div>
             </li>

@@ -66,17 +66,17 @@ Route::post('Distributor/GRN/delete', [DistributorGRNController::class, 'delete'
 
 //Inventory Routes
 // Product Code
-Route::prefix('productcode')->name('productcode.')->group(function () {
+Route::prefix('Inventory/productcode')->name('productcode.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Inventory\productcode::class, 'index'])->name('index');
 });
 
 // Negative Inventory Routes
-Route::prefix('negativeinventory')->name('negativeinventory.')->group(function () {
+Route::prefix('Inventory/negativeinventory')->name('negativeinventory.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Inventory\negativeinventory::class, 'index'])->name('index');
 });
 
 // Archived Routes
-Route::prefix('archived')->name('archived.')->group(function () {
+Route::prefix('Inventory/archived')->name('archived.')->group(function () {
 
     Route::get('/', [\App\Http\Controllers\Inventory\archived::class, 'index'])->name('index');
     Route::get('/{id}', [\App\Http\Controllers\Inventory\archived::class, 'show'])->name('show');
@@ -84,21 +84,21 @@ Route::prefix('archived')->name('archived.')->group(function () {
 });
 
 //Memo in routes
-Route::prefix('memoin')->name('memoin.')->group(function () {
+Route::prefix('Inventory/memoin')->name('memoin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\inventory\memoin::class, 'index'])->name('index');
     Route::get('/{id}', [\App\Http\Controllers\inventory\memoin::class, 'show'])->name('show');
     Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\memoin::class, 'restore'])->name('restore');
 });
 
 //Inventory List
-Route::prefix('inventorylist')->name('inventorylist.')->group(function () {
+Route::prefix('Inventory/inventorylist')->name('inventorylist.')->group(function () {
     Route::get('/', [\App\Http\Controllers\inventory\inventorylist::class, 'index'])->name('index');
     Route::get('/{id}', [\App\Http\Controllers\inventory\inventorylist::class, 'show'])->name('show');
     Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\inventorylist::class, 'restore'])->name('restore');
 });
 
 //Inventory Adjustment
-Route::prefix('inventoryadjustment')->name('inventoryadjustment.')->group(function () {
+Route::prefix('Inventory/inventoryadjustment')->name('inventoryadjustment.')->group(function () {
     Route::get('/', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'index'])->name('index');
     Route::get('/{id}', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'show'])->name('show');
     Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'restore'])->name('restore');
@@ -106,8 +106,8 @@ Route::prefix('inventoryadjustment')->name('inventoryadjustment.')->group(functi
 
 Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(function () {
     Route::get('/', [InventoryController::class, 'myinventory'])->name('index');
-    Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
     Route::get('/new', [InventoryController::class, 'show'])->name('new');
+    Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
 });
 
 // CRM Routes
@@ -146,8 +146,8 @@ Route::prefix('crm')->name('crm.')->group(function () {
 
 //Production Routes
 Route::prefix('production')->name('production.')->group(function () {
-    Route::get('/overview',         [\App\Http\Controllers\production\overview::class,         'index'])->name('overview.index');
-    Route::get('/excelsheet',       [\App\Http\Controllers\production\excelsheet::class,       'index'])->name('excelsheet.index');
+    Route::get('/overview', [\App\Http\Controllers\production\overview::class, 'index'])->name('overview.index');
+    Route::get('/excelsheet', [\App\Http\Controllers\production\excelsheet::class, 'index'])->name('excelsheet.index');
     Route::get('/excelsheetupload', [\App\Http\Controllers\production\excelsheetupload::class, 'index'])->name('excelsheetupload.index');
 });
 
