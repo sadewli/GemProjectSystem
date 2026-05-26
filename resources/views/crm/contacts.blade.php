@@ -1470,6 +1470,9 @@
     </div>
     {{-- ===== END ADD CONTACT MODAL ===== --}}
 
+@endsection
+
+@section('script')
     <script>
 
         (function () {
@@ -1734,5 +1737,4 @@
             setupModalSearchableDropdown('CompanyId');
         });
     </script>
-
 @endsection

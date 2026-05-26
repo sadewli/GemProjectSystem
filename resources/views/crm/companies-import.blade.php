@@ -414,8 +414,11 @@
 
     </div>
 
+@endsection
+
+@section('script')
     <script>
-        (function () {
+        document.addEventListener('DOMContentLoaded', function () {
 
             // ── Generic dropdown factory ──────────────────────────────────────────────
             function makeDropdown(cfg) {
@@ -590,6 +593,6 @@
                 if (file) showFile(file);
             });
 
-        })();
+        });
     </script>
 @endsection

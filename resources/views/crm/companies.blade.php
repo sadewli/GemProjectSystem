@@ -194,7 +194,7 @@
                                     </div>
 
                                     {{-- Options list --}}
-                                    </li>
+                                    <ul id="ownerOptionsList" class="py-1 max-h-48 overflow-y-auto w-full">
                                     @foreach($owners ?? [] as $owner)
                                         <li class="owner-option px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer {{ request('owner') == $owner->id ? 'bg-blue-50 text-blue-700 font-medium' : '' }}"
                                             data-value="{{ $owner->id }}" data-label="{{ $owner->name }}">
@@ -742,9 +742,18 @@
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M19 9l-7 7-7-7" />
-                                            <ul id="modalCountryList" class="py-1 max-h-48 overflow-y-auto w-full">
-                                                <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer text-slate-400 italic"
-                                                    data-value="" data-label="Choose country">Choose country</li>
+                                        </svg>
+                                    </div>
+                                    <div id="modalDelCountryPanel"
+                                        class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                                        <div class="p-2 border-b border-slate-100">
+                                            <input type="text" id="modalDelCountrySearch" placeholder="Search..."
+                                                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                autocomplete="off">
+                                        </div>
+                                        <ul id="modalDelCountryList" class="py-1 max-h-48 overflow-y-auto w-full">
+                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer text-slate-400 italic"
+                                                data-value="" data-label="Choose country">Choose country</li>
                                                 <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
                                                     data-value="206" data-label="Sri Lanka">Sri Lanka</li>
                                                 <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
@@ -1275,7 +1284,9 @@
         </div>
     </div>
     {{-- ===== END CREATE COMPANY MODAL ===== --}}
+@endsection
 
+@section('script')
     <script>
 
         // ===== Create Company Modal =====
