@@ -972,20 +972,39 @@
     </style>
     @php } @endphp
 
+    <style>
+        .brand-wrapper {
+            width: 78px;
+            height: 100%;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            transition: width 0.5s ease;
+        }
+        .brand-wrapper.open {
+            width: 250px;
+        }
+    </style>
+
     @yield('style')
 </head>
 
 <body class="nav-fixed">
     <div id="app">
         <nav class="topnav navbar navbar-expand shadow navbar-light topnavbarcolor" id="sidenavAccordion">
-            <a class="navbar-brand font-weight-bold" href="{{ url('/home') }}" style="color: white; font-size: 24px;">
-                <i class="fas fa-pallet mr-2"></i>Ceylon Center Gem
-            </a>
-            @unless(Session::get('usertype') == 'Employee')
-                <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 mr-lg-2" id="sidebarToggle" href="#"><i
-                        class="fas fa-bars text-light"></i></button>
-                {{-- @include('layouts.breadcrumblist') --}}
-            @endunless
+            <div id="brandWrapper" class="brand-wrapper">
+                <a class="brand-logo d-flex align-items-center" href="{{ url('/home') }}" style="text-decoration: none;">
+                    <div style="width: 32px; height: 32px; background-color: #000000; border-radius: 50%;"></div>
+                </a>
+                <a id="brandText" class="font-weight-bold" href="{{ url('/home') }}" style="display: none; white-space: nowrap; color: white; font-size: 16px; text-decoration: none;">Ceylon Center Gem</a>
+                @unless(Session::get('usertype') == 'Employee')
+                    <button class="btn btn-icon btn-transparent-dark" id="sidebarToggle" href="#">
+                        <i class="fas fa-bars text-light"></i>
+                    </button>
+                @endunless
+            </div>
             <ul class="navbar-nav align-items-center ml-auto">
                 @if (!Session::has('userid'))
                     <li class="nav-item dropdown no-caret mr-3 dropdown-user"><a href="{{ url('Welcome') }}">Login</a></li>
@@ -1097,9 +1116,20 @@
         $(function () {
             var isEmployee = {{ Session::get('usertype') == 'Employee' ? 'true' : 'false' }};
 
+            function updateBrandVisibility() {
+                if ($('#sidebar').hasClass('open')) {
+                    $('#brandWrapper').addClass('open');
+                    $('#brandText').show();
+                } else {
+                    $('#brandWrapper').removeClass('open');
+                    $('#brandText').hide();
+                }
+            }
+
             function toggleSidebar() {
                 // $('#sidebar').toggleClass('open', $(window).width() >= 992);
                 $('body').toggleClass('sidenav-toggled', $(window).width() >= 992);
+                updateBrandVisibility();
             }
 
             if (isEmployee == false) {
@@ -1109,15 +1139,18 @@
 
                 $('#sidebarToggle').on('click', function (e) {
                     e.preventDefault();
-                    // if ($(window).width() < 992) {
                     $('#sidebar').toggleClass('open');
                     $('body').toggleClass('sidenav-toggled');
-                    // }
+                    updateBrandVisibility();
                 });
             }
             else {
                 $('body').toggleClass('sidenav-toggled', $(window).width() >= 992);
+                updateBrandVisibility();
             }
+
+            // Run initial check
+            updateBrandVisibility();
         });
         $(document).ready(function () {
             window.scripturl = '{{ url('/scripts') }}';
