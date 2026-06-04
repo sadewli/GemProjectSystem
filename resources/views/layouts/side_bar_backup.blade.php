@@ -1,6 +1,4 @@
 @php
-
-
     $functionmenu = trim(request()->path(), '/');
     $functionmenu2 = last(explode('/', $functionmenu));
     $menuprivilegearray = $menuaccess ?? [];
@@ -64,7 +62,7 @@
         <!-- Dashboard -->
         <li class="{{ $isDashboardActive ? 'active' : '' }}">
             <a href="{{ url('Welcome/Dashboard') }}" id="dashboard_link" class="{{ $isDashboardActive ? 'active-link' : '' }}">
-                <i class="fas fa-tachometer-alt"></i>
+                <i class="fa-light fa-house"></i>
                 <span class="links_name">Dashboard</span>
             </a>
             <span class="tooltip">Dashboard</span>
@@ -75,8 +73,8 @@
             <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseInventory"
                aria-expanded="{{ $isInventoryActive ? 'true' : 'false' }}"
                class="{{ $isInventoryActive ? '' : 'collapsed' }}">
-                <i class="fas fa-boxes"></i>
-                <span class="links_name">Inventory <span class="collapse-icon"></span>
+                <i class="fa-light fa-boxes"></i>
+                <span class="links_name">Inventory <i class="collapse-icon"></i></span>
             </a>
             <span class="tooltip">Inventory</span>
             <div class="collapse {{ $isInventoryActive ? 'show' : '' }}" id="collapseInventory" data-parent="#sidebar">
@@ -99,7 +97,7 @@
             <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSales"
                aria-expanded="{{ $isSalesActive ? 'true' : 'false' }}"
                class="{{ $isSalesActive ? '' : 'collapsed' }}">
-                <i class="fas fa-chart-bar"></i>
+                <i class="fa-light fa-chart-column"></i>
                 <span class="links_name">Sales & Purchases <i class="collapse-icon"></i></span>
             </a>
             <span class="tooltip">Sales & Purchases</span>
@@ -122,8 +120,8 @@
             <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseCRM"
                aria-expanded="{{ $isCrmActive ? 'true' : 'false' }}"
                class="{{ $isCrmActive ? '' : 'collapsed' }}">
-                <i class="fas fa-users"></i>
-                <span class="links_name">CRM <span class="collapse-icon"></span>
+                <i class="fa-light fa-user-group"></i>
+                <span class="links_name">CRM <i class="collapse-icon"></i></span>
             </a>
             <span class="tooltip">CRM</span>
             <div class="collapse {{ $isCrmActive ? 'show' : '' }}" id="collapseCRM" data-parent="#sidebar">
@@ -139,8 +137,8 @@
             <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseProduction"
                aria-expanded="{{ $isProductionActive ? 'true' : 'false' }}"
                class="{{ $isProductionActive ? '' : 'collapsed' }}">
-                <i class="fas fa-industry"></i>
-                <span class="links_name">Production <span class="collapse-icon"></span>
+                <i class="fa-light fa-sitemap"></i>
+                <span class="links_name">Production <i class="collapse-icon"></i></span>
             </a>
             <span class="tooltip">Production</span>
             <div class="collapse {{ $isProductionActive ? 'show' : '' }}" id="collapseProduction" data-parent="#sidebar">
@@ -161,8 +159,8 @@
                 <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSystemUsers"
                    aria-expanded="{{ $isSystemUsersActive ? 'true' : 'false' }}"
                    class="{{ $isSystemUsersActive ? '' : 'collapsed' }}">
-                    <i class="fas fa-user-cog"></i>
-                    <span class="links_name">System Users <span class="collapse-icon"></span>
+                    <i class="fa-light fa-users-cog"></i>
+                    <span class="links_name">System Users <i class="collapse-icon"></i></span>
                 </a>
                 <span class="tooltip">System Users</span>
                 <div class="collapse {{ $isSystemUsersActive ? 'show' : '' }}" id="collapseSystemUsers" data-parent="#sidebar">
@@ -186,8 +184,8 @@
             <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseMasterData"
                aria-expanded="{{ $isMasterDataActive ? 'true' : 'false' }}"
                class="{{ $isMasterDataActive ? '' : 'collapsed' }}">
-                <i class="fas fa-database"></i>
-                <span class="links_name">Master Data <span class="collapse-icon"></span>
+                <i class="fa-light fa-database"></i>
+                <span class="links_name">Master Data <i class="collapse-icon"></i></span>
             </a>
             <span class="tooltip">Master Data</span>
             <div class="collapse {{ $isMasterDataActive ? 'show' : '' }}" id="collapseMasterData" data-parent="#sidebar">
@@ -211,7 +209,7 @@
             <!-- Dashboard -->
             <li class="{{ $isDashboardActive ? 'active' : '' }}">
                 <a href="{{ url('Welcome/Dashboard') }}" class="{{ $isDashboardActive ? 'active-link' : '' }}">
-                    <i class="fas fa-gauge-high"></i>
+                    <i class="fa-light fa-house"></i>
                     <span class="links_name">Dashboard</span>
                 </a>
             </li>
@@ -221,8 +219,8 @@
                 <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseInventoryMobile"
                    aria-expanded="{{ $isInventoryActive ? 'true' : 'false' }}"
                    class="{{ $isInventoryActive ? '' : 'collapsed' }}">
-                    <i class="fas fa-boxes-stacked"></i>
-                    <span class="links_name">Inventory <span class="collapse-icon"></span>
+                    <i class="fa-light fa-boxes"></i>
+                    <span class="links_name">Inventory <i class="collapse-icon"></i></span>
                 </a>
                 <div class="collapse {{ $isInventoryActive ? 'show' : '' }}" id="collapseInventoryMobile" data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">
@@ -244,8 +242,8 @@
                 <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSalesMobile"
                    aria-expanded="{{ $isSalesActive ? 'true' : 'false' }}"
                    class="{{ $isSalesActive ? '' : 'collapsed' }}">
-                    <i class="fas fa-chart-column"></i>
-                    <span class="links_name">Sales & Purchases <span class="collapse-icon"></span>
+                    <i class="fa-light fa-chart-column"></i>
+                    <span class="links_name">Sales & Purchases <i class="collapse-icon"></i></span>
                 </a>
                 <div class="collapse {{ $isSalesActive ? 'show' : '' }}" id="collapseSalesMobile" data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">
@@ -256,6 +254,7 @@
                         <a class="nav-link" href="javascript:void(0);">Transfer documents</a>
                         <a class="nav-link" href="javascript:void(0);">Purchase order</a>
                         <a class="nav-link" href="javascript:void(0);">Supplier memo</a>
+                        <a class="nav-link {{ request()->is('Distributor/GRN*') ? 'active' : '' }}" href="{{ url('Distributor/GRN') }}">Distributor GRN</a>
                     </nav>
                 </div>
             </li>
@@ -265,8 +264,8 @@
                 <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseCRMMobile"
                    aria-expanded="{{ $isCrmActive ? 'true' : 'false' }}"
                    class="{{ $isCrmActive ? '' : 'collapsed' }}">
-                    <i class="fas fa-users"></i>
-                    <span class="links_name">CRM <span class="collapse-icon"></span>
+                    <i class="fa-light fa-user-group"></i>
+                    <span class="links_name">CRM <i class="collapse-icon"></i></span>
                 </a>
                 <div class="collapse {{ $isCrmActive ? 'show' : '' }}" id="collapseCRMMobile" data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">
@@ -281,8 +280,8 @@
                 <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseProductionMobile"
                    aria-expanded="{{ $isProductionActive ? 'true' : 'false' }}"
                    class="{{ $isProductionActive ? '' : 'collapsed' }}">
-                    <i class="fas fa-industry"></i>
-                    <span class="links_name">Production <span class="collapse-icon"></span>
+                    <i class="fa-light fa-sitemap"></i>
+                    <span class="links_name">Production <i class="collapse-icon"></i></span>
                 </a>
                 <div class="collapse {{ $isProductionActive ? 'show' : '' }}" id="collapseProductionMobile" data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">
@@ -302,8 +301,8 @@
                     <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSystemUsersMobile"
                        aria-expanded="{{ $isSystemUsersActive ? 'true' : 'false' }}"
                        class="{{ $isSystemUsersActive ? '' : 'collapsed' }}">
-                        <i class="fas fa-user-gear"></i>
-                        <span class="links_name">System Users <span class="collapse-icon"></span>
+                        <i class="fa-light fa-users-cog"></i>
+                        <span class="links_name">System Users <i class="collapse-icon"></i></span>
                     </a>
                     <div class="collapse {{ $isSystemUsersActive ? 'show' : '' }}" id="collapseSystemUsersMobile" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion">
@@ -326,8 +325,8 @@
                 <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseMasterDataMobile"
                    aria-expanded="{{ $isMasterDataActive ? 'true' : 'false' }}"
                    class="{{ $isMasterDataActive ? '' : 'collapsed' }}">
-                    <i class="fas fa-database"></i>
-                    <span class="links_name">Master Data <span class="collapse-icon"></span>
+                    <i class="fa-light fa-database"></i>
+                    <span class="links_name">Master Data <i class="collapse-icon"></i></span>
                 </a>
                 <div class="collapse {{ $isMasterDataActive ? 'show' : '' }}" id="collapseMasterDataMobile" data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">

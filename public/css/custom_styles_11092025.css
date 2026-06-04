@@ -41,7 +41,7 @@ table thead {background-color:#d5dbec} */
 
 /* .sidenavbarcolor {
   background-color: #4169e1;
-  
+
 } */
 
 .sidenav-menu {
@@ -528,7 +528,7 @@ table thead {background-color:#d5dbec} */
 
 /* .sidebar .nav-list{
   margin-top: 20px;
-  height: 100%;  
+  height: 100%;
 } */
 .sidebar .nav-list {
   margin-top: 20px;
@@ -1043,4 +1043,51 @@ ul.select_optlist .select_opthead {
 
 .chosen-container-single .chosen-single div {
   top: 6px !Important;
+}
+
+
+
+
+/* ===== Sidebar UI Improvements ===== */
+.sidebar li a .links_name .collapse-icon::before {
+    content: "+";
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+.sidebar li a[aria-expanded="true"] .links_name .collapse-icon::before {
+    content: "-";
+}
+
+.sidebar.open {
+    width: 280px;
+}
+
+.sidebar li a.active,
+.sidebar li a.active-link{
+    background:#1AC6D9 !important;
+    color:#fff !important;
+    border-radius:12px;
+}
+
+.sidebar li a.active i,
+.sidebar li a.active-link i{
+    color:#fff !important;
+}
+
+.sidebar li a:hover{
+    background:#f1f5f9 !important;
+    border-radius:10px;
+}
+
+.sidebar .sidenav-menu-nested a::before{
+    content:"•";
+    margin-right:10px;
+    color:#1AC6D9;
+}
+
+.sidebar .sidenav-menu-nested a{
+    padding-left:35px !important;
 }

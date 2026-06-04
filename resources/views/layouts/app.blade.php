@@ -1149,6 +1149,13 @@
                 updateBrandVisibility();
             }
 
+            // Automatically expand sidebar when a collapsed category icon is clicked
+            $(document).on('click', '#sidebar:not(.open) li.sidebar-item > a', function (e) {
+                $('#sidebar').addClass('open');
+                $('body').removeClass('sidenav-toggled');
+                updateBrandVisibility();
+            });
+
             // Run initial check
             updateBrandVisibility();
         });

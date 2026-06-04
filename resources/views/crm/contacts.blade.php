@@ -63,7 +63,10 @@
                                 </svg>
                                 <span id="companyTypeLabel">
                                     @php
-                                        $ctMap = ['customer' => 'Customer', 'supplier' => 'Supplier', 'laboratory' => 'Laboratory', 'partner' => 'Partner', 'broker_sales_agent' => 'Broker & Sales Agent', 'contractor' => 'Contractor'];
+                                        $ctMap = [];
+                                        foreach($companyTypes ?? [] as $ct) {
+                                            $ctMap[$ct->value] = $ct->company_type;
+                                        }
                                         echo request('company_type') ? ($ctMap[request('company_type')] ?? 'Select company type') : 'Select company type';
                                     @endphp
                                 </span>
@@ -79,19 +82,10 @@
                                 <ul id="companyTypeList" class="py-1">
                                     <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ !request('company_type') ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
                                         data-value="" data-label="Select company type">Select company type</li>
-                                    <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === 'customer' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="customer" data-label="Customer">Customer</li>
-                                    <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === 'supplier' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="supplier" data-label="Supplier">Supplier</li>
-                                    <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === 'laboratory' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="laboratory" data-label="Laboratory">Laboratory</li>
-                                    <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === 'partner' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="partner" data-label="Partner">Partner</li>
-                                    <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === 'broker_sales_agent' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="broker_sales_agent" data-label="Broker &amp; Sales Agent">Broker &amp;
-                                        Sales Agent</li>
-                                    <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === 'contractor' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="contractor" data-label="Contractor">Contractor</li>
+                                    @foreach($companyTypes ?? [] as $ct)
+                                        <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === $ct->value ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
+                                            data-value="{{ $ct->value }}" data-label="{{ $ct->company_type }}">{{ $ct->company_type }}</li>
+                                    @endforeach
                                     <li class="ct-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('company_type') === 'all' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
                                         data-value="all" data-label="all">All</li>
                                 </ul>
@@ -251,6 +245,54 @@
                 </div>
             </div>
 
+            {{-- Contacts Table --}}
+            <div class="p-5">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="text-slate-500 text-xs uppercase tracking-wider">
+                                <th class="px-3 py-2">Ref</th>
+                                <th class="px-3 py-2">Name</th>
+                                <th class="px-3 py-2">Email</th>
+                                <th class="px-3 py-2">Phone</th>
+                                <th class="px-3 py-2">Company</th>
+                                <th class="px-3 py-2">Owner</th>
+                                <th class="px-3 py-2">Status</th>
+                                <th class="px-3 py-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($contacts ?? [] as $contact)
+                                <tr class="border-t border-slate-100">
+                                    <td class="px-3 py-3 align-top">{{ $contact->reference }}</td>
+                                    <td class="px-3 py-3 align-top">{{ $contact->first_name }} {{ $contact->last_name }}</td>
+                                    <td class="px-3 py-3 align-top">{{ $contact->email }}</td>
+                                    <td class="px-3 py-3 align-top">{{ $contact->phone_code ? $contact->phone_code . ' ' : '' }}{{ $contact->phone }}</td>
+                                    <td class="px-3 py-3 align-top">{{ optional($contact->company)->name ?? '' }}</td>
+                                    <td class="px-3 py-3 align-top">{{ optional($contact->owner)->name ?? '' }}</td>
+                                    <td class="px-3 py-3 align-top">{{ ucfirst($contact->status ?? '') }}</td>
+                                    <td class="px-3 py-3 align-top">
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" class="edit-contact inline-flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm text-slate-600 hover:bg-slate-50" data-id="{{ $contact->idtbl_create_contact }}">Edit</button>
+
+                                            <form action="{{ url('crm/contacts/' . $contact->idtbl_create_contact) }}" method="POST" onsubmit="return confirm('Delete this contact?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm text-red-600 hover:bg-red-50">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td class="px-3 py-4 text-slate-500" colspan="8">No contacts found</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             {{-- ===== PAGINATION ===== --}}
             <div class="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 bg-slate-50">
                 <div class="flex items-center gap-2 text-sm text-slate-500">
@@ -266,28 +308,28 @@
                 </div>
 
                 <div class="text-sm text-slate-500">
-                    @if(isset($companies) && method_exists($companies, 'total'))
-                        Showing results {{ $companies->firstItem() ?? 0 }} to {{ $companies->lastItem() ?? 0 }} of
-                        {{ $companies->total() }} entries
+                    @if(isset($contacts) && method_exists($contacts, 'total'))
+                        Showing results {{ $contacts->firstItem() ?? 0 }} to {{ $contacts->lastItem() ?? 0 }} of
+                        {{ $contacts->total() }} entries
                     @endif
                 </div>
 
                 <div class="flex items-center gap-1">
-                    @if(isset($companies) && method_exists($companies, 'previousPageUrl'))
-                        <a href="{{ $companies->previousPageUrl() }}"
-                            class="px-3 py-1.5 text-sm rounded-md {{ $companies->onFirstPage() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
+                    @if(isset($contacts) && method_exists($contacts, 'previousPageUrl'))
+                        <a href="{{ $contacts->previousPageUrl() }}"
+                            class="px-3 py-1.5 text-sm rounded-md {{ $contacts->onFirstPage() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
                             Previous
                         </a>
-                        @foreach($companies->getUrlRange(1, $companies->lastPage()) as $page => $url)
+                        @foreach($contacts->getUrlRange(1, $contacts->lastPage()) as $page => $url)
                                 <a href="{{ $url }}" class="w-8 h-8 flex items-center justify-center text-sm rounded-md transition-colors
-                                                                                                  {{ $page == $companies->currentPage()
+                                                                                                  {{ $page == $contacts->currentPage()
                             ? 'bg-primary-600 text-white font-semibold'
                             : 'text-slate-600 hover:bg-slate-200' }}">
                                     {{ $page }}
                                 </a>
                         @endforeach
-                        <a href="{{ $companies->nextPageUrl() }}"
-                            class="px-3 py-1.5 text-sm rounded-md {{ !$companies->hasMorePages() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
+                        <a href="{{ $contacts->nextPageUrl() }}"
+                            class="px-3 py-1.5 text-sm rounded-md {{ !$contacts->hasMorePages() ? 'text-slate-300 cursor-not-allowed pointer-events-none' : 'text-slate-600 hover:bg-slate-200 transition-colors' }}">
                             Next
                         </a>
                     @endif
@@ -298,8 +340,8 @@
     </div>
 
     {{-- ===== ADD CONTACT MODAL ===== --}}
-    <div id="createCompanyModal" class="fixed inset-0 z-50 hidden items-center justify-center"
-        style="background:rgba(0,0,0,0.45);">
+    <div id="createCompanyModal" class="fixed inset-0 hidden items-center justify-center"
+        style="background:rgba(0,0,0,0.45); z-index:1100;">
 
         <div class="bg-white rounded-md shadow-2xl w-full max-w-2xl mx-4 flex flex-col" style="max-height:90vh;">
 
@@ -344,7 +386,7 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">Reference #:</label>
                                 <input type="text" name="reference" readonly
-                                    value="P-101"
+                                    value="{{ $nextReference ?? 'P-101' }}"
                                     class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-md bg-slate-50 text-slate-700 focus:outline-none cursor-default">
                             </div>
 
@@ -420,407 +462,17 @@
                                                     class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     autocomplete="off">
                                             </div>
-                                            <ul id="modalPhoneCodeList" class="py-1 max-h-48 overflow-y-auto w-full">
+                                                                                        <ul id="modalPhoneCodeList" class="py-1 max-h-48 overflow-y-auto w-full">
                                                 <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer text-slate-400 italic"
                                                     data-value="" data-label="Country code">Country code</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LK+94" data-label="LK+94">LK+94</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AF+93" data-label="AF+93">AF+93</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="DZ+213" data-label="DZ+213">DZ+213</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AS+1684" data-label="AS+1684">AS+1684</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AD+376" data-label="AD+376">AD+376</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AO+244" data-label="AO+244">AO+244</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AI+1264" data-label="AI+1264">AI+1264</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AG+1268" data-label="AG+1268">AG+1268</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AM+374" data-label="AM+374">AM+374</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AW+297" data-label="AW+297">AW+297</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AU+61" data-label="AU+61">AU+61</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AT+43" data-label="AT+43">AT+43</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AZ+994" data-label="AZ+994">AZ+994</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BS+1242" data-label="BS+1242">BS+1242</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BH+973" data-label="BH+973">BH+973</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BD+880" data-label="BD+880">BD+880</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BB+1246" data-label="BB+1246">BB+1246</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BY+375" data-label="BY+375">BY+375</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BE+32" data-label="BE+32">BE+32</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BZ+501" data-label="BZ+501">BZ+501</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BJ+229" data-label="BJ+229">BJ+229</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BT+975" data-label="BT+975">BT+975</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BO+591" data-label="BO+591">BO+591</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BA+387" data-label="BA+387">BA+387</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BW+267" data-label="BW+267">BW+267</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BR+55" data-label="BR+55">BR+55</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BN+673" data-label="BN+673">BN+673</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BG+359" data-label="BG+359">BG+359</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BF+226" data-label="BF+226">BF+226</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="BI+257" data-label="BI+257">BI+257</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KH+855" data-label="KH+855">KH+855</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CM+237" data-label="CM+237">CM+237</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CA+1" data-label="CA+1">CA+1</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CV+238" data-label="CV+238">CV+238</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KY+1345" data-label="KY+1345">KY+1345</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CF+236" data-label="CF+236">CF+236</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TD+235" data-label="TD+235">TD+235</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CL+56" data-label="CL+56">CL+56</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CN+86" data-label="CN+86">CN+86</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CO+57" data-label="CO+57">CO+57</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KM+269" data-label="KM+269">KM+269</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CG+242" data-label="CG+242">CG+242</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CD+243" data-label="CD+243">CD+243</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CK+682" data-label="CK+682">CK+682</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CR+506" data-label="CR+506">CR+506</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CI+225" data-label="CI+225">CI+225</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="HR+385" data-label="HR+385">HR+385</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CU+53" data-label="CU+53">CU+53</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CY+357" data-label="CY+357">CY+357</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CZ+420" data-label="CZ+420">CZ+420</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="DK+45" data-label="DK+45">DK+45</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="DJ+253" data-label="DJ+253">DJ+253</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="DM+1767" data-label="DM+1767">DM+1767</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="DO+1809" data-label="DO+1809">DO+1809</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="EC+593" data-label="EC+593">EC+593</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="EG+20" data-label="EG+20">EG+20</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SV+503" data-label="SV+503">SV+503</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GQ+240" data-label="GQ+240">GQ+240</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="ER+291" data-label="ER+291">ER+291</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="EE+372" data-label="EE+372">EE+372</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="ET+251" data-label="ET+251">ET+251</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="FJ+679" data-label="FJ+679">FJ+679</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="FI+358" data-label="FI+358">FI+358</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="FR+33" data-label="FR+33">FR+33</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GA+241" data-label="GA+241">GA+241</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GM+220" data-label="GM+220">GM+220</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GE+995" data-label="GE+995">GE+995</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="DE+49" data-label="DE+49">DE+49</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GH+233" data-label="GH+233">GH+233</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GI+350" data-label="GI+350">GI+350</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GR+30" data-label="GR+30">GR+30</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GL+299" data-label="GL+299">GL+299</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GD+1473" data-label="GD+1473">GD+1473</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GU+1671" data-label="GU+1671">GU+1671</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GT+502" data-label="GT+502">GT+502</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="GY+592" data-label="GY+592">GY+592</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="HT+509" data-label="HT+509">HT+509</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="HN+504" data-label="HN+504">HN+504</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="HK+852" data-label="HK+852">HK+852</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="HU+36" data-label="HU+36">HU+36</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="IS+354" data-label="IS+354">IS+354</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="IN+91" data-label="IN+91">IN+91</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="ID+62" data-label="ID+62">ID+62</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="IR+98" data-label="IR+98">IR+98</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="IQ+964" data-label="IQ+964">IQ+964</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="IE+353" data-label="IE+353">IE+353</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="IL+972" data-label="IL+972">IL+972</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="IT+39" data-label="IT+39">IT+39</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="JM+1876" data-label="JM+1876">JM+1876</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="JP+81" data-label="JP+81">JP+81</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="JO+962" data-label="JO+962">JO+962</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KZ+76" data-label="KZ+76">KZ+76</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KE+254" data-label="KE+254">KE+254</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KI+686" data-label="KI+686">KI+686</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KP+850" data-label="KP+850">KP+850</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KR+82" data-label="KR+82">KR+82</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KW+965" data-label="KW+965">KW+965</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KG+996" data-label="KG+996">KG+996</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LA+856" data-label="LA+856">LA+856</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LV+371" data-label="LV+371">LV+371</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LB+961" data-label="LB+961">LB+961</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LS+266" data-label="LS+266">LS+266</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LR+231" data-label="LR+231">LR+231</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LY+218" data-label="LY+218">LY+218</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LI+423" data-label="LI+423">LI+423</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LT+370" data-label="LT+370">LT+370</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LU+352" data-label="LU+352">LU+352</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MO+853" data-label="MO+853">MO+853</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MK+389" data-label="MK+389">MK+389</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MG+261" data-label="MG+261">MG+261</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MW+265" data-label="MW+265">MW+265</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MY+60" data-label="MY+60">MY+60</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="ML+223" data-label="ML+223">ML+223</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MT+356" data-label="MT+356">MT+356</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MH+692" data-label="MH+692">MH+692</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MQ+596" data-label="MQ+596">MQ+596</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MR+222" data-label="MR+222">MR+222</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MU+230" data-label="MU+230">MU+230</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MX+52" data-label="MX+52">MX+52</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="FM+691" data-label="FM+691">FM+691</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MD+373" data-label="MD+373">MD+373</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MC+377" data-label="MC+377">MC+377</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MN+976" data-label="MN+976">MN+976</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MA+212" data-label="MA+212">MA+212</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MZ+258" data-label="MZ+258">MZ+258</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="MM+95" data-label="MM+95">MM+95</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NA+264" data-label="NA+264">NA+264</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NR+674" data-label="NR+674">NR+674</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NP+977" data-label="NP+977">NP+977</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NL+31" data-label="NL+31">NL+31</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NZ+64" data-label="NZ+64">NZ+64</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NI+505" data-label="NI+505">NI+505</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NE+227" data-label="NE+227">NE+227</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NG+234" data-label="NG+234">NG+234</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="NO+47" data-label="NO+47">NO+47</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="OM+968" data-label="OM+968">OM+968</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PK+92" data-label="PK+92">PK+92</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PW+680" data-label="PW+680">PW+680</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PS+970" data-label="PS+970">PS+970</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PA+507" data-label="PA+507">PA+507</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PG+675" data-label="PG+675">PG+675</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PY+595" data-label="PY+595">PY+595</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PE+51" data-label="PE+51">PE+51</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PH+63" data-label="PH+63">PH+63</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PL+48" data-label="PL+48">PL+48</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PT+351" data-label="PT+351">PT+351</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="PR+1787" data-label="PR+1787">PR+1787</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="QA+974" data-label="QA+974">QA+974</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="RO+40" data-label="RO+40">RO+40</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="RU+73" data-label="RU+73">RU+73</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="RW+250" data-label="RW+250">RW+250</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="KN+1869" data-label="KN+1869">KN+1869</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="LC+1758" data-label="LC+1758">LC+1758</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="VC+1784" data-label="VC+1784">VC+1784</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="WS+685" data-label="WS+685">WS+685</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SM+378" data-label="SM+378">SM+378</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SN+221" data-label="SN+221">SN+221</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="RS+381" data-label="RS+381">RS+381</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SC+248" data-label="SC+248">SC+248</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SL+232" data-label="SL+232">SL+232</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SG+65" data-label="SG+65">SG+65</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SK+421" data-label="SK+421">SK+421</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SI+386" data-label="SI+386">SI+386</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SB+677" data-label="SB+677">SB+677</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SO+252" data-label="SO+252">SO+252</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="ZA+27" data-label="ZA+27">ZA+27</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SS+211" data-label="SS+211">SS+211</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SD+249" data-label="SD+249">SD+249</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SR+597" data-label="SR+597">SR+597</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SZ+268" data-label="SZ+268">SZ+268</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SE+46" data-label="SE+46">SE+46</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="CH+41" data-label="CH+41">CH+41</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="SY+963" data-label="SY+963">SY+963</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TW+886" data-label="TW+886">TW+886</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TJ+992" data-label="TJ+992">TJ+992</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TZ+255" data-label="TZ+255">TZ+255</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TH+66" data-label="TH+66">TH+66</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TG+228" data-label="TG+228">TG+228</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TO+676" data-label="TO+676">TO+676</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TT+1868" data-label="TT+1868">TT+1868</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TN+216" data-label="TN+216">TN+216</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TR+90" data-label="TR+90">TR+90</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TM+993" data-label="TM+993">TM+993</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TC+1649" data-label="TC+1649">TC+1649</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="TV+688" data-label="TV+688">TV+688</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="UG+256" data-label="UG+256">UG+256</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="UA+380" data-label="UA+380">UA+380</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="AE+971" data-label="AE+971">AE+971</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="US+1" data-label="US+1">US+1</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="UY+598" data-label="UY+598">UY+598</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="UZ+998" data-label="UZ+998">UZ+998</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="VU+678" data-label="VU+678">VU+678</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="VN+84" data-label="VN+84">VN+84</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="VG+1284" data-label="VG+1284">VG+1284</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="VI+1340" data-label="VI+1340">VI+1340</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="YE+967" data-label="YE+967">YE+967</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="ZM+260" data-label="ZM+260">ZM+260</li>
-                                                <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                    data-value="ZW+263" data-label="ZW+263">ZW+263</li>
-                                                <li class="hidden px-3 py-2 text-sm text-slate-400 italic no-results">No
-                                                    results found</li>
+                                                @foreach($phoneCodes ?? [] as $pc)
+                                                    <li class="modal-option-phone_code px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                                                        data-value="{{ $pc->phone_code }}" data-label="{{ $pc->flag_emoji }} {{ $pc->phone_code }}">
+                                                        {{ $pc->flag_emoji }} {{ $pc->phone_code }} ({{ $pc->country_name }})
+                                                    </li>
+                                                @endforeach
+                                                <li class="hidden px-3 py-2 text-sm text-slate-400 italic no-results">No results
+                                                    found</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -890,20 +542,10 @@
                                         <ul class="py-1 max-h-48 overflow-y-auto">
                                             <li class="modal-option-role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 bg-blue-600 text-white font-semibold"
                                                 data-value="" data-label="Select role">Select role</li>
-                                            <li class="modal-option-role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="ceo" data-label="CEO">CEO</li>
-                                            <li class="modal-option-role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="accountant_operation_manager"
-                                                data-label="Accountant operations manager">Accountant operations manager
-                                            </li>
-                                            <li class="modal-option-role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="supply_chain_manager" data-label="Supply chain manager">Supply
-                                                chain manager</li>
-                                            <li class="modal-option-role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="warehouse_manager" data-label="Warehouse manager">Warehouse
-                                                manager</li>
-                                            <li class="modal-option-role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="sales_manager" data-label="Sales manager">Sales manager</li>
+                                            @foreach($roles ?? [] as $role)
+                                                <li class="modal-option-role flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50"
+                                                    data-value="{{ $role->value ?? $role->idtbl_role }}" data-label="{{ $role->role_name }}">{{ $role->role_name }}</li>
+                                            @endforeach
                                         </ul>
                                     </div>
                                 </div>
@@ -972,384 +614,13 @@
                                                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 autocomplete="off">
                                         </div>
-                                        <ul id="modalCountryList" class="py-1 max-h-48 overflow-y-auto w-full">
+                                                                                <ul id="modalCountryList" class="py-1 max-h-48 overflow-y-auto w-full">
                                             <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer text-slate-400 italic"
                                                 data-value="" data-label="Choose country">Choose country</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="206" data-label="Sri Lanka">Sri Lanka</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="101" data-label="India">India</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="231" data-label="United States">United States</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="230" data-label="United Kingdom">United Kingdom</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="13" data-label="Australia">Australia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="196" data-label="Singapore">Singapore</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="229" data-label="United Arab Emirates">United Arab Emirates</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="1" data-label="Afghanistan">Afghanistan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="3" data-label="Algeria">Algeria</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="4" data-label="American Samoa">American Samoa</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="5" data-label="Andorra">Andorra</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="6" data-label="Angola">Angola</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="7" data-label="Anguilla">Anguilla</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="9" data-label="Antigua And Barbuda">Antigua And Barbuda</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="11" data-label="Armenia">Armenia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="12" data-label="Aruba">Aruba</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="14" data-label="Austria">Austria</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="15" data-label="Azerbaijan">Azerbaijan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="16" data-label="Bahamas The">Bahamas The</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="17" data-label="Bahrain">Bahrain</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="18" data-label="Bangladesh">Bangladesh</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="19" data-label="Barbados">Barbados</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="20" data-label="Belarus">Belarus</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="21" data-label="Belgium">Belgium</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="22" data-label="Belize">Belize</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="23" data-label="Benin">Benin</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="25" data-label="Bhutan">Bhutan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="26" data-label="Bolivia">Bolivia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="27" data-label="Bosnia and Herzegovina">Bosnia and Herzegovina
-                                            </li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="28" data-label="Botswana">Botswana</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="30" data-label="Brazil">Brazil</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="32" data-label="Brunei">Brunei</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="33" data-label="Bulgaria">Bulgaria</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="34" data-label="Burkina Faso">Burkina Faso</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="35" data-label="Burundi">Burundi</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="36" data-label="Cambodia">Cambodia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="37" data-label="Cameroon">Cameroon</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="38" data-label="Canada">Canada</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="39" data-label="Cape Verde">Cape Verde</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="40" data-label="Cayman Islands">Cayman Islands</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="41" data-label="Central African Republic">Central African
-                                                Republic</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="42" data-label="Chad">Chad</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="43" data-label="Chile">Chile</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="44" data-label="China">China</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="47" data-label="Colombia">Colombia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="48" data-label="Comoros">Comoros</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="49" data-label="Congo">Congo</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="50" data-label="Congo The Democratic Republic Of The">Congo The
-                                                Democratic Republic Of The</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="51" data-label="Cook Islands">Cook Islands</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="52" data-label="Costa Rica">Costa Rica</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="53" data-label="Cote D'Ivoire (Ivory Coast)">Cote D'Ivoire
-                                                (Ivory Coast)</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="54" data-label="Croatia (Hrvatska)">Croatia (Hrvatska)</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="55" data-label="Cuba">Cuba</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="56" data-label="Cyprus">Cyprus</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="57" data-label="Czech Republic">Czech Republic</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="58" data-label="Denmark">Denmark</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="59" data-label="Djibouti">Djibouti</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="60" data-label="Dominica">Dominica</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="61" data-label="Dominican Republic">Dominican Republic</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="63" data-label="Ecuador">Ecuador</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="64" data-label="Egypt">Egypt</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="65" data-label="El Salvador">El Salvador</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="66" data-label="Equatorial Guinea">Equatorial Guinea</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="67" data-label="Eritrea">Eritrea</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="68" data-label="Estonia">Estonia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="69" data-label="Ethiopia">Ethiopia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="73" data-label="Fiji Islands">Fiji Islands</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="74" data-label="Finland">Finland</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="75" data-label="France">France</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="79" data-label="Gabon">Gabon</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="80" data-label="Gambia The">Gambia The</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="81" data-label="Georgia">Georgia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="82" data-label="Germany">Germany</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="83" data-label="Ghana">Ghana</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="85" data-label="Greece">Greece</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="87" data-label="Grenada">Grenada</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="89" data-label="Guam">Guam</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="90" data-label="Guatemala">Guatemala</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="94" data-label="Guyana">Guyana</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="95" data-label="Haiti">Haiti</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="97" data-label="Honduras">Honduras</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="98" data-label="Hong Kong S.A.R.">Hong Kong S.A.R.</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="99" data-label="Hungary">Hungary</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="100" data-label="Iceland">Iceland</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="102" data-label="Indonesia">Indonesia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="103" data-label="Iran">Iran</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="104" data-label="Iraq">Iraq</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="105" data-label="Ireland">Ireland</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="106" data-label="Israel">Israel</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="107" data-label="Italy">Italy</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="108" data-label="Jamaica">Jamaica</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="109" data-label="Japan">Japan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="111" data-label="Jordan">Jordan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="112" data-label="Kazakhstan">Kazakhstan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="113" data-label="Kenya">Kenya</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="116" data-label="Korea South">Korea South</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="117" data-label="Kuwait">Kuwait</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="118" data-label="Kyrgyzstan">Kyrgyzstan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="119" data-label="Laos">Laos</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="120" data-label="Latvia">Latvia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="121" data-label="Lebanon">Lebanon</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="122" data-label="Lesotho">Lesotho</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="123" data-label="Liberia">Liberia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="124" data-label="Libya">Libya</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="125" data-label="Liechtenstein">Liechtenstein</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="126" data-label="Lithuania">Lithuania</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="127" data-label="Luxembourg">Luxembourg</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="130" data-label="Madagascar">Madagascar</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="131" data-label="Malawi">Malawi</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="132" data-label="Malaysia">Malaysia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="134" data-label="Mali">Mali</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="135" data-label="Malta">Malta</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="139" data-label="Mauritania">Mauritania</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="140" data-label="Mauritius">Mauritius</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="142" data-label="Mexico">Mexico</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="144" data-label="Moldova">Moldova</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="145" data-label="Monaco">Monaco</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="146" data-label="Mongolia">Mongolia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="148" data-label="Morocco">Morocco</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="149" data-label="Mozambique">Mozambique</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="150" data-label="Myanmar">Myanmar</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="151" data-label="Namibia">Namibia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="153" data-label="Nepal">Nepal</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="155" data-label="Netherlands The">Netherlands The</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="157" data-label="New Zealand">New Zealand</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="158" data-label="Nicaragua">Nicaragua</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="159" data-label="Niger">Niger</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="160" data-label="Nigeria">Nigeria</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="164" data-label="Norway">Norway</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="165" data-label="Oman">Oman</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="166" data-label="Pakistan">Pakistan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="168" data-label="Palestinian Territory Occupied">Palestinian
-                                                Territory Occupied</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="169" data-label="Panama">Panama</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="170" data-label="Papua new Guinea">Papua new Guinea</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="171" data-label="Paraguay">Paraguay</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="172" data-label="Peru">Peru</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="173" data-label="Philippines">Philippines</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="175" data-label="Poland">Poland</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="176" data-label="Portugal">Portugal</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="178" data-label="Qatar">Qatar</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="180" data-label="Romania">Romania</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="181" data-label="Russia">Russia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="182" data-label="Rwanda">Rwanda</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="184" data-label="Saint Kitts And Nevis">Saint Kitts And Nevis
-                                            </li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="185" data-label="Saint Lucia">Saint Lucia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="187" data-label="Saint Vincent And The Grenadines">Saint Vincent
-                                                And The Grenadines</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="188" data-label="Samoa">Samoa</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="189" data-label="San Marino">San Marino</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="192" data-label="Senegal">Senegal</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="193" data-label="Serbia">Serbia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="194" data-label="Seychelles">Seychelles</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="195" data-label="Sierra Leone">Sierra Leone</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="197" data-label="Slovakia">Slovakia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="198" data-label="Slovenia">Slovenia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="200" data-label="Solomon Islands">Solomon Islands</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="201" data-label="Somalia">Somalia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="202" data-label="South Africa">South Africa</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="204" data-label="South Sudan">South Sudan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="207" data-label="Sudan">Sudan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="208" data-label="Suriname">Suriname</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="210" data-label="Swaziland">Swaziland</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="211" data-label="Sweden">Sweden</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="212" data-label="Switzerland">Switzerland</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="213" data-label="Syria">Syria</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="214" data-label="Taiwan">Taiwan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="215" data-label="Tajikistan">Tajikistan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="216" data-label="Tanzania">Tanzania</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="217" data-label="Thailand">Thailand</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="218" data-label="Togo">Togo</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="220" data-label="Tonga">Tonga</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="221" data-label="Trinidad And Tobago">Trinidad And Tobago</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="222" data-label="Tunisia">Tunisia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="223" data-label="Turkey">Turkey</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="224" data-label="Turkmenistan">Turkmenistan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="226" data-label="Tuvalu">Tuvalu</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="227" data-label="Uganda">Uganda</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="228" data-label="Ukraine">Ukraine</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="233" data-label="Uruguay">Uruguay</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="234" data-label="Uzbekistan">Uzbekistan</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="235" data-label="Vanuatu">Vanuatu</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="238" data-label="Vietnam">Vietnam</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="243" data-label="Yemen">Yemen</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="245" data-label="Zambia">Zambia</li>
-                                            <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer "
-                                                data-value="246" data-label="Zimbabwe">Zimbabwe</li>
+                                            @foreach($countries ?? [] as $co)
+                                                <li class="modal-option-country px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                                                    data-value="{{ $co->value ?? $co->idtbl_country }}" data-label="{{ $co->country_name }}">{{ $co->country_name }}</li>
+                                            @endforeach
                                             <li class="hidden px-3 py-2 text-sm text-slate-400 italic no-results">No results
                                                 found</li>
                                         </ul>
@@ -1379,10 +650,13 @@
                                                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 autocomplete="off">
                                         </div>
-                                        <ul id="modalStateList" class="py-1 max-h-48 overflow-y-auto w-full">
+                                                                                <ul id="modalStateList" class="py-1 max-h-48 overflow-y-auto w-full">
                                             <li class="modal-option-state px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer text-slate-400 italic"
                                                 data-value="" data-label="Choose state">Choose state</li>
-                                            {{-- States load dynamically via AJAX based on selected country --}}
+                                            @foreach($states ?? [] as $st)
+                                                <li class="modal-option-state px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                                                    data-value="{{ $st->value ?? $st->idtbl_state }}" data-label="{{ $st->state_name }}" data-country="{{ $st->country->value ?? $st->idtbl_country }}">{{ $st->state_name }}</li>
+                                            @endforeach
                                             <li class="hidden px-3 py-2 text-sm text-slate-400 italic no-results">No results
                                                 found</li>
                                         </ul>
@@ -1480,8 +754,11 @@
             const openBtn = document.getElementById('openCreateModal');
             const closeBtn = document.getElementById('closeCreateModal');
             const cancelBtn = document.getElementById('cancelCreateModal');
-            const createBtn = document.getElementById('createCompanyBtn');
+            const actionBtn = document.getElementById('createCompanyBtn');
             const form = document.getElementById('createCompanyForm');
+
+            const storeUrl = "{{ route('crm.contacts.store') }}";
+            const contactBaseUrl = "{{ url('crm/contacts') }}";
 
             function openModal() {
                 modal.classList.remove('hidden');
@@ -1495,7 +772,86 @@
                 document.body.style.overflow = '';
             }
 
-            if (openBtn) openBtn.addEventListener('click', openModal);
+            function setFormToCreate() {
+                form.reset();
+                form.action = storeUrl;
+                // remove method spoof if present
+                const m = form.querySelector('input[name="_method"]');
+                if (m) m.remove();
+                // reset modal labels that are not regular inputs
+                const labelIds = ['modalContactTypeLabel','modalPhoneCodeLabel','modalOwnedByLabel','modalRoleLabel','modalCountryLabel','modalStateLabel','modalCompanyIdLabel'];
+                labelIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        // default placeholder text when cleared
+                        if (id === 'modalPhoneCodeLabel') el.textContent = 'Country code';
+                        else if (id === 'modalCompanyIdLabel') el.textContent = 'Choose company';
+                        else if (id === 'modalCountryLabel') el.textContent = 'Choose country';
+                        else if (id === 'modalStateLabel') el.textContent = 'Choose state';
+                        else el.textContent = 'Select';
+                    }
+                });
+                // header + action button text
+                const header = modal.querySelector('h2');
+                if (header) header.textContent = 'Add contact';
+                if (actionBtn) actionBtn.textContent = 'Create';
+            }
+
+            async function setFormToEdit(id) {
+                try {
+                    const res = await fetch(contactBaseUrl + '/' + id);
+                    if (!res.ok) throw new Error('Failed to fetch');
+                    const data = await res.json();
+
+                    // set simple fields
+                    Object.keys(data).forEach(key => {
+                        const el = form.querySelector('[name="' + key + '"]');
+                        if (el) {
+                            el.value = data[key] ?? '';
+                        }
+                    });
+
+                    // update labels for select-like components
+                    const mapping = {
+                        contact_type: 'modalContactTypeLabel',
+                        phone_code: 'modalPhoneCodeLabel',
+                        owned_by: 'modalOwnedByLabel',
+                        role: 'modalRoleLabel',
+                        country: 'modalCountryLabel',
+                        state: 'modalStateLabel',
+                        company_id: 'modalCompanyIdLabel'
+                    };
+                    Object.keys(mapping).forEach(k => {
+                        const lbl = document.getElementById(mapping[k]);
+                        if (lbl) {
+                            lbl.textContent = data[k] ?? lbl.textContent;
+                        }
+                    });
+
+                    // change action + method
+                    form.action = contactBaseUrl + '/' + id;
+                    let methodInput = form.querySelector('input[name="_method"]');
+                    if (!methodInput) {
+                        methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        form.appendChild(methodInput);
+                    }
+                    methodInput.value = 'PUT';
+
+                    const header = modal.querySelector('h2');
+                    if (header) header.textContent = 'Edit contact';
+                    if (actionBtn) actionBtn.textContent = 'Update';
+                } catch (err) {
+                    console.error(err);
+                    alert('Unable to load contact data.');
+                }
+            }
+
+            if (openBtn) openBtn.addEventListener('click', function () {
+                setFormToCreate();
+                openModal();
+            });
             if (closeBtn) closeBtn.addEventListener('click', closeModal);
             if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
@@ -1509,11 +865,23 @@
                 if (modal && e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
             });
 
-            if (createBtn) {
-                createBtn.addEventListener('click', function () {
+            if (actionBtn) {
+                actionBtn.addEventListener('click', function () {
                     form.submit();
                 });
             }
+
+            // delegate edit button clicks
+            document.addEventListener('click', function (e) {
+                const editBtn = e.target.closest('.edit-contact');
+                if (editBtn) {
+                    const id = editBtn.dataset.id;
+                    if (id) {
+                        setFormToEdit(id);
+                        openModal();
+                    }
+                }
+            });
         })();
 
 
@@ -1699,11 +1067,32 @@
 
                 function filterOptions(query) {
                     let visibleCount = 0;
+
+                    // Handle country dependency for states
+                    let countryHidden = null;
+                    if (fieldName.endsWith('State')) {
+                        const countryId = 'modal' + fieldName.replace('State', 'Country') + 'Hidden';
+                        countryHidden = document.getElementById(countryId);
+                    }
+                    const currentCountry = countryHidden ? countryHidden.value : null;
+
                     options.forEach(opt => {
                         const text = (opt.getAttribute('data-label') || '').toLowerCase();
                         const match = text.includes(query);
-                        opt.style.display = match ? '' : 'none';
-                        if (match && opt.getAttribute('data-value') !== "") visibleCount++;
+
+                        // If there is a country dependency, check if state belongs to the selected country
+                        const stateCountry = opt.getAttribute('data-country');
+                        let countryMatch = true;
+                        if (stateCountry && currentCountry && stateCountry !== currentCountry) {
+                            countryMatch = false;
+                        }
+
+                        const shouldShow = match && countryMatch;
+                        opt.style.display = shouldShow ? '' : 'none';
+
+                        if (shouldShow && opt.getAttribute('data-value') !== "") {
+                            visibleCount++;
+                        }
                     });
                     if (noResults) noResults.classList.toggle('hidden', visibleCount > 0 || options.length <= 1);
                 }
@@ -1713,6 +1102,9 @@
                     if (!opt) return;
                     hidden.value = opt.getAttribute('data-value');
                     label.textContent = opt.getAttribute('data-label');
+
+                    // Dispatch change event to notify dependent filtering (e.g. states by country)
+                    hidden.dispatchEvent(new Event('change'));
 
                     options.forEach(o => {
                         o.classList.remove('bg-blue-50', 'text-blue-700', 'font-medium');
@@ -1728,6 +1120,50 @@
                 });
             }
 
+            // Dynamic country-to-state dropdown filtering logic
+            function bindCountryStateFilter(countryHiddenId, stateWrapperId, stateHiddenId, stateLabelId, stateListId, stateOptionClass) {
+                const countryHidden = document.getElementById(countryHiddenId);
+                const stateWrapper = document.getElementById(stateWrapperId);
+                if (!countryHidden || !stateWrapper) return;
+
+                const stateHidden = document.getElementById(stateHiddenId);
+                const stateLabel = document.getElementById(stateLabelId);
+                const stateList = document.getElementById(stateListId);
+                const stateOptions = stateList.querySelectorAll('li.' + stateOptionClass);
+
+                countryHidden.addEventListener('change', function () {
+                    const countryVal = this.value;
+
+                    // Reset selected state
+                    stateHidden.value = '';
+                    stateLabel.textContent = 'Choose state';
+
+                    // Highlight default "Choose state" option in state dropdown list
+                    stateOptions.forEach(opt => {
+                        const val = opt.getAttribute('data-value');
+                        if (val === '') {
+                            opt.classList.add('bg-blue-600', 'text-white', 'font-semibold');
+                            opt.classList.remove('text-slate-600', 'hover:bg-slate-50');
+                        } else {
+                            opt.classList.remove('bg-blue-600', 'text-white', 'font-semibold');
+                            opt.classList.add('text-slate-600', 'hover:bg-slate-50');
+                        }
+                    });
+
+                    // Filter states list based on country relationship
+                    stateOptions.forEach(opt => {
+                        const stateCountry = opt.getAttribute('data-country');
+                        if (opt.getAttribute('data-value') === '') {
+                            opt.style.display = ''; // Always keep "Choose state" visible
+                        } else if (!countryVal || stateCountry === countryVal) {
+                            opt.style.display = '';
+                        } else {
+                            opt.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
             setupModalSimpleDropdown('ContactType');
             setupModalSearchableDropdown('PhoneCode');
             setupModalSearchableDropdown('OwnedBy');
@@ -1735,6 +1171,8 @@
             setupModalSearchableDropdown('Country');
             setupModalSearchableDropdown('State');
             setupModalSearchableDropdown('CompanyId');
+
+            bindCountryStateFilter('modalCountryHidden', 'modalStateWrapper', 'modalStateHidden', 'modalStateLabel', 'modalStateList', 'modal-option-state');
         });
     </script>
 @endsection
