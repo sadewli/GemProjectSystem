@@ -35,4 +35,17 @@
 
     <!-- Location Master -->
     <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/StorageLocation') }}">Storage Locations</a>
+
+    <!-- Company Types Master -->
+    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/CompanyType') }}">Company Types</a>
+
+    <!-- Roles Master -->
+    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/Role') }}">Roles</a>
+
+    <!-- States Master -->
+    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/State') }}">States</a>
+
+    <!-- Countries Master -->
+    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/Country') }}">Countries</a>
 </div>
+

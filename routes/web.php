@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\DistributorGRNController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\InventoryController;
 
@@ -52,16 +51,21 @@ Route::get('Master/Grade', [MasterController::class, 'grade']);
 Route::get('Master/OriginTreatment', [MasterController::class, 'origin_treatment']);
 Route::get('Master/StorageLocation', [MasterController::class, 'storage_location']);
 
+Route::get('Master/CompanyType', [MasterController::class, 'companytype'])->name('master.companytype');
+Route::post('Master/CompanyTypeinsertupdate', [MasterController::class, 'companytype_insertupdate'])->name('master.companytype.insertupdate');
+Route::get('Master/CompanyTypestatus/{id}/{status}', [MasterController::class, 'companytype_status'])->name('master.companytype.status');
 
-Route::get('Distributor/GRN', [DistributorGRNController::class, 'index'])->name('distributor.grn');
-Route::get('Distributor/GRN/list', [DistributorGRNController::class, 'list'])->name('distributor.grn.list');
-Route::get('Distributor/GRN/getConfirmedPO', [DistributorGRNController::class, 'getConfirmedPO'])->name('distributor.grn.getconfirmedpo');
-Route::post('Distributor/GRN/getPODetails', [DistributorGRNController::class, 'getPODetails'])->name('distributor.grn.getpodetails');
-Route::post('Distributor/GRN/store', [DistributorGRNController::class, 'store'])->name('distributor.grn.store');
-Route::post('Distributor/GRN/view', [DistributorGRNController::class, 'view'])->name('distributor.grn.view');
-Route::post('Distributor/GRN/updateStatus', [DistributorGRNController::class, 'updateStatus'])->name('distributor.grn.updatestatus');
-Route::post('Distributor/GRN/transferStock', [DistributorGRNController::class, 'transferStock'])->name('distributor.grn.transferstock');
-Route::post('Distributor/GRN/delete', [DistributorGRNController::class, 'delete'])->name('distributor.grn.delete');
+Route::get('Master/Role', [MasterController::class, 'role'])->name('master.role');
+Route::post('Master/Roleinsertupdate', [MasterController::class, 'role_insertupdate'])->name('master.role.insertupdate');
+Route::get('Master/Rolestatus/{id}/{status}', [MasterController::class, 'role_status'])->name('master.role.status');
+
+Route::get('Master/State', [MasterController::class, 'state'])->name('master.state');
+Route::post('Master/Stateinsertupdate', [MasterController::class, 'state_insertupdate'])->name('master.state.insertupdate');
+Route::get('Master/Statestatus/{id}/{status}', [MasterController::class, 'state_status'])->name('master.state.status');
+
+Route::get('Master/Country', [MasterController::class, 'country'])->name('master.country');
+Route::post('Master/Countryinsertupdate', [MasterController::class, 'country_insertupdate'])->name('master.country.insertupdate');
+Route::get('Master/Countrystatus/{id}/{status}', [MasterController::class, 'country_status'])->name('master.country.status');
 
 
 //Inventory Routes
@@ -127,19 +131,31 @@ Route::prefix('crm')->name('crm.')->group(function () {
     Route::get('/companies/import', [\App\Http\Controllers\crm\CompaniesController::class, 'import'])
         ->name('companies.import');
 
-    // Dummy routes to prevent blade errors since project is only UI for now
-    Route::post('/contacts', function () {
-        return back();
-    })->name('contacts.store');
-    Route::post('/companies', function () {
-        return back();
-    })->name('companies.store');
+    Route::post('/companies', [\App\Http\Controllers\crm\CompaniesController::class, 'store'])
+        ->name('companies.store');
+
+    Route::get('/companies/{id}', [\App\Http\Controllers\crm\CompaniesController::class, 'show'])
+        ->name('companies.show');
+
+    Route::put('/companies/{id}', [\App\Http\Controllers\crm\CompaniesController::class, 'update'])
+        ->name('companies.update');
+
+    Route::delete('/companies/{id}', [\App\Http\Controllers\crm\CompaniesController::class, 'destroy'])
+        ->name('companies.destroy');
+
+    // Contacts CRUD
+    Route::post('/contacts', [\App\Http\Controllers\crm\ContactsController::class, 'store'])
+        ->name('contacts.store');
+    Route::get('/contacts/{id}', [\App\Http\Controllers\crm\ContactsController::class, 'show'])
+        ->name('contacts.show');
+    Route::put('/contacts/{id}', [\App\Http\Controllers\crm\ContactsController::class, 'update'])
+        ->name('contacts.update');
+    Route::delete('/contacts/{id}', [\App\Http\Controllers\crm\ContactsController::class, 'destroy'])
+        ->name('contacts.destroy');
+
     Route::get('/companies/create', function () {
-        return back();
+        return redirect()->route('crm.companies.index', ['open_modal' => 1]);
     })->name('companies.create');
-    Route::get('/companies/{id}', function () {
-        return back();
-    })->name('companies.show');
 
 });
 
