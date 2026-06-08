@@ -47,28 +47,23 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($categories as $category)
                                 <tr>
-                                    <td>01</td>
-                                    <td>Primary/Basic</td>
+                                    <td>{{ str_pad($category->idtbl_color_categories, 2, '0', STR_PAD_LEFT) }}</td>
+                                    <td>{{ $category->category_name }}</td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
+                                            <button class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $category->idtbl_color_categories }}" data-name="{{ $category->category_name }}"><i class="fas fa-pen"></i></button>
+                                            @if($category->status == 1)
+                                            <button class="btn btn-success btn-sm mr-1 btnStatus" data-id="{{ $category->idtbl_color_categories }}"><i class="fas fa-check"></i></button>
+                                            @else
+                                            <button class="btn btn-warning btn-sm mr-1 btnStatus" data-id="{{ $category->idtbl_color_categories }}"><i class="fas fa-times"></i></button>
+                                            @endif
+                                            <button class="btn btn-danger btn-sm btnDelete" data-id="{{ $category->idtbl_color_categories }}"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>02</td>
-                                    <td>Pastel</td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -85,6 +80,16 @@
         $('#dataTable').DataTable({
             responsive: true,
             order: [[0, "asc"]],
+        });
+
+        $(document).on('click', '.btnEdit', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            
+            $('#recordID').val(id);
+            $('#recordOption').val('2');
+            $('#category_name').val(name);
+            $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Update');
         });
     });
 </script>

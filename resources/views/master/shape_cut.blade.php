@@ -58,36 +58,22 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse($shapes as $shape)
                                 <tr>
-                                    <td>Shape</td>
-                                    <td>Oval</td>
+                                    <td>{{ $shape->type }}</td>
+                                    <td>{{ $shape->name }}</td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
+                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $shape->idtbl_shapes }}"><i class="fas fa-pen"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $shape->idtbl_shapes }}"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td>Shape</td>
-                                    <td>Round</td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
+                                    <td colspan="3" class="text-center text-muted py-3">No records found</td>
                                 </tr>
-                                <tr>
-                                    <td>Cutting</td>
-                                    <td>Faceted</td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -100,11 +86,69 @@
 
 @section('script')
 <script>
+    let table;
     $(document).ready(function() {
-        $('#dataTable').DataTable({
+        table = $('#dataTable').DataTable({
             responsive: true,
             order: [[0, "asc"]],
+            columnDefs: [
+                { targets: -1, orderable: false, searchable: false }
+            ]
         });
+
+        // Edit button click
+        $(document).on('click', '.btnEdit', function() {
+            let recordID = $(this).data('id');
+            
+            $.ajax({
+                url: '{{ url("Master/Shapecutedit") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    recordID: recordID
+                },
+                success: function(response) {
+                    $('#name').val(response.name);
+                    if (response.type === 'Shape') {
+                        $('#typeShape').prop('checked', true);
+                    } else {
+                        $('#typeCutting').prop('checked', true);
+                    }
+                    $('#recordID').val(response.idtbl_shapes);
+                    $('#recordOption').val('2');
+                    $('#submitBtn').html('<i class="fas fa-sync"></i>&nbsp;Update Entry');
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
+                },
+                error: function() {
+                    alert('Error loading record');
+                }
+            });
+        });
+
+        // Delete button click
+        $(document).on('click', '.btnDelete', function() {
+            let recordID = $(this).data('id');
+            
+            if (confirm('Are you sure you want to delete this record?')) {
+                let form = $('<form method="POST" action="{{ url("Master/Shapecutdelete") }}"></form>');
+                form.append('<input type="hidden" name="_token" value="{{ csrf_token() }}">');
+                form.append('<input type="hidden" name="recordID" value="' + recordID + '">');
+                $('body').append(form);
+                form.submit();
+            }
+        });
+
+        // Reset form
+        function resetForm() {
+            $('#name').val('');
+            $('#typeShape').prop('checked', true);
+            $('#recordID').val('');
+            $('#recordOption').val('1');
+            $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Save Entry');
+        }
+
+        // You could add a reset button or call this after successful submission
+        // For now, it will reset when needed
     });
 </script>
 @endsection

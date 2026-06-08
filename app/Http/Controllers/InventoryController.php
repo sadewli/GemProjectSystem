@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ProductType;
 
 class InventoryController extends Controller
 {
     public function myinventory()
     {
-        return view('inventory.myinventory.myinventory');
+        $productTypes = ProductType::all();
+        return view('inventory.myinventory.myinventory', compact('productTypes'));
     }
 
     public function show($id = null)
     {
-        return view('inventory.myinventory.fullpage.fullpage.show');
+        $productTypes = ProductType::all();
+        return view('inventory.myinventory.myinventory', compact('productTypes'));
+    }
+
+    public function memoOut()
+    {
+        return view('inventory.memo_out');
     }
 }

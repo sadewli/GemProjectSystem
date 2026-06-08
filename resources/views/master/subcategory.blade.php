@@ -29,17 +29,18 @@
                             <label class="small font-weight-bold text-dark">Select Main Variety*</label>
                             <select class="form-control form-control-sm" name="variety_id" id="variety_id" required>
                                 <option value="">Select Variety</option>
-                                <option value="1">Sapphire</option>
-                                <option value="2">Ruby</option>
-                                <option value="3">Alexandrite</option>
+                                @foreach($varieties as $variety)
+                                <option value="{{ $variety->idtbl_varieties }}">{{ $variety->variety_name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group mb-2">
                             <label class="small font-weight-bold text-dark">Sub-Category Name*</label>
                             <input type="text" class="form-control form-control-sm" name="subcategory_name" id="subcategory_name" required>
                         </div>
-                        <div class="form-group mt-3 text-right">
-                            <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4 w-100"><i class="far fa-save"></i>&nbsp;Add</button>
+                        <div class="form-group mt-3 d-flex text-right">
+                            <button type="button" id="resetBtn" class="btn btn-secondary btn-sm px-4 w-50 mr-1 d-none">Cancel</button>
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4 w-100"><i class="far fa-save"></i>&nbsp;<span id="submitBtnText">Add</span></button>
                         </div>
                         <input type="hidden" name="recordOption" id="recordOption" value="1">
                         <input type="hidden" name="recordID" id="recordID" value="">
@@ -54,9 +55,9 @@
                                 </div>
                                 <select class="form-control" id="filter_variety">
                                     <option value="">All Varieties</option>
-                                    <option value="Sapphire">Sapphire</option>
-                                    <option value="Ruby">Ruby</option>
-                                    <option value="Alexandrite">Alexandrite</option>
+                                    @foreach($varieties as $variety)
+                                    <option value="{{ $variety->variety_name }}">{{ $variety->variety_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -71,39 +72,19 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($subcategories as $subcategory)
                                 <tr>
-                                    <td>Sapphire</td>
-                                    <td>Natural</td>
+                                    <td>{{ $subcategory->variety ? $subcategory->variety->variety_name : 'Unknown' }}</td>
+                                    <td>{{ $subcategory->subcategory_name }}</td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
+                                            <button class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $subcategory->idtbl_sub_categories }}" data-name="{{ $subcategory->subcategory_name }}" data-variety="{{ $subcategory->variety_id }}"><i class="fas fa-pen"></i></button>
                                             <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
                                             <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>Sapphire</td>
-                                    <td>Synthetic</td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Ruby</td>
-                                    <td>Pigeon Blood</td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -124,6 +105,34 @@
 
         $('#filter_variety').on('change', function () {
             table.columns(0).search(this.value).draw();
+        });
+
+        // Edit button functionality
+        $('.btnEdit').on('click', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var variety = $(this).data('variety');
+
+            $('#recordOption').val(2);
+            $('#recordID').val(id);
+            $('#subcategory_name').val(name);
+            $('#variety_id').val(variety);
+            
+            $('#submitBtnText').text('Update');
+            $('#submitBtn').removeClass('w-100').addClass('w-50');
+            $('#resetBtn').removeClass('d-none');
+        });
+
+        // Reset button functionality
+        $('#resetBtn').on('click', function() {
+            $('#recordOption').val(1);
+            $('#recordID').val('');
+            $('#subcategory_name').val('');
+            $('#variety_id').val('');
+            
+            $('#submitBtnText').text('Add');
+            $('#submitBtn').removeClass('w-50').addClass('w-100');
+            $('#resetBtn').addClass('d-none');
         });
     });
 </script>

@@ -41,8 +41,11 @@
                             <label class="small font-weight-bold text-dark">Branch/Office*</label>
                             <select class="form-control form-control-sm" name="branch_id" id="branch_id" required>
                                 <option value="">Select Branch</option>
-                                <option value="1">Main Office</option>
-                                <option value="2">Branch 01</option>
+                                @forelse($branches as $branch)
+                                    <option value="{{ $branch->idtbl_company_branch }}">{{ $branch->branch }}</option>
+                                @empty
+                                    <option disabled>No branches available</option>
+                                @endforelse
                             </select>
                         </div>
                     </div>
@@ -54,6 +57,7 @@
                     </div>
                 </div>
                 <div class="form-group mt-2 text-right">
+                    <button type="button" id="clearBtn" class="btn btn-secondary btn-sm px-4 mr-2"><i class="fas fa-redo"></i>&nbsp;Clear</button>
                     <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-5"><i class="far fa-save"></i>&nbsp;Save Location</button>
                 </div>
                 <input type="hidden" name="recordOption" id="recordOption" value="1">
@@ -74,18 +78,31 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Safe Box 01</td>
-                            <td>SB01</td>
-                            <td>Main Office</td>
-                            <td>Manager Name</td>
-                            <td class="text-right">
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                    <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
+@forelse($locations as $index => $location)
+    <tr>
+        <td>{{ $index + 1 }}. {{ $location->location_name }}</td>
+        <td>{{ $location->short_code }}</td>
+        <td>
+            @php
+                $branch = $branches->firstWhere('idtbl_company_branch', $location->branch_id);
+            @endphp
+            {{ $branch ? $branch->branch : 'Unknown Branch' }}
+        </td>
+        <td>{{ $location->contact_person ?? '-' }}</td>
+        <td class="text-right">
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $location->id }}">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <button class="btn btn-danger btn-sm btnDelete" data-id="{{ $location->id }}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+@empty
+    <tr><td colspan="5" class="text-center text-muted py-3">No storage locations found</td></tr>
+@endforelse
                     </tbody>
                 </table>
             </div>
@@ -100,6 +117,61 @@
         $('#dataTable').DataTable({
             responsive: true,
             order: [[0, "asc"]],
+        });
+
+        // Clear form button
+        $('#clearBtn').on('click', function() {
+            $('#location_name').val('');
+            $('#short_code').val('');
+            $('#branch_id').val('');
+            $('#contact_person').val('');
+            $('#recordOption').val(1);
+            $('#recordID').val('');
+            $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Save Location');
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+        });
+
+        // Edit button click handler
+        $(document).on('click', '.btnEdit', function() {
+            const recordID = $(this).data('id');
+            $.ajax({
+                url: '{{ url("Master/Storagelocationedit") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    recordID: recordID
+                },
+                success: function(data) {
+                    $('#location_name').val(data.location_name);
+                    $('#short_code').val(data.short_code);
+                    $('#branch_id').val(data.branch_id);
+                    $('#contact_person').val(data.contact_person);
+                    $('#recordOption').val(2);
+                    $('#recordID').val(data.id);
+                    $('#submitBtn').html('<i class="fas fa-edit"></i>&nbsp;Update Location');
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                },
+                error: function(xhr) {
+                    alert('Error loading record');
+                }
+            });
+        });
+
+        // Delete button click handler
+        $(document).on('click', '.btnDelete', function() {
+            if (!confirm('Are you sure you want to delete this location?')) {
+                return;
+            }
+            const recordID = $(this).data('id');
+            const form = $('<form></form>').attr({
+                method: 'POST',
+                action: '{{ url("Master/Storagelocationdelete") }}'
+            }).append(
+                $('<input>').attr({ type: 'hidden', name: '_token', value: '{{ csrf_token() }}' }),
+                $('<input>').attr({ type: 'hidden', name: 'recordID', value: recordID })
+            );
+            $(document.body).append(form);
+            form.submit();
         });
     });
 </script>

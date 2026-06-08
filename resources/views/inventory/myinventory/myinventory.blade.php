@@ -45,9 +45,21 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">My Inventory</h1>
-        <button type="button" id="openGemstoneModalBtn" class="btn btn-primary">
-            <i class="fas fa-plus mr-2"></i> Create New Product
-        </button>
+        <div class="relative inline-block text-left">
+            <button type="button" id="createProductDropdownBtn" class="btn btn-primary flex items-center">
+                <i class="fas fa-plus mr-2"></i> Create New Product
+                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+            </button>
+            <div id="createProductDropdownMenu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div class="py-1" role="none">
+                    @foreach($productTypes as $type)
+                        <a href="javascript:void(0)" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 openGemstoneModalBtnItem" data-type-id="{{ $type->id }}" data-type-name="{{ $type->type_name }}">{{ $type->type_name }}</a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- You can add a table here later --}}
@@ -764,7 +776,6 @@
 
         // --- Modal Toggle Logic ---
         const modal = document.getElementById('createGemstoneModal');
-        const openBtn = document.getElementById('openGemstoneModalBtn');
         const closeBtn = document.getElementById('closeGemstoneModalBtn');
         const cancelBtn = document.getElementById('cancelGemstoneModalBtn');
 
@@ -780,7 +791,31 @@
             }
         }
 
-        openBtn.addEventListener('click', () => toggleModal(true));
+        // Dropdown Logic
+        const dropdownBtn = document.getElementById('createProductDropdownBtn');
+        const dropdownMenu = document.getElementById('createProductDropdownMenu');
+        
+        if (dropdownBtn && dropdownMenu) {
+            dropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        document.querySelectorAll('.openGemstoneModalBtnItem').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdownMenu.classList.add('hidden');
+                toggleModal(true);
+            });
+        });
+
         closeBtn.addEventListener('click', () => toggleModal(false));
         cancelBtn.addEventListener('click', () => toggleModal(false));
 

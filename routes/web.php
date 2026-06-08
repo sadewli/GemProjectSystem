@@ -17,6 +17,35 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\Sales\SalesController;
+use App\Http\Controllers\Sales\CustomerMemoController;
+use App\Http\Controllers\Sales\QuotationController;
+use App\Http\Controllers\Sales\ShippingInvoiceController;
+use App\Http\Controllers\Sales\LocationTransferController;
+use App\Http\Controllers\Sales\PurchaseOrderController;
+use App\Http\Controllers\Sales\SupplierMemoController;
+use App\Http\Controllers\Master\SkuController;
+use App\Http\Controllers\Master\VarietyController;
+use App\Http\Controllers\Master\ProductTypeController;
+use App\Http\Controllers\Master\SubCategoryController;
+use App\Http\Controllers\Master\ColorController;
+use App\Http\Controllers\Master\ColorCategoryController;
+use App\Http\Controllers\Master\ShapeController;
+use App\Http\Controllers\Master\CutController;
+use App\Http\Controllers\Master\GradeTypeController;
+use App\Http\Controllers\Master\GradeController;
+use App\Http\Controllers\Master\OriginController;
+use App\Http\Controllers\Master\TreatmentController;
+use App\Http\Controllers\Master\CuttingGradeController;
+use App\Http\Controllers\Master\ClarityGradeController;
+use App\Http\Controllers\Master\TrayBoxController;
+use App\Http\Controllers\Master\StorageLocationController;
+use App\Http\Controllers\Master\SupplierController;
+use App\Http\Controllers\Master\CompanyTypeController;
+use App\Http\Controllers\Master\RoleController;
+use App\Http\Controllers\Master\StateController;
+use App\Http\Controllers\Master\CountryController;
+use App\Http\Controllers\Master\ColorGradeController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('Welcome', [WelcomeController::class, 'index']);
@@ -42,30 +71,108 @@ Route::get('User/Userprivilegestatus/{x}/{y}', [UserController::class, 'Userpriv
 
 // Additional routes will be added similarly for other controllers in the CI project, preserving the same URI patterns.
 
-Route::get('Master/Variety', [MasterController::class, 'variety']);
-Route::get('Master/Subcategory', [MasterController::class, 'subcategory']);
-Route::get('Master/Color', [MasterController::class, 'color']);
-Route::get('Master/ColorCategory', [MasterController::class, 'color_category']);
-Route::get('Master/ShapeCut', [MasterController::class, 'shape_cut']);
-Route::get('Master/Grade', [MasterController::class, 'grade']);
-Route::get('Master/OriginTreatment', [MasterController::class, 'origin_treatment']);
-Route::get('Master/StorageLocation', [MasterController::class, 'storage_location']);
+Route::get('Master/Variety', [VarietyController::class, 'index']);
+Route::get('Master/ProductType', [ProductTypeController::class, 'index']);
+Route::post('Master/ProductTypeinsertupdate', [ProductTypeController::class, 'insertupdate']);
+Route::post('Master/ProductTypeDelete', [ProductTypeController::class, 'delete']);
+Route::post('Master/Varietyinsertupdate', [VarietyController::class, 'insertupdate']);
+Route::get('Master/Subcategory', [SubCategoryController::class, 'index']);
+Route::post('Master/Subcategoryinsertupdate', [SubCategoryController::class, 'insertupdate']);
+Route::post('Master/Subcategorydelete', [SubCategoryController::class, 'delete']);
+Route::get('Master/Color', [ColorController::class, 'index']);
+Route::get('Master/ColorCategory', [ColorCategoryController::class, 'index']);
+Route::get('Master/Shape', [ShapeController::class, 'index']);
+Route::post('Master/Shapeinsertupdate', [ShapeController::class, 'insertupdate']);
+Route::post('Master/Shapeedit', [ShapeController::class, 'edit']);
+Route::post('Master/Shapedelete', [ShapeController::class, 'delete']);
+Route::get('Master/Cut', [CutController::class, 'index']);
+Route::post('Master/Cutinsertupdate', [CutController::class, 'insertupdate']);
+Route::post('Master/Cutedit', [CutController::class, 'edit']);
+Route::post('Master/Cutdelete', [CutController::class, 'delete']);
+Route::get('Master/GradeType', [GradeTypeController::class, 'index']);
+Route::post('Master/Gradetypeinsertupdate', [GradeTypeController::class, 'insertupdate']);
+Route::post('Master/Gradetypeedit', [GradeTypeController::class, 'edit']);
+Route::post('Master/Gradetypedelete', [GradeTypeController::class, 'delete']);
+Route::get('Master/Grade', [GradeController::class, 'index']);
+Route::post('Master/Gradeinsertupdate', [GradeController::class, 'insertupdate']);
+Route::post('Master/Gradeedit', [GradeController::class, 'edit']);
+Route::post('Master/Gradedelete', [GradeController::class, 'delete']);
+Route::get('Master/Origin', [OriginController::class, 'index']);
+Route::post('Master/Origininsertupdate', [OriginController::class, 'insertupdate']);
+Route::post('Master/Originedit', [OriginController::class, 'edit']);
+Route::post('Master/Origindelete', [OriginController::class, 'delete']);
+Route::get('Master/Treatment', [TreatmentController::class, 'index']);
+Route::post('Master/Treatmentinsertupdate', [TreatmentController::class, 'insertupdate']);
+Route::post('Master/Treatmentedit', [TreatmentController::class, 'edit']);
+Route::post('Master/Treatmentdelete', [TreatmentController::class, 'delete']);
+Route::get('Master/CuttingGrade', [CuttingGradeController::class, 'index']);
+Route::post('Master/CuttingGradeinsertupdate', [CuttingGradeController::class, 'insertupdate']);
+Route::post('Master/CuttingGradeedit', [CuttingGradeController::class, 'edit']);
+Route::post('Master/CuttingGradedelete', [CuttingGradeController::class, 'delete']);
+Route::get('Master/ClarityGrade', [ClarityGradeController::class, 'index']);
+Route::post('Master/ClarityGradeinsertupdate', [ClarityGradeController::class, 'insertupdate']);
+Route::post('Master/ClarityGradeedit', [ClarityGradeController::class, 'edit']);
+Route::post('Master/ClarityGradedelete', [ClarityGradeController::class, 'delete']);
+Route::get('Master/TrayBox', [TrayBoxController::class, 'index']);
+Route::post('Master/TrayBoxinsertupdate', [TrayBoxController::class, 'insertupdate']);
+Route::post('Master/TrayBoxedit', [TrayBoxController::class, 'edit']);
+Route::post('Master/TrayBoxdelete', [TrayBoxController::class, 'delete']);
+Route::get('Master/StorageLocation', [StorageLocationController::class, 'index']);
+Route::post('Master/Storagelocationinsertupdate', [StorageLocationController::class, 'insertupdate']);
+Route::post('Master/Storagelocationedit', [StorageLocationController::class, 'edit']);
+Route::post('Master/Storagelocationdelete', [StorageLocationController::class, 'delete']);
+Route::get('Master/Suppliers', [SupplierController::class, 'index']);
+Route::post('Master/Suppliersinsertupdate', [SupplierController::class, 'insertupdate']);
+Route::post('Master/Colorinsertupdate', [ColorController::class, 'insertupdate']);
+Route::post('Master/Colorcategoryinsertupdate', [ColorCategoryController::class, 'insertupdate']);
 
-Route::get('Master/CompanyType', [MasterController::class, 'companytype'])->name('master.companytype');
-Route::post('Master/CompanyTypeinsertupdate', [MasterController::class, 'companytype_insertupdate'])->name('master.companytype.insertupdate');
-Route::get('Master/CompanyTypestatus/{id}/{status}', [MasterController::class, 'companytype_status'])->name('master.companytype.status');
+Route::get('Master/CompanyType', [CompanyTypeController::class, 'index'])->name('master.companytype');
+Route::post('Master/CompanyTypeinsertupdate', [CompanyTypeController::class, 'insertupdate'])->name('master.companytype.insertupdate');
+Route::get('Master/CompanyTypestatus/{id}/{status}', [CompanyTypeController::class, 'status'])->name('master.companytype.status');
 
-Route::get('Master/Role', [MasterController::class, 'role'])->name('master.role');
-Route::post('Master/Roleinsertupdate', [MasterController::class, 'role_insertupdate'])->name('master.role.insertupdate');
-Route::get('Master/Rolestatus/{id}/{status}', [MasterController::class, 'role_status'])->name('master.role.status');
+Route::get('Master/Sku', [SkuController::class, 'index'])->name('master.sku');
+Route::post('Master/Skuinsertupdate', [SkuController::class, 'insertupdate'])->name('master.sku.insertupdate');
+Route::post('Master/Skuedit', [SkuController::class, 'edit'])->name('master.sku.edit');
+Route::post('Master/Skustatus', [SkuController::class, 'status'])->name('master.sku.status');
+Route::post('Master/Skudelete', [SkuController::class, 'delete'])->name('master.sku.delete');
 
-Route::get('Master/State', [MasterController::class, 'state'])->name('master.state');
-Route::post('Master/Stateinsertupdate', [MasterController::class, 'state_insertupdate'])->name('master.state.insertupdate');
-Route::get('Master/Statestatus/{id}/{status}', [MasterController::class, 'state_status'])->name('master.state.status');
+Route::get('Sales/Invoices', [SalesController::class, 'invoices'])->name('sales.invoices');
+Route::get('Sales/Invoice', [SalesController::class, 'invoice'])->name('sales.invoice');
+Route::get('Sales/CustomerMemo', [CustomerMemoController::class, 'index'])->name('sales.customermemo');
+Route::get('Sales/CustomerMemo/new', [CustomerMemoController::class, 'show'])->name('sales.customermemo.new');
+Route::get('Sales/CustomerMemo/{id}', [CustomerMemoController::class, 'show'])->name('sales.customermemo.show');
+Route::get('Sales/Quotations', [QuotationController::class, 'index'])->name('sales.quotations');
+Route::get('Sales/Quotations/new', [QuotationController::class, 'show'])->name('sales.quotations.new');
+Route::get('Sales/Quotations/{id}', [QuotationController::class, 'show'])->name('sales.quotations.show');
+Route::get('Sales/ShippingInvoices', [ShippingInvoiceController::class, 'index'])->name('sales.shippinginvoices');
+Route::get('Sales/ShippingInvoices/new', [ShippingInvoiceController::class, 'show'])->name('sales.shippinginvoices.new');
+Route::get('Sales/ShippingInvoices/{id}', [ShippingInvoiceController::class, 'show'])->name('sales.shippinginvoices.show');
+Route::get('Sales/LocationTransfer', [LocationTransferController::class, 'index'])->name('sales.locationtransfer');
+Route::get('Sales/LocationTransfer/new', [LocationTransferController::class, 'show'])->name('sales.locationtransfer.new');
+Route::get('Sales/LocationTransfer/{id}', [LocationTransferController::class, 'show'])->name('sales.locationtransfer.show');
+Route::get('Sales/PurchaseOrders', [PurchaseOrderController::class, 'index'])->name('sales.purchaseorders');
+Route::get('Sales/PurchaseOrders/new', [PurchaseOrderController::class, 'show'])->name('sales.purchaseorders.new');
+Route::get('Sales/PurchaseOrders/{id}', [PurchaseOrderController::class, 'show'])->name('sales.purchaseorders.show');
+Route::get('Sales/SupplierMemos', [SupplierMemoController::class, 'index'])->name('sales.suppliermemos');
+Route::get('Sales/SupplierMemos/new', [SupplierMemoController::class, 'show'])->name('sales.suppliermemos.new');
+Route::get('Sales/SupplierMemos/{id}', [SupplierMemoController::class, 'show'])->name('sales.suppliermemos.show');
 
-Route::get('Master/Country', [MasterController::class, 'country'])->name('master.country');
-Route::post('Master/Countryinsertupdate', [MasterController::class, 'country_insertupdate'])->name('master.country.insertupdate');
-Route::get('Master/Countrystatus/{id}/{status}', [MasterController::class, 'country_status'])->name('master.country.status');
+Route::get('Master/Role', [RoleController::class, 'index'])->name('master.role');
+Route::post('Master/Roleinsertupdate', [RoleController::class, 'insertupdate'])->name('master.role.insertupdate');
+Route::get('Master/Rolestatus/{id}/{status}', [RoleController::class, 'status'])->name('master.role.status');
+
+Route::get('Master/State', [StateController::class, 'index'])->name('master.state');
+Route::post('Master/Stateinsertupdate', [StateController::class, 'insertupdate'])->name('master.state.insertupdate');
+Route::get('Master/Statestatus/{id}/{status}', [StateController::class, 'status'])->name('master.state.status');
+
+Route::get('Master/Country', [CountryController::class, 'index'])->name('master.country');
+Route::post('Master/Countryinsertupdate', [CountryController::class, 'insertupdate'])->name('master.country.insertupdate');
+Route::get('Master/Countrystatus/{id}/{status}', [CountryController::class, 'status'])->name('master.country.status');
+
+Route::get('Master/ColorGrade', [ColorGradeController::class, 'index'])->name('master.colorgrade');
+Route::post('Master/ColorGradeinsertupdate', [ColorGradeController::class, 'insertupdate'])->name('master.colorgrade.insertupdate');
+Route::post('Master/ColorGradestatus', [ColorGradeController::class, 'status'])->name('master.colorgrade.status');
+Route::post('Master/ColorGradedelete', [ColorGradeController::class, 'delete'])->name('master.colorgrade.delete');
 
 
 //Inventory Routes
@@ -113,6 +220,9 @@ Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(fu
     Route::get('/new', [InventoryController::class, 'show'])->name('new');
     Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
 });
+
+Route::get('Inventory/MemoOut', [InventoryController::class, 'memoOut'])->name('inventory.memoout');
+
 
 // CRM Routes
 Route::prefix('crm')->name('crm.')->group(function () {
@@ -168,3 +278,4 @@ Route::prefix('production')->name('production.')->group(function () {
 });
 
 
+/* Obsolete AJAX routes removed */

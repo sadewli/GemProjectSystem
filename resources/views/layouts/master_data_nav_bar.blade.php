@@ -1,51 +1,71 @@
-<div class="flex flex-wrap items-center gap-4 py-2.5 mb-2 relative z-50">
+<ul class="nav nav-pills mb-3 bg-light p-2 rounded shadow-sm" id="masterDataNavBar" style="gap: 0.5rem;">
     <!-- Variety Master Dropdown -->
-    <div class="dropdown group relative">
-        <a class="text-sm font-bold text-gray-800 dropdown-toggle hover:text-gray-900 no-underline" href="#" role="button" id="varietyMasterDropdown">
-            Variety Master
-        </a>
-        <div class="dropdown-menu shadow-sm border-0 mt-2 rounded-lg absolute hidden group-hover:block bg-white min-w-[150px] z-50" aria-labelledby="varietyMasterDropdown">
-            <a class="dropdown-item text-sm font-bold py-1.5 px-4 hover:bg-gray-100 block" href="{{ url('Master/Variety') }}">Variety</a>
-            <a class="dropdown-item text-sm font-bold py-1.5 px-4 hover:bg-gray-100 block" href="{{ url('Master/Subcategory') }}">Sub-Category</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle font-weight-bold text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Variety Master</a>
+        <div class="dropdown-menu shadow-sm border-0 mt-1">
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Variety') }}">Variety</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Subcategory') }}">Sub-Category</a>
         </div>
-    </div>
+    </li>
 
     <!-- Color Master Dropdown -->
-    <div class="dropdown group relative">
-        <a class="text-sm font-bold text-gray-800 dropdown-toggle hover:text-gray-900 no-underline" href="#" role="button" id="colorMasterDropdown">
-            Color Master
-        </a>
-        <div class="dropdown-menu shadow-sm border-0 mt-2 rounded-lg absolute hidden group-hover:block bg-white min-w-[150px] z-50" aria-labelledby="colorMasterDropdown">
-            <a class="dropdown-item text-sm font-bold py-1.5 px-4 hover:bg-gray-100 block" href="{{ url('Master/Color') }}">Color</a>
-            <a class="dropdown-item text-sm font-bold py-1.5 px-4 hover:bg-gray-100 block" href="{{ url('Master/ColorCategory') }}">Color Category</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle font-weight-bold text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Color Master</a>
+        <div class="dropdown-menu shadow-sm border-0 mt-1">
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Color') }}">Color</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/ColorGrade') }}">Color Grade</a>
         </div>
-    </div>
+    </li>
 
     <!-- Product Master Dropdown -->
-    <div class="dropdown group relative">
-        <a class="text-sm font-bold text-gray-800 dropdown-toggle hover:text-gray-900 no-underline" href="#" role="button" id="productMasterDropdown">
-            Product Master
-        </a>
-        <div class="dropdown-menu shadow-sm border-0 mt-2 rounded-lg absolute hidden group-hover:block bg-white min-w-[200px] z-50" aria-labelledby="productMasterDropdown">
-            <a class="dropdown-item text-sm font-bold py-1.5 px-4 hover:bg-gray-100 block" href="{{ url('Master/ShapeCut') }}">Shapes / Cutting</a>
-            <a class="dropdown-item text-sm font-bold py-1.5 px-4 hover:bg-gray-100 block" href="{{ url('Master/Grade') }}">Grades</a>
-            <a class="dropdown-item text-sm font-bold py-1.5 px-4 hover:bg-gray-100 block" href="{{ url('Master/OriginTreatment') }}">Origin & Treatment</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle font-weight-bold text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Product Master</a>
+        <div class="dropdown-menu shadow-sm border-0 mt-1">
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/ProductType') }}">Product Type</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Shape') }}">Shapes</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Cut') }}">Cuts</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/CuttingGrade') }}">Cutting Grades</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/ClarityGrade') }}">Clarity Grades</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/GradeType') }}">Grade Types</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Grade') }}">Grades</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Origin') }}">Origins</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Treatment') }}">Treatments</a>
+            <a class="dropdown-item font-weight-bold text-sm" href="{{ url('Master/Sku') }}">SKU</a>
         </div>
-    </div>
+    </li>
 
     <!-- Location Master -->
-    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/StorageLocation') }}">Storage Locations</a>
+    <li class="nav-item">
+        <a class="nav-link font-weight-bold text-dark" href="{{ url('Master/StorageLocation') }}">Storage Locations</a>
+    </li>
+
+    <!-- Tray / Box Master -->
+    <li class="nav-item">
+        <a class="nav-link font-weight-bold text-dark" href="{{ url('Master/TrayBox') }}">Tray / Box</a>
+    </li>
+
+    <!-- Suppliers -->
+    <li class="nav-item">
+        <a class="nav-link font-weight-bold text-dark" href="{{ url('Master/Suppliers') }}">Suppliers</a>
+    </li>
 
     <!-- Company Types Master -->
-    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/CompanyType') }}">Company Types</a>
+    <li class="nav-item">
+        <a class="nav-link font-weight-bold text-dark" href="{{ url('Master/CompanyType') }}">Company Types</a>
+    </li>
 
     <!-- Roles Master -->
-    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/Role') }}">Roles</a>
+    <li class="nav-item">
+        <a class="nav-link font-weight-bold text-dark" href="{{ url('Master/Role') }}">Roles</a>
+    </li>
 
     <!-- States Master -->
-    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/State') }}">States</a>
+    <li class="nav-item">
+        <a class="nav-link font-weight-bold text-dark" href="{{ url('Master/State') }}">States</a>
+    </li>
 
     <!-- Countries Master -->
-    <a class="text-sm font-bold text-gray-800 hover:text-gray-900 no-underline" href="{{ url('Master/Country') }}">Countries</a>
-</div>
-
+    <li class="nav-item">
+        <a class="nav-link font-weight-bold text-dark" href="{{ url('Master/Country') }}">Countries</a>
+    </li>
+</ul>

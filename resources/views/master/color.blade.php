@@ -40,9 +40,9 @@
                             <label class="small font-weight-bold text-dark">Color Category*</label>
                             <select class="form-control form-control-sm" name="color_category" id="color_category" required>
                                 <option value="">Select Category</option>
-                                <option value="Primary/Basic">Primary/Basic</option>
-                                <option value="Pastel">Pastel</option>
-                                <option value="Neon">Neon</option>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->idtbl_color_categories }}">{{ $category->category_name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group mt-3 text-right">
@@ -64,42 +64,28 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($colors as $color)
                                 <tr>
-                                    <td>01</td>
-                                    <td>Blue</td>
-                                    <td><span style="display:inline-block; width:20px; height:20px; background-color:#0000FF; border:1px solid #ccc; border-radius:3px;"></span></td>
+                                    <td>{{ str_pad($color->idtbl_colors, 2, '0', STR_PAD_LEFT) }}</td>
+                                    <td>{{ $color->color_name }}</td>
+                                    <td>
+                                        @if($color->hex_code)
+                                        <span style="display:inline-block; width:20px; height:20px; background-color:{{ $color->hex_code }}; border:1px solid #ccc; border-radius:3px;"></span>
+                                        @endif
+                                    </td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
+                                            <button class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $color->idtbl_colors }}" data-name="{{ $color->color_name }}" data-hex="{{ $color->hex_code }}"><i class="fas fa-pen"></i></button>
+                                            @if($color->status == 1)
+                                            <button class="btn btn-success btn-sm mr-1 btnStatus" data-id="{{ $color->idtbl_colors }}"><i class="fas fa-check"></i></button>
+                                            @else
+                                            <button class="btn btn-warning btn-sm mr-1 btnStatus" data-id="{{ $color->idtbl_colors }}"><i class="fas fa-times"></i></button>
+                                            @endif
+                                            <button class="btn btn-danger btn-sm btnDelete" data-id="{{ $color->idtbl_colors }}"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>02</td>
-                                    <td>Pink</td>
-                                    <td><span style="display:inline-block; width:20px; height:20px; background-color:#FFC0CB; border:1px solid #ccc; border-radius:3px;"></span></td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>03</td>
-                                    <td>Yellow</td>
-                                    <td><span style="display:inline-block; width:20px; height:20px; background-color:#FFFF00; border:1px solid #ccc; border-radius:3px;"></span></td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -128,6 +114,21 @@
             if (/^#[0-9A-F]{6}$/i.test(val)) {
                 $('#hex_code_picker').val(val);
             }
+        });
+
+        $(document).on('click', '.btnEdit', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var hex = $(this).data('hex');
+            
+            $('#recordID').val(id);
+            $('#recordOption').val('2');
+            $('#color_name').val(name);
+            $('#hex_code').val(hex);
+            if(hex && /^#[0-9A-F]{6}$/i.test(hex)) {
+                $('#hex_code_picker').val(hex);
+            }
+            $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Update');
         });
     });
 </script>

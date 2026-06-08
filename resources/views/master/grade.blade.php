@@ -27,11 +27,11 @@
                         @csrf
                         <div class="form-group mb-2">
                             <label class="small font-weight-bold text-dark">Grade Type*</label>
-                            <select class="form-control form-control-sm" name="grade_type" id="grade_type" required>
+                            <select class="form-control form-control-sm" name="grade_type_id" id="grade_type_id" required>
                                 <option value="">Select Grade Type</option>
-                                <option value="Clarity Grade">Clarity Grade</option>
-                                <option value="Color Grade">Color Grade</option>
-                                <option value="Cut Grade">Cut Grade</option>
+                                @foreach($gradeTypes as $type)
+                                <option value="{{ $type->idtbl_grade_types }}">{{ $type->type_name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group mb-2">
@@ -56,26 +56,22 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse($grades as $grade)
                                 <tr>
-                                    <td>Clarity</td>
-                                    <td>VVS1</td>
+                                    <td>{{ $grade->gradeType->type_name ?? '-' }}</td>
+                                    <td>{{ $grade->grade_value }}</td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
+                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $grade->idtbl_grades }}"><i class="fas fa-pen"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $grade->idtbl_grades }}"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td>Color</td>
-                                    <td>Vivid</td>
-                                    <td class="text-right">
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
+                                    <td colspan="3" class="text-center text-muted py-3">No records found</td>
                                 </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -88,11 +84,62 @@
 
 @section('script')
 <script>
+    let table;
     $(document).ready(function() {
-        $('#dataTable').DataTable({
+        table = $('#dataTable').DataTable({
             responsive: true,
             order: [[0, "asc"]],
+            columnDefs: [
+                { targets: -1, orderable: false, searchable: false }
+            ]
         });
+
+        // Edit button click
+        $(document).on('click', '.btnEdit', function() {
+            let recordID = $(this).data('id');
+            
+            $.ajax({
+                url: '{{ url("Master/Gradeedit") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    recordID: recordID
+                },
+                success: function(response) {
+                    $('#grade_type_id').val(response.grade_type_id);
+                    $('#grade_value').val(response.grade_value);
+                    $('#recordID').val(response.idtbl_grades);
+                    $('#recordOption').val('2');
+                    $('#submitBtn').html('<i class="fas fa-sync"></i>&nbsp;Update Grade');
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
+                },
+                error: function() {
+                    alert('Error loading record');
+                }
+            });
+        });
+
+        // Delete button click
+        $(document).on('click', '.btnDelete', function() {
+            let recordID = $(this).data('id');
+            
+            if (confirm('Are you sure you want to delete this record?')) {
+                let form = $('<form method="POST" action="{{ url("Master/Gradedelete") }}"></form>');
+                form.append('<input type="hidden" name="_token" value="{{ csrf_token() }}">');
+                form.append('<input type="hidden" name="recordID" value="' + recordID + '">');
+                $('body').append(form);
+                form.submit();
+            }
+        });
+
+        // Reset form
+        function resetForm() {
+            $('#grade_type_id').val('');
+            $('#grade_value').val('');
+            $('#recordID').val('');
+            $('#recordOption').val('1');
+            $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Save Grade');
+        }
     });
 </script>
 @endsection
