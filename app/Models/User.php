@@ -49,7 +49,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        // NOTE: password cast is intentionally NOT 'hashed' here.
+        // This system uses MD5 passwords (legacy CI migration).
+        // WelcomeController uses md5($input) + where('password', $md5) to authenticate.
     ];
 
     public function type()
