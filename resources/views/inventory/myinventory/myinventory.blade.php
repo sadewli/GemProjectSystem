@@ -55,7 +55,7 @@
             <div id="createProductDropdownMenu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="py-1" role="none">
                     @foreach($productTypes as $type)
-                        <a href="javascript:void(0)" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 openGemstoneModalBtnItem" data-type-id="{{ $type->id }}" data-type-name="{{ $type->type_name }}">{{ $type->type_name }}</a>
+                        <a href="javascript:void(0)" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 openGemstoneModalBtnItem" data-type-id="{{ $type->idtbl_product_types }}" data-type-name="{{ $type->name }}">{{ $type->name }}</a>
                     @endforeach
                 </div>
             </div>
@@ -121,7 +121,32 @@
                     {{-- Section: Product attributes --}}
                     <div class="section-header !mt-0">Product attributes</div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+        {{-- Product Type --}}
+        <div>
+            <label class="block text-[13px] text-slate-700 mb-1.5">Product Type *</label>
+            <div class="relative w-full searchable-dropdown" id="ddProductTypeWrapper">
+                <input type="hidden" name="product_type_id" id="ddProductTypeHidden">
+                <button type="button" id="ddProductTypeBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                    <span id="ddProductTypeLabel" class="truncate text-slate-400">Select product type</span>
+                </button>
+                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+                <div id="ddProductTypePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                    <div class="p-2 border-b border-slate-100">
+                        <input type="text" id="ddProductTypeSearch" placeholder="Search..." class="form-control !h-9 px-3" />
+                    </div>
+                    <ul id="ddProductTypeList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                        @foreach($productTypes as $type)
+                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $type->idtbl_product_types }}" data-label="{{ $type->name }}">{{ $type->name }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
                         {{-- SKU --}}
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">SKU</label>

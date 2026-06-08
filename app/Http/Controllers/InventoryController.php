@@ -16,7 +16,7 @@ class InventoryController extends Controller
     public function show($id = null)
     {
         $productTypes = ProductType::all();
-        return view('inventory.myinventory.myinventory', compact('productTypes'));
+        return view('inventory.myinventory.fullpage.fullpage.show', compact('productTypes'));
     }
 
     public function memoOut()

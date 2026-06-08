@@ -207,7 +207,7 @@
             <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSales"
                 aria-expanded="{{ $isSalesActive ? 'true' : 'false' }}" class="{{ $isSalesActive ? '' : 'collapsed' }}">
                 <i class="fas fa-chart-bar"></i>
-                <span class="links_name">Sales & Purchases <i class="collapse-icon"></i></span>
+                <span class="links_name">Sales & Purchases <span class="collapse-icon"></span></span>
             </a>
             <span class="tooltip">Sales & Purchases</span>
             <div class="collapse {{ $isSalesActive ? 'show' : '' }}" id="collapseSales" data-parent="#sidebar">
@@ -340,40 +340,7 @@
             </div>
         </li>
 
-        <li class="sidebar-item">
-            <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseInventory" aria-expanded="false"
-                aria-controls="collapseInventory">
-                <i class="fa-light fa-boxes"></i>
-                <span class="links_name">Inventory <i class="fas fa-angle-down"></i></span>
-            </a>
-            <span class="tooltip">Inventory</span>
-            <div class="collapse" id="collapseInventory" data-parent="#sidebar">
-                <nav class="sidenav-menu-nested nav accordion">
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Inventory/MyInventory') }}">My Inventory</a>
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Inventory/productcode') }}">Product Code</a>
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Inventory/negativeinventory') }}">Negative Inventory</a>
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Inventory/archived') }}">Archived</a>
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Inventory/memoin') }}">Memo In</a>
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Inventory/inventorylist') }}">Inventory List</a>
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Inventory/inventoryadjustment') }}">Inventory Adjustment</a>
-                </nav>
-            </div>
-        </li>
 
-        <li>
-            <a href="{{ url('Distributor/GRN') }}">
-                <i class="fa-light fa-box"></i>
-                <span class="links_name">Distributor GRN</span>
-            </a>
-            <span class="tooltip">Distributor GRN</span>
-        </li>
     </ul>
 
     <!-- Mobile Navigation Layer (Accordion) -->
@@ -424,7 +391,7 @@
                     aria-expanded="{{ $isSalesActive ? 'true' : 'false' }}"
                     class="{{ $isSalesActive ? '' : 'collapsed' }}">
                     <i class="fas fa-chart-column"></i>
-                    <span class="links_name">Sales & Purchases <span class="collapse-icon"></span>
+                    <span class="links_name">Sales & Purchases <span class="collapse-icon"></span></span>
                 </a>
                 <div class="collapse {{ $isSalesActive ? 'show' : '' }}" id="collapseSalesMobile"
                     data-parent="#accordionSidenav">
@@ -551,38 +518,6 @@
                 </div>
             </li>
 
-            <li>
-                <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseInventoryMobile"
-                    aria-expanded="false" aria-controls="collapseInventoryMobile">
-                    <i class="fa-light fa-boxes"></i>
-                    <span class="links_name">Inventory <i class="fas fa-angle-down"></i></span>
-                </a>
-                <div class="collapse" id="collapseInventoryMobile" data-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion">
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Inventory/MyInventory') }}">My Inventory</a>
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Inventory/productcode') }}">Product Code</a>
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Inventory/negativeinventory') }}">Negative Inventory</a>
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Inventory/archived') }}">Archived</a>
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Inventory/memoin') }}">Memo In</a>
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Inventory/inventorylist') }}">Inventory List</a>
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Inventory/inventoryadjustment') }}">Inventory Adjustment</a>
-                    </nav>
-                </div>
-            </li>
-
-            <li>
-                <a href="{{ url('Distributor/GRN') }}">
-                    <i class="fa-light fa-box"></i>
-                    <span class="links_name">Distributor GRN</span>
-                </a>
-            </li>
         </ul>
     </div>
 </div>

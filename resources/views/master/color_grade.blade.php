@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Colors - Master Data')
+@section('title', 'Color Grades - Master Data')
 
 @section('content')
 <div class="page-header page-header-light bg-white shadow">
@@ -8,7 +8,7 @@
         <div class="page-header-content py-3 text-center text-lg-left">
             <h1 class="page-header-title font-weight-light mb-0">
                 <div class="page-header-icon"><i data-feather="database"></i></div>
-                <span>Colors</span>
+                <span>Color Grades</span>
             </h1>
         </div>
     </div>
@@ -23,30 +23,23 @@
         <div class="card-body p-2">
             <div class="row">
                 <div class="col-12 col-md-4 mb-3">
-                    <form action="{{ url('Master/Colorinsertupdate') }}" method="post" autocomplete="off">
+                    <form action="{{ url('Master/ColorGradeinsertupdate') }}" method="post" autocomplete="off" id="colorGradeForm">
                         @csrf
                         <div class="form-group mb-2">
-                            <label class="small font-weight-bold text-dark">Color Name*</label>
-                            <input type="text" class="form-control form-control-sm" name="color_name" id="color_name" required placeholder="e.g. Royal Blue">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label class="small font-weight-bold text-dark">Hex Code (Optional)</label>
-                            <div class="input-group input-group-sm">
-                                <input type="color" class="form-control form-control-sm" name="hex_code_picker" id="hex_code_picker" style="max-width: 40px; padding: 0.1rem;" value="#002366">
-                                <input type="text" class="form-control form-control-sm" name="hex_code" id="hex_code" placeholder="#002366">
-                            </div>
-                        </div>
-                        <div class="form-group mb-2">
-                            <label class="small font-weight-bold text-dark">Product Type*</label>
+                            <label class="small font-weight-bold text-dark">Product Type <span class="text-danger">*</span></label>
                             <select class="form-control form-control-sm" name="idtbl_product_types" id="idtbl_product_types" required>
-                                <option value="">Select Product Type</option>
+                                <option value="">-- Select Product Type --</option>
                                 @foreach($productTypes as $type)
                                 <option value="{{ $type->idtbl_product_types }}">{{ $type->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group mt-3 text-right">
-                            <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4 w-100"><i class="far fa-save"></i>&nbsp;Add</button>
+                        <div class="form-group mb-2">
+                            <label class="small font-weight-bold text-dark">Grade Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-sm" name="grade_name" id="grade_name" required placeholder="e.g. AAA+">
+                        </div>
+                        <div class="form-group mt-3">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4 w-100"><i class="far fa-save"></i>&nbsp;Save Grade</button>
                         </div>
                         <div class="text-right mt-1">
                             <button type="button" id="resetBtn" class="btn btn-light btn-sm btn-block"><i class="fas fa-redo-alt"></i>&nbsp;Reset</button>
@@ -62,25 +55,19 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>PRODUCT TYPE</th>
-                                    <th>COLOR NAME</th>
-                                    <th>PREVIEW</th>
+                                    <th>GRADE NAME</th>
                                     <th>STATUS</th>
                                     <th class="text-right">ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($colors as $color)
+                                @forelse($colorGrades as $grade)
                                 <tr>
-                                    <td>{{ str_pad($color->idtbl_colors, 2, '0', STR_PAD_LEFT) }}</td>
-                                    <td>{{ $color->productType->name ?? '-' }}</td>
-                                    <td>{{ $color->color_name }}</td>
+                                    <td>{{ str_pad($grade->idtbl_color_grade, 2, '0', STR_PAD_LEFT) }}</td>
+                                    <td>{{ $grade->productType->name ?? '-' }}</td>
+                                    <td>{{ $grade->grade_name }}</td>
                                     <td>
-                                        @if($color->hex_code)
-                                        <span style="display:inline-block; width:20px; height:20px; background-color:{{ $color->hex_code }}; border:1px solid #ccc; border-radius:3px;"></span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($color->status == 1)
+                                        @if($grade->status == 1)
                                             <span class="badge badge-success font-weight-normal">Active</span>
                                         @else
                                             <span class="badge badge-secondary font-weight-normal">Inactive</span>
@@ -88,24 +75,29 @@
                                     </td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1" 
-                                                data-id="{{ $color->idtbl_colors }}" 
-                                                data-product-type="{{ $color->idtbl_product_types }}"
-                                                data-name="{{ $color->color_name }}" 
-                                                data-hex="{{ $color->hex_code }}"
+                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1"
+                                                data-id="{{ $grade->idtbl_color_grade }}"
+                                                data-product-type="{{ $grade->idtbl_product_types }}"
+                                                data-grade-name="{{ $grade->grade_name }}"
                                                 title="Edit">
                                                 <i class="fas fa-pen"></i>
                                             </button>
-                                            @if($color->status == 1)
-                                            <button type="button" class="btn btn-success btn-sm mr-1 btnStatus" data-id="{{ $color->idtbl_colors }}" title="Active - click to deactivate"><i class="fas fa-check"></i></button>
+                                            @if($grade->status == 1)
+                                            <button type="button" class="btn btn-success btn-sm mr-1 btnStatus" data-id="{{ $grade->idtbl_color_grade }}" title="Active – click to deactivate"><i class="fas fa-check"></i></button>
                                             @else
-                                            <button type="button" class="btn btn-warning btn-sm mr-1 btnStatus" data-id="{{ $color->idtbl_colors }}" title="Inactive - click to activate"><i class="fas fa-times"></i></button>
+                                            <button type="button" class="btn btn-warning btn-sm mr-1 btnStatus" data-id="{{ $grade->idtbl_color_grade }}" title="Inactive – click to activate"><i class="fas fa-times"></i></button>
                                             @endif
-                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $color->idtbl_colors }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $grade->idtbl_color_grade }}" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-3">No records found</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -118,66 +110,49 @@
 
 @section('script')
 <script>
+    let table;
     $(document).ready(function() {
-        $('#dataTable').DataTable({
+        table = $('#dataTable').DataTable({
             responsive: true,
-            order: [[0, "asc"]],
+            order: [[0, 'asc']],
             columnDefs: [
                 { targets: -1, orderable: false, searchable: false }
             ]
         });
 
-        // Sync color picker with hex input
-        $('#hex_code_picker').on('input', function() {
-            $('#hex_code').val($(this).val());
-        });
-        $('#hex_code').on('input', function() {
-            // Only update picker if valid hex
-            var val = $(this).val();
-            if (/^#[0-9A-F]{6}$/i.test(val)) {
-                $('#hex_code_picker').val(val);
-            }
-        });
-
+        // Reset form helper
         function resetForm() {
             $('#recordID').val('');
             $('#recordOption').val('1');
-            $('#color_name').val('');
-            $('#hex_code').val('');
-            $('#hex_code_picker').val('#002366');
+            $('#grade_name').val('');
             $('#idtbl_product_types').val('');
-            $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Add');
+            $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Save Grade');
         }
 
+        // Reset button
         $('#resetBtn').on('click', function() {
             resetForm();
         });
 
+        // Edit button
         $(document).on('click', '.btnEdit', function() {
-            var id = $(this).data('id');
+            var id          = $(this).data('id');
             var productType = $(this).data('product-type');
-            var name = $(this).data('name');
-            var hex = $(this).data('hex');
-            
+            var gradeName   = $(this).data('grade-name');
+
             $('#recordID').val(id);
             $('#recordOption').val('2');
             $('#idtbl_product_types').val(productType);
-            $('#color_name').val(name);
-            $('#hex_code').val(hex);
-            if(hex && /^#[0-9A-F]{6}$/i.test(hex)) {
-                $('#hex_code_picker').val(hex);
-            } else {
-                $('#hex_code_picker').val('#000000');
-            }
-            $('#submitBtn').html('<i class="fas fa-sync"></i>&nbsp;Update');
+            $('#grade_name').val(gradeName);
+            $('#submitBtn').html('<i class="fas fa-sync"></i>&nbsp;Update Grade');
             $('html, body').animate({ scrollTop: 0 }, 'slow');
         });
-        
+
         // Status toggle
         $(document).on('click', '.btnStatus', function() {
             var id = $(this).data('id');
             if (confirm('Are you sure you want to change the status of this record?')) {
-                var form = $('<form method="POST" action="{{ url("Master/Colorstatus") }}"></form>');
+                var form = $('<form method="POST" action="{{ url("Master/ColorGradestatus") }}"></form>');
                 form.append('<input type="hidden" name="_token" value="{{ csrf_token() }}">');
                 form.append('<input type="hidden" name="recordID" value="' + id + '">');
                 $('body').append(form);
@@ -189,14 +164,14 @@
         $(document).on('click', '.btnDelete', function() {
             var id = $(this).data('id');
             if (confirm('Are you sure you want to delete this record?')) {
-                var form = $('<form method="POST" action="{{ url("Master/Colordelete") }}"></form>');
+                var form = $('<form method="POST" action="{{ url("Master/ColorGradedelete") }}"></form>');
                 form.append('<input type="hidden" name="_token" value="{{ csrf_token() }}">');
                 form.append('<input type="hidden" name="recordID" value="' + id + '">');
                 $('body').append(form);
                 form.submit();
             }
         });
-        
+
         @if(Session::has('msg'))
             action('{!! Session::get("msg") !!}');
         @endif
