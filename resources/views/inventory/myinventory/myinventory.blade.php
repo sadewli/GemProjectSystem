@@ -95,7 +95,7 @@
                 @csrf
 
                 {{-- ================= TAB 1: QUICK VIEW ================= --}}
-                <div id="tab-quick-view" class="tab-content block px-6 py-6 pb-20">
+                <div id="tab-quick-view" class="tab-content active px-6 py-6 pb-20">
 
                     {{-- Upload Box --}}
                     <div class="w-[120px] h-[120px] bg-[#f1f5f9] rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors mb-6 border border-transparent">
@@ -561,7 +561,7 @@
                 </div>
 
                 {{-- ================= TAB 2: PRICING ================= --}}
-                <div id="tab-pricing" class="tab-content hidden px-6 py-6 pb-20">
+                <div id="tab-pricing" class="tab-content px-6 py-6 pb-20">
                     <div class="flex items-center gap-6 mb-6">
                         <div class="w-64">
                             <label class="block text-[13px] text-slate-700 mb-1.5">Pricing unit</label>
@@ -659,7 +659,7 @@
                 </div>
 
                 {{-- ================= TAB 3: HISTORY ================= --}}
-                <div id="tab-history" class="tab-content hidden px-6 py-6 pb-20">
+                <div id="tab-history" class="tab-content px-6 py-6 pb-20">
                     <div class="flex justify-between items-center mb-6">
                         <div class="relative w-64 searchable-dropdown" id="ddFilterWrapper">
                             <input type="hidden" name="history_filter" id="ddFilterHidden" value="Filter">
@@ -796,21 +796,19 @@
                     b.classList.add('text-slate-500');
                 });
 
-                // Hide all tab contents using Tailwind's 'hidden' class
+                // Hide all tab contents
                 tabContents.forEach(c => {
-                    c.classList.add('hidden');
-                    c.classList.remove('block');
+                    c.classList.remove('active');
                 });
 
                 // Set active state on clicked button
                 btn.classList.add('active');
                 btn.classList.remove('text-slate-500');
 
-                // Show targeted tab content using Tailwind's 'block' class
+                // Show targeted tab content
                 const target = document.querySelector(btn.dataset.target);
                 if (target) {
-                    target.classList.remove('hidden');
-                    target.classList.add('block');
+                    target.classList.add('active');
                 }
             });
         });

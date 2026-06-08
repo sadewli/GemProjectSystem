@@ -425,6 +425,15 @@ table thead {background-color:#d5dbec} */
   font-family: "Poppins", sans-serif;
 }
 
+.ki-duotone [class^="path"],
+.ki-duotone [class*=" path"],
+.ki-outline [class^="path"],
+.ki-outline [class*=" path"],
+.ki-solid [class^="path"],
+.ki-solid [class*=" path"] {
+  font-family: inherit !important;
+}
+
 @media screen and (min-width: 300px) {
   .sidebar {
     position: fixed;

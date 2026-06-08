@@ -31,13 +31,13 @@ class Commeninfo extends Model
 
             if ($priv) {
                 $menuprivilegearray[] = (object) [
-                    'add' => $priv->can_add,
-                    'edit' => $priv->can_edit,
+                    'add'          => $priv->can_add,
+                    'edit'         => $priv->can_edit,
                     'statuschange' => $priv->can_statuschange,
-                    'remove' => $priv->can_remove,
-                    'access_status' => $priv->access_status,
-                    'menuid' => $priv->tbl_menu_list_idtbl_menu_list,
-                    'menuname' => $menuname,
+                    'remove'       => $priv->can_remove,
+                    'access_status'=> $priv->access_status,
+                    'menuid'       => $priv->tbl_menu_list_idtbl_menu_list,
+                    'menuname'     => $menuname,
                 ];
             }
         }
