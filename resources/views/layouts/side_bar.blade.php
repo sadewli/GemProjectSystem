@@ -186,7 +186,8 @@
                         href="{{ url('Inventory/MyInventory') }}">My inventory</a>
                     <a class="nav-link {{ request()->is('Inventory/memoin*') ? 'active' : '' }}"
                         href="{{ url('Inventory/memoin') }}">Memo in</a>
-                    <a class="nav-link" href="javascript:void(0);">Memo out</a>
+                    <a class="nav-link {{ request()->is('Inventory/memoout*') ? 'active' : '' }}"
+                        href="{{ url('Inventory/memoout') }}">Memo out</a>
                     <a class="nav-link {{ request()->is('Inventory/archived*') ? 'active' : '' }}"
                         href="{{ url('Inventory/archived') }}">Archived</a>
                     <a class="nav-link {{ request()->is('Inventory/inventorylist*') ? 'active' : '' }}"
@@ -212,13 +213,13 @@
             <span class="tooltip">Sales & Purchases</span>
             <div class="collapse {{ $isSalesActive ? 'show' : '' }}" id="collapseSales" data-parent="#sidebar">
                 <nav class="sidenav-menu-nested nav accordion">
-                    <a class="nav-link" href="javascript:void(0);">Invoice</a>
-                    <a class="nav-link" href="javascript:void(0);">Customer memo</a>
-                    <a class="nav-link" href="javascript:void(0);">Quotation</a>
-                    <a class="nav-link" href="javascript:void(0);">Shipping invoice</a>
-                    <a class="nav-link" href="javascript:void(0);">Transfer documents</a>
-                    <a class="nav-link" href="javascript:void(0);">Purchase order</a>
-                    <a class="nav-link" href="javascript:void(0);">Supplier memo</a>
+                    <a class="nav-link {{ request()->is('sales/invoice*') ? 'active' : '' }}" href="{{ url('sales/invoice') }}">Invoice</a>
+                    <a class="nav-link {{ request()->is('sales/customer_memo*') ? 'active' : '' }}" href="{{ url('sales/customer_memo') }}">Customer Memo</a>
+                    <a class="nav-link {{ request()->is('sales/quotation*') ? 'active' : '' }}" href="{{ url('sales/quotation') }}">Quotation</a>
+                    <a class="nav-link {{ request()->is('sales/shipping_invoice*') ? 'active' : '' }}" href="{{ url('sales/shipping_invoice') }}">Shipping Invoice</a>
+                    <a class="nav-link {{ request()->is('sales/location_transfer*') ? 'active' : '' }}" href="{{ url('sales/location_transfer') }}">Transfer Documents</a>
+                    <a class="nav-link {{ request()->is('sales/purchase_order*') ? 'active' : '' }}" href="{{ url('sales/purchase_order') }}">Purchase Order</a>
+                    <a class="nav-link {{ request()->is('sales/supplier_memo*') ? 'active' : '' }}" href="{{ url('sales/supplier_memo') }}">Supplier Memo</a>
                     <a class="nav-link {{ request()->is('Distributor/GRN*') ? 'active' : '' }}"
                         href="{{ url('Distributor/GRN') }}">Distributor GRN</a>
                 </nav>
@@ -308,34 +309,77 @@
             <div class="collapse {{ $isMasterDataActive ? 'show' : '' }}" id="collapseMasterData"
                 data-parent="#sidebar">
                 <nav class="sidenav-menu-nested nav accordion">
+                    <!-- Variety Master -->
                     <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                         href="javascript:void(0);">Variety Master</a>
                     <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
                         href="{{ url('Master/Variety') }}">Variety</a>
                     <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
                         href="{{ url('Master/Subcategory') }}">Sub-Category</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/ProductType') }}">Product Type</a>
 
+                    <!-- Color Master -->
                     <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                         href="javascript:void(0);">Color Master</a>
                     <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
                         href="{{ url('Master/Color') }}">Color</a>
                     <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Master/ColorCategory') }}">Color
-                        Category</a>
+                        href="{{ url('Master/ColorCategory') }}">Color Category</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/ColorGrade') }}">Color Grade</a>
 
+                    <!-- Product Master -->
                     <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                         href="javascript:void(0);">Product Master</a>
                     <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Master/ShapeCut') }}">Shapes /
-                        Cutting</a>
+                        href="{{ url('Master/Shape') }}">Shape</a>
                     <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Master/Grade') }}">Grades</a>
+                        href="{{ url('Master/Cut') }}">Cut</a>
                     <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Master/OriginTreatment') }}">Origin
-                        & Treatment</a>
+                        href="{{ url('Master/Grade') }}">Grade</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/GradeType') }}">Grade Type</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/CuttingGrade') }}">Cutting Grade</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/ClarityGrade') }}">Clarity Grade</a>
 
-                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2 hover:text-gray-900"
-                        href="{{ url('Master/StorageLocation') }}">Storage Locations</a>
+                    <!-- Origin & Treatment -->
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                        href="javascript:void(0);">Origin & Treatment</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/Origin') }}">Origin</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/Treatment') }}">Treatment</a>
+
+                    <!-- Storage & Location -->
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                        href="javascript:void(0);">Storage & Location</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/StorageLocation') }}">Storage Location</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/TrayBox') }}">Tray/Box</a>
+
+                    <!-- Inventory -->
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                        href="javascript:void(0);">Inventory</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/SKU') }}">SKU</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/Supplier') }}">Supplier</a>
+
+                    <!-- Company & Organization -->
+                    <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                        href="javascript:void(0);">Company & Organization</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/CompanyType') }}">Company Type</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/Country') }}">Country</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/State') }}">State</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                        href="{{ url('Master/Role') }}">Role</a>
                 </nav>
             </div>
         </li>
@@ -369,7 +413,8 @@
                             href="{{ url('Inventory/MyInventory') }}">My inventory</a>
                         <a class="nav-link {{ request()->is('Inventory/memoin*') ? 'active' : '' }}"
                             href="{{ url('Inventory/memoin') }}">Memo in</a>
-                        <a class="nav-link" href="javascript:void(0);">Memo out</a>
+                        <a class="nav-link {{ request()->is('Inventory/memoout*') ? 'active' : '' }}"
+                            href="{{ url('Inventory/memoout') }}">Memo out</a>
                         <a class="nav-link {{ request()->is('Inventory/archived*') ? 'active' : '' }}"
                             href="{{ url('Inventory/archived') }}">Archived</a>
                         <a class="nav-link {{ request()->is('Inventory/inventorylist*') ? 'active' : '' }}"
@@ -396,13 +441,13 @@
                 <div class="collapse {{ $isSalesActive ? 'show' : '' }}" id="collapseSalesMobile"
                     data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">
-                        <a class="nav-link" href="javascript:void(0);">Invoice</a>
-                        <a class="nav-link" href="javascript:void(0);">Customer memo</a>
-                        <a class="nav-link" href="javascript:void(0);">Quotation</a>
-                        <a class="nav-link" href="javascript:void(0);">Shipping invoice</a>
-                        <a class="nav-link" href="javascript:void(0);">Transfer documents</a>
-                        <a class="nav-link" href="javascript:void(0);">Purchase order</a>
-                        <a class="nav-link" href="javascript:void(0);">Supplier memo</a>
+                        <a class="nav-link {{ request()->is('sales/invoice*') ? 'active' : '' }}" href="{{ url('sales/invoice') }}">Invoice</a>
+                        <a class="nav-link {{ request()->is('sales/customer_memo*') ? 'active' : '' }}" href="{{ url('sales/customer_memo') }}">Customer Memo</a>
+                        <a class="nav-link {{ request()->is('sales/quotation*') ? 'active' : '' }}" href="{{ url('sales/quotation') }}">Quotation</a>
+                        <a class="nav-link {{ request()->is('sales/shipping_invoice*') ? 'active' : '' }}" href="{{ url('sales/shipping_invoice') }}">Shipping Invoice</a>
+                        <a class="nav-link {{ request()->is('sales/location_transfer*') ? 'active' : '' }}" href="{{ url('sales/location_transfer') }}">Transfer Documents</a>
+                        <a class="nav-link {{ request()->is('sales/purchase_order*') ? 'active' : '' }}" href="{{ url('sales/purchase_order') }}">Purchase Order</a>
+                        <a class="nav-link {{ request()->is('sales/supplier_memo*') ? 'active' : '' }}" href="{{ url('sales/supplier_memo') }}">Supplier Memo</a>
                     </nav>
                 </div>
             </li>
@@ -487,33 +532,77 @@
                 <div class="collapse {{ $isMasterDataActive ? 'show' : '' }}" id="collapseMasterDataMobile"
                     data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion">
+                        <!-- Variety Master -->
                         <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                             href="javascript:void(0);">Variety Master</a>
                         <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
                             href="{{ url('Master/Variety') }}">Variety</a>
                         <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
                             href="{{ url('Master/Subcategory') }}">Sub-Category</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/ProductType') }}">Product Type</a>
 
+                        <!-- Color Master -->
                         <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                             href="javascript:void(0);">Color Master</a>
                         <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
                             href="{{ url('Master/Color') }}">Color</a>
                         <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Master/ColorCategory') }}">Color
-                            Category</a>
+                            href="{{ url('Master/ColorCategory') }}">Color Category</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/ColorGrade') }}">Color Grade</a>
 
+                        <!-- Product Master -->
                         <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                             href="javascript:void(0);">Product Master</a>
                         <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Master/ShapeCut') }}">Shapes /
-                            Cutting</a>
+                            href="{{ url('Master/Shape') }}">Shape</a>
                         <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Master/Grade') }}">Grades</a>
+                            href="{{ url('Master/Cut') }}">Cut</a>
                         <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Master/OriginTreatment') }}">Origin & Treatment</a>
+                            href="{{ url('Master/Grade') }}">Grade</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/GradeType') }}">Grade Type</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/CuttingGrade') }}">Cutting Grade</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/ClarityGrade') }}">Clarity Grade</a>
 
-                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2 hover:text-gray-900"
-                            href="{{ url('Master/StorageLocation') }}">Storage Locations</a>
+                        <!-- Origin & Treatment -->
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                            href="javascript:void(0);">Origin & Treatment</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/Origin') }}">Origin</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/Treatment') }}">Treatment</a>
+
+                        <!-- Storage & Location -->
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                            href="javascript:void(0);">Storage & Location</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/StorageLocation') }}">Storage Location</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/TrayBox') }}">Tray/Box</a>
+
+                        <!-- Inventory -->
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                            href="javascript:void(0);">Inventory</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/SKU') }}">SKU</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/Supplier') }}">Supplier</a>
+
+                        <!-- Company & Organization -->
+                        <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
+                            href="javascript:void(0);">Company & Organization</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/CompanyType') }}">Company Type</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/Country') }}">Country</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/State') }}">State</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
+                            href="{{ url('Master/Role') }}">Role</a>
                     </nav>
                 </div>
             </li>
