@@ -14,9 +14,7 @@
     </div>
 </div>
 
-<div class="container-fluid mt-3">
-    @include('layouts.master_data_nav_bar')
-</div>
+
 
 <div class="container-fluid mt-3 p-2 p-md-3">
     <div class="card shadow-sm border border-slate-200 rounded-lg overflow-hidden">

@@ -68,6 +68,7 @@ Route::get('User/Userprivilege', [UserController::class, 'Userprivilege']);
 Route::post('User/Userprivilegeinsertupdate', [UserController::class, 'Userprivilegeinsertupdate']);
 Route::post('User/Userprivilegeedit', [UserController::class, 'Userprivilegeedit']);
 Route::get('User/Userprivilegestatus/{x}/{y}', [UserController::class, 'Userprivilegestatus']);
+Route::get('User/User4MenuAccess', [UserController::class, 'User4MenuAccess']);
 
 // Additional routes will be added similarly for other controllers in the CI project, preserving the same URI patterns.
 
@@ -217,7 +218,12 @@ Route::prefix('Inventory/inventoryadjustment')->name('inventoryadjustment.')->gr
 
 Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(function () {
     Route::get('/', [InventoryController::class, 'myinventory'])->name('index');
+    Route::get('/select-type', [InventoryController::class, 'selectProductType'])->name('select_type');
+    Route::post('/store-type', [InventoryController::class, 'storeProductTypeSession'])->name('store_type');
+    Route::get('/create', [InventoryController::class, 'create'])->name('create');
     Route::get('/new', [InventoryController::class, 'show'])->name('new');
+    Route::post('/store', [InventoryController::class, 'store'])->name('store');
+    Route::get('/next-sku/{productTypeId}', [InventoryController::class, 'nextSku'])->name('next_sku');
     Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
 });
 
@@ -275,7 +281,17 @@ Route::prefix('production')->name('production.')->group(function () {
     Route::get('/overview', [\App\Http\Controllers\production\overview::class, 'index'])->name('overview.index');
     Route::get('/excelsheet', [\App\Http\Controllers\production\excelsheet::class, 'index'])->name('excelsheet.index');
     Route::get('/excelsheetupload', [\App\Http\Controllers\production\excelsheetupload::class, 'index'])->name('excelsheetupload.index');
+    
+    // New placeholder routes for menubar items
+    Route::get('/recutting', function() { return view('dashboard'); })->name('recutting');
+    Route::get('/cutting', function() { return view('dashboard'); })->name('cutting');
+    Route::get('/reassortment', function() { return view('dashboard'); })->name('reassortment');
+    Route::get('/treatment', function() { return view('dashboard'); })->name('treatment');
+    Route::get('/producttransfer', function() { return view('dashboard'); })->name('producttransfer');
 });
+
+// Missing Inventory Route
+Route::get('Inventory/stocktake', function() { return view('dashboard'); })->name('inventory.stocktake');
 
 
 /* Obsolete AJAX routes removed */

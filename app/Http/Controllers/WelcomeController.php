@@ -85,30 +85,8 @@ class WelcomeController extends Controller
             return redirect('/');
         }
 
-        $company = Company::active()
-            ->whereHas('branches', function ($query) {
-                $query->active();
-            })
-            ->orderBy('company', 'asc')
-            ->first();
-
-        if (!$company) {
-            Session::flash('msg', 'No active company available for login');
-            return redirect('/');
-        }
-
-        $branch = CompanyBranch::active()
-            ->where('tbl_company_idtbl_company', $company->idtbl_company)
-            ->orderBy('branch', 'asc')
-            ->first();
-
-        if (!$branch) {
-            Session::flash('msg', 'No active branch available for login');
-            return redirect('/');
-        }
-
-        $company_id = $company->idtbl_company;
-        $branch_id = $branch->idtbl_company_branch;
+        $company_id = null;
+        $branch_id = null;
 
         Session::put('userid', $user->idtbl_user);
         Session::put('name', $user->name);
@@ -116,17 +94,15 @@ class WelcomeController extends Controller
         Session::put('type', $user->tbl_user_type_idtbl_user_type);
         Session::put('typename', optional($user->type)->usertype);
         Session::put('company_id', $company_id);
-        Session::put('company_name', $company->company);
-        Session::put('company_code', $company->code);
+        Session::put('company_name', null);
+        Session::put('company_code', null);
         Session::put('branch_id', $branch_id);
-        Session::put('branch_name', $branch->branch);
-        Session::put('branch_code', $branch->code);
+        Session::put('branch_name', null);
+        Session::put('branch_code', null);
         Session::put('loggedin', true);
 
         LoginLog::create([
             'tbl_user_idtbl_user' => $user->idtbl_user,
-            'tbl_company_idtbl_company' => $company_id,
-            'tbl_company_branch_idtbl_company_branch' => $branch_id,
             'login_datetime' => now(),
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),

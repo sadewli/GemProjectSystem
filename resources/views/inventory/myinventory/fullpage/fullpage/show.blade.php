@@ -134,6 +134,8 @@
 
 @section('content')
     <div class="p-6 bg-[#f8fafc] min-h-screen font-sans">
+        <form id="productForm" method="POST" action="{{ route('inventory.myinventory.store') }}">
+            @csrf
 
         {{-- Top Header --}}
         <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6 flex justify-between items-center shadow-sm">
@@ -150,7 +152,7 @@
                     <div class="text-[11px] font-semibold text-amber-500">Draft</div>
                 </div>
             </div>
-            <button type="button"
+            <button type="submit"
                 class="bg-[#2563eb] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors">
                 Save and add new
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,6 +201,7 @@
             @include('inventory.myinventory.fullpage.fullpage.partials._sidebar')
 
         </div>
+        </form>
     </div>
 @endsection
 
@@ -278,6 +281,12 @@
                             selectedTextSpan.innerText = val;
                             selectedTextSpan.classList.remove('text-slate-400');
                             selectedTextSpan.classList.add('text-slate-800');
+                        }
+
+                        // Update hidden input if it exists
+                        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+                        if (hiddenInput) {
+                            hiddenInput.value = this.getAttribute('data-value') || '';
                         }
 
                         // Mark selected item

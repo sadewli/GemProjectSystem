@@ -73,8 +73,7 @@
         <h1 class="text-[20px] font-bold text-gray-900 m-0">Archived products</h1>
     </div>
 
-    <!-- Page Menu Bar -->
-    @include('layouts.master_data_nav_bar')
+
 
     <!-- Filter Card -->
     <div class="bg-white border border-gray-200 rounded-md shadow-sm w-full mb-10 relative z-20">

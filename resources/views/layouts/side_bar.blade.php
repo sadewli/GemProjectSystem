@@ -192,7 +192,7 @@
                         href="{{ url('Inventory/archived') }}">Archived</a>
                     <a class="nav-link {{ request()->is('Inventory/inventorylist*') ? 'active' : '' }}"
                         href="{{ url('Inventory/inventorylist') }}">Inventory list</a>
-                    <a class="nav-link" href="javascript:void(0);">Stock take</a>
+                    <a class="nav-link {{ request()->is('Inventory/stocktake*') ? 'active' : '' }}" href="{{ url('Inventory/stocktake') }}">Stock take</a>
                     <a class="nav-link {{ request()->is('Inventory/inventoryadjustment*') ? 'active' : '' }}"
                         href="{{ url('Inventory/inventoryadjustment') }}">Inventory adjustment</a>
                     <a class="nav-link {{ request()->is('Inventory/negativeinventory*') ? 'active' : '' }}"
@@ -258,11 +258,11 @@
                 <nav class="sidenav-menu-nested nav accordion">
                     <a class="nav-link {{ request()->is('production/overview*') ? 'active' : '' }}"
                         href="{{ url('production/overview') }}">Overview</a>
-                    <a class="nav-link" href="javascript:void(0);">Re-cutting</a>
-                    <a class="nav-link" href="javascript:void(0);">Cutting</a>
-                    <a class="nav-link" href="javascript:void(0);">Re-assortment</a>
-                    <a class="nav-link" href="javascript:void(0);">Treatment</a>
-                    <a class="nav-link" href="javascript:void(0);">Product transfer</a>
+                    <a class="nav-link {{ request()->is('production/recutting*') ? 'active' : '' }}" href="{{ url('production/recutting') }}">Re-cutting</a>
+                    <a class="nav-link {{ request()->is('production/cutting*') ? 'active' : '' }}" href="{{ url('production/cutting') }}">Cutting</a>
+                    <a class="nav-link {{ request()->is('production/reassortment*') ? 'active' : '' }}" href="{{ url('production/reassortment') }}">Re-assortment</a>
+                    <a class="nav-link {{ request()->is('production/treatment*') ? 'active' : '' }}" href="{{ url('production/treatment') }}">Treatment</a>
+                    <a class="nav-link {{ request()->is('production/producttransfer*') ? 'active' : '' }}" href="{{ url('production/producttransfer') }}">Product transfer</a>
                 </nav>
             </div>
         </li>
@@ -364,10 +364,10 @@
                     <!-- Inventory -->
                     <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                         href="javascript:void(0);">Inventory</a>
-                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Master/SKU') }}">SKU</a>
-                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                        href="{{ url('Master/Supplier') }}">Supplier</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900 {{ request()->is('Master/Sku*') ? 'active text-blue-600' : '' }}"
+                        href="{{ url('Master/Sku') }}">SKU</a>
+                    <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900 {{ request()->is('Master/Suppliers*') ? 'active text-blue-600' : '' }}"
+                        href="{{ url('Master/Suppliers') }}">Supplier</a>
 
                     <!-- Company & Organization -->
                     <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
@@ -419,7 +419,7 @@
                             href="{{ url('Inventory/archived') }}">Archived</a>
                         <a class="nav-link {{ request()->is('Inventory/inventorylist*') ? 'active' : '' }}"
                             href="{{ url('Inventory/inventorylist') }}">Inventory list</a>
-                        <a class="nav-link" href="javascript:void(0);">Stock take</a>
+                        <a class="nav-link {{ request()->is('Inventory/stocktake*') ? 'active' : '' }}" href="{{ url('Inventory/stocktake') }}">Stock take</a>
                         <a class="nav-link {{ request()->is('Inventory/inventoryadjustment*') ? 'active' : '' }}"
                             href="{{ url('Inventory/inventoryadjustment') }}">Inventory adjustment</a>
                         <a class="nav-link {{ request()->is('Inventory/negativeinventory*') ? 'active' : '' }}"
@@ -483,11 +483,11 @@
                     <nav class="sidenav-menu-nested nav accordion">
                         <a class="nav-link {{ request()->is('production/overview*') ? 'active' : '' }}"
                             href="{{ url('production/overview') }}">Overview</a>
-                        <a class="nav-link" href="javascript:void(0);">Re-cutting</a>
-                        <a class="nav-link" href="javascript:void(0);">Cutting</a>
-                        <a class="nav-link" href="javascript:void(0);">Re-assortment</a>
-                        <a class="nav-link" href="javascript:void(0);">Treatment</a>
-                        <a class="nav-link" href="javascript:void(0);">Product transfer</a>
+                        <a class="nav-link {{ request()->is('production/recutting*') ? 'active' : '' }}" href="{{ url('production/recutting') }}">Re-cutting</a>
+                        <a class="nav-link {{ request()->is('production/cutting*') ? 'active' : '' }}" href="{{ url('production/cutting') }}">Cutting</a>
+                        <a class="nav-link {{ request()->is('production/reassortment*') ? 'active' : '' }}" href="{{ url('production/reassortment') }}">Re-assortment</a>
+                        <a class="nav-link {{ request()->is('production/treatment*') ? 'active' : '' }}" href="{{ url('production/treatment') }}">Treatment</a>
+                        <a class="nav-link {{ request()->is('production/producttransfer*') ? 'active' : '' }}" href="{{ url('production/producttransfer') }}">Product transfer</a>
                     </nav>
                 </div>
             </li>
@@ -587,10 +587,10 @@
                         <!-- Inventory -->
                         <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"
                             href="javascript:void(0);">Inventory</a>
-                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Master/SKU') }}">SKU</a>
-                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900"
-                            href="{{ url('Master/Supplier') }}">Supplier</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900 {{ request()->is('Master/Sku*') ? 'active text-blue-600' : '' }}"
+                            href="{{ url('Master/Sku') }}">SKU</a>
+                        <a class="nav-link p-0 px-4 py-1 text-sm text-gray-800 hover:text-gray-900 {{ request()->is('Master/Suppliers*') ? 'active text-blue-600' : '' }}"
+                            href="{{ url('Master/Suppliers') }}">Supplier</a>
 
                         <!-- Company & Organization -->
                         <a class="nav-link p-0 px-3 py-1 text-sm text-gray-800 font-bold mt-2"

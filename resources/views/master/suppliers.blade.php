@@ -14,10 +14,6 @@
     </div>
 </div>
 
-<div class="container-fluid mt-2">
-    @include('layouts.master_data_nav_bar')
-</div>
-
 <div class="container-fluid mt-2 p-0 p-md-2">
     <div class="card shadow-sm mb-3">
         <div class="card-body p-3">
@@ -37,8 +33,8 @@
                 <div class="row">
                     <div class="col-md-6 form-group">
                         <label class="small font-weight-bold text-dark">Supplier Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-sm @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
-                        @error('name')
+                        <input type="text" class="form-control form-control-sm @error('supplier_name') is-invalid @enderror" name="supplier_name" value="{{ old('supplier_name') }}" required>
+                        @error('supplier_name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -84,8 +80,8 @@
                     <div class="col-md-3 form-group">
                         <label class="small font-weight-bold text-dark">Status</label>
                         <select class="form-control form-control-sm @error('status') is-invalid @enderror" name="status">
-                            <option value="Active" {{ old('status', 'Active') === 'Active' ? 'selected' : '' }}>Active</option>
-                            <option value="Inactive" {{ old('status') === 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Active</option>
+                            <option value="2" {{ old('status') == '2' ? 'selected' : '' }}>Inactive</option>
                         </select>
                         @error('status')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -136,13 +132,21 @@
                         @forelse($suppliers as $index => $supplier)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $supplier->name }}</td>
+                                <td>{{ $supplier->supplier_name }}</td>
                                 <td>{{ $supplier->contact_name ?? '-' }}</td>
                                 <td>{{ $supplier->email ?? '-' }}</td>
                                 <td>{{ $supplier->phone ?? '-' }}</td>
                                 <td>{{ $supplier->country ?? '-' }}</td>
                                 <td>{{ $supplier->currency }}</td>
-                                <td>{{ $supplier->status }}</td>
+                                <td>
+                                    @if($supplier->status == 1)
+                                        <span class="badge badge-success">Active</span>
+                                    @elseif($supplier->status == 2)
+                                        <span class="badge badge-warning">Inactive</span>
+                                    @else
+                                        <span class="badge badge-danger">Deleted</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -160,6 +164,9 @@
 @section('script')
 <script>
     $(document).ready(function () {
+        if ($.fn.DataTable.isDataTable('#supplierDataTable')) {
+            $('#supplierDataTable').DataTable().destroy();
+        }
         $('#supplierDataTable').DataTable({
             responsive: true,
             order: [[0, 'asc']],

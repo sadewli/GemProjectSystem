@@ -10,7 +10,7 @@
     .tab-btn { transition: all 0.2s; border-bottom: 2px solid transparent; }
     .tab-btn.active { color: #2563eb !important; border-bottom-color: #2563eb !important; }
     .tab-content { display: none; }
-    .tab-content.active { display: block !important; }
+    .tab-content.active, .tab-content.block { display: block !important; }
 
     /* Custom scrollbar for modal body */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -45,19 +45,29 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">My Inventory</h1>
-        <div class="relative inline-block text-left">
-            <button type="button" id="createProductDropdownBtn" class="btn btn-primary flex items-center">
-                <i class="fas fa-plus mr-2"></i> Create New Product
-                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
+        <div class="relative inline-block" id="createBtnWrapper">
+            <button type="button" id="openGemstoneModalBtn" class="btn btn-primary flex items-center gap-2">
+                <i class="fas fa-plus"></i> Create New Product
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
-            <div id="createProductDropdownMenu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div class="py-1" role="none">
-                    @foreach($productTypes as $type)
-                        <a href="javascript:void(0)" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 openGemstoneModalBtnItem" data-type-id="{{ $type->idtbl_product_types }}" data-type-name="{{ $type->name }}">{{ $type->name }}</a>
-                    @endforeach
+            {{-- Product Type Picker Dropdown --}}
+            <div id="productTypePickerMenu" class="hidden absolute right-0 z-50 mt-2 w-56 bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden">
+                <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200">
+                    <p class="text-[12px] font-semibold text-slate-500 uppercase tracking-wide">Select Product Type</p>
                 </div>
+                <ul class="py-1">
+                    @foreach($productTypes as $type)
+                        <li>
+                            <button type="button"
+                                class="product-type-pick-btn w-full text-left flex items-center gap-3 px-4 py-3 text-[14px] text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                                data-type-id="{{ $type->idtbl_product_types }}"
+                                data-type-name="{{ $type->name }}">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-blue-100 text-blue-700 text-[11px] font-bold">{{ strtoupper(substr($type->skuname ?? $type->name, 0, 2)) }}</span>
+                                <span>{{ $type->name }}</span>
+                            </button>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
         </div>
     </div>
@@ -90,6 +100,8 @@
                 <div class="flex items-center gap-2 mt-1 text-[14px]">
                     <span class="text-amber-500 font-medium">Draft</span>
                     <span class="text-slate-500 font-medium">Created by Sachintha Kaveen {{ date('d M Y') }}</span>
+                    <span class="text-slate-300">•</span>
+                    <span id="selectedProductTypeLabel" class="text-blue-600 font-medium"></span>
                 </div>
             </div>
         </div>
@@ -101,13 +113,12 @@
             <button type="button" class="tab-btn py-3.5 font-semibold text-[14px] flex-1 text-center text-slate-500" data-target="#tab-history">History</button>
         </div>
 
-        {{-- Modal Body (Scrollable) --}}
         <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
-            <form id="createGemstoneForm" action="#" method="POST">
+            <form id="createGemstoneForm" action="{{ route('inventory.myinventory.store') }}" method="POST">
                 @csrf
 
                 {{-- ================= TAB 1: QUICK VIEW ================= --}}
-                <div id="tab-quick-view" class="tab-content active px-6 py-6 pb-20">
+                <div id="tab-quick-view" class="tab-content active block px-6 py-6 pb-20">
 
                     {{-- Upload Box --}}
                     <div class="w-[120px] h-[120px] bg-[#f1f5f9] rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors mb-6 border border-transparent">
@@ -121,32 +132,7 @@
                     {{-- Section: Product attributes --}}
                     <div class="section-header !mt-0">Product attributes</div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-        {{-- Product Type --}}
-        <div>
-            <label class="block text-[13px] text-slate-700 mb-1.5">Product Type *</label>
-            <div class="relative w-full searchable-dropdown" id="ddProductTypeWrapper">
-                <input type="hidden" name="product_type_id" id="ddProductTypeHidden">
-                <button type="button" id="ddProductTypeBtn" class="form-control flex items-center pl-3 pr-8 text-left">
-                    <span id="ddProductTypeLabel" class="truncate text-slate-400">Select product type</span>
-                </button>
-                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-                <div id="ddProductTypePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
-                    <div class="p-2 border-b border-slate-100">
-                        <input type="text" id="ddProductTypeSearch" placeholder="Search..." class="form-control !h-9 px-3" />
-                    </div>
-                    <ul id="ddProductTypeList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
-                        @foreach($productTypes as $type)
-                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $type->idtbl_product_types }}" data-label="{{ $type->name }}">{{ $type->name }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
                         {{-- SKU --}}
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">SKU</label>
@@ -165,7 +151,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <input type="text" value="CPG8" class="form-control w-1/2 px-3">
+                                <input type="text" name="sku_number" value="CPG8" class="form-control w-1/2 px-3">
                             </div>
                         </div>
 
@@ -173,7 +159,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Variety <span class="text-rose-500">*</span></label>
                             <div class="relative w-full searchable-dropdown" id="ddVarietyWrapper">
-                                <input type="hidden" name="variety" id="ddVarietyHidden">
+                                <input type="hidden" name="idtbl_varieties" id="ddVarietyHidden">
                                 <button type="button" id="ddVarietyBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddVarietyLabel" class="truncate text-slate-400">Select variety</span>
                                 </button>
@@ -197,7 +183,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Sub - Category</label>
                             <div class="relative w-full searchable-dropdown" id="ddSubCategoryWrapper">
-                                <input type="hidden" name="sub_category" id="ddSubCategoryHidden" value="Unspecified">
+                                <input type="hidden" name="idtbl_sub_categories" id="ddSubCategoryHidden" value="Unspecified">
                                 <button type="button" id="ddSubCategoryBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddSubCategoryLabel" class="truncate text-slate-800">Unspecified</span>
                                 </button>
@@ -217,18 +203,18 @@
                         {{-- Quantity --}}
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Quantity</label>
-                            <input type="text" placeholder="Quantity" class="form-control px-3">
+                            <input type="text" name="quantity" placeholder="Quantity" class="form-control px-3">
                         </div>
 
                         {{-- Dimensions --}}
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Dimensions (mm.)</label>
                             <div class="flex items-center gap-2">
-                                <input type="text" placeholder="L" class="form-control px-3 text-center !rounded-md">
+                                <input type="text" name="length_mm" placeholder="L" class="form-control px-3 text-center !rounded-md">
                                 <span class="text-slate-600 font-medium text-[13px]">x</span>
-                                <input type="text" placeholder="W" class="form-control px-3 text-center !rounded-md">
+                                <input type="text" name="width_mm" placeholder="W" class="form-control px-3 text-center !rounded-md">
                                 <span class="text-slate-600 font-medium text-[13px]">x</span>
-                                <input type="text" placeholder="H" class="form-control px-3 text-center !rounded-md">
+                                <input type="text" name="height_mm" placeholder="H" class="form-control px-3 text-center !rounded-md">
                             </div>
                         </div>
 
@@ -236,9 +222,9 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Weight <span class="text-rose-500">*</span></label>
                             <div class="flex gap-2">
-                                <input type="text" placeholder='Weight e.g. "1.2"' class="form-control flex-1 px-3">
+                                <input type="text" name="weight" placeholder='Weight e.g. "1.2"' class="form-control flex-1 px-3">
                                 <div class="relative w-[85px] searchable-dropdown" id="ddWeightUnitWrapper">
-                                    <input type="hidden" name="weight_unit" id="ddWeightUnitHidden" value="ct">
+                                    <input type="hidden" name="idtbl_weight_units" id="ddWeightUnitHidden" value="ct">
                                     <button type="button" id="ddWeightUnitBtn" class="form-control flex items-center pl-3 pr-7 text-left">
                                         <span id="ddWeightUnitLabel" class="truncate text-slate-800">ct</span>
                                     </button>
@@ -259,7 +245,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Color</label>
                             <div class="relative w-full searchable-dropdown" id="ddColorWrapper">
-                                <input type="hidden" name="color" id="ddColorHidden">
+                                <input type="hidden" name="idtbl_colors" id="ddColorHidden">
                                 <button type="button" id="ddColorBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddColorLabel" class="truncate text-slate-400">Select color</span>
                                 </button>
@@ -283,7 +269,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Shape</label>
                             <div class="relative w-full searchable-dropdown" id="ddShapeWrapper">
-                                <input type="hidden" name="shape" id="ddShapeHidden">
+                                <input type="hidden" name="idtbl_shapes" id="ddShapeHidden">
                                 <button type="button" id="ddShapeBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddShapeLabel" class="truncate text-slate-400">Select shape</span>
                                 </button>
@@ -306,7 +292,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Cutting type</label>
                             <div class="relative w-full searchable-dropdown" id="ddCuttingWrapper">
-                                <input type="hidden" name="cutting_type" id="ddCuttingHidden">
+                                <input type="hidden" name="idtbl_cuts" id="ddCuttingHidden">
                                 <button type="button" id="ddCuttingBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddCuttingLabel" class="truncate text-slate-400">Select cutting type</span>
                                 </button>
@@ -327,7 +313,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Color grade</label>
                             <div class="relative w-full searchable-dropdown" id="ddColorGradeWrapper">
-                                <input type="hidden" name="color_grade" id="ddColorGradeHidden">
+                                <input type="hidden" name="idtbl_color_grade" id="ddColorGradeHidden">
                                 <button type="button" id="ddColorGradeBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddColorGradeLabel" class="truncate text-slate-400">Select color grade</span>
                                 </button>
@@ -346,7 +332,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Clarity grade</label>
                             <div class="relative w-full searchable-dropdown" id="ddClarityWrapper">
-                                <input type="hidden" name="clarity_grade" id="ddClarityHidden">
+                                <input type="hidden" name="idtbl_clarity_grade" id="ddClarityHidden">
                                 <button type="button" id="ddClarityBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddClarityLabel" class="truncate text-slate-400">Select clarity grade</span>
                                 </button>
@@ -365,7 +351,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Cut grade</label>
                             <div class="relative w-full searchable-dropdown" id="ddCutGradeWrapper">
-                                <input type="hidden" name="cut_grade" id="ddCutGradeHidden">
+                                <input type="hidden" name="idtbl_cuttinggrade" id="ddCutGradeHidden">
                                 <button type="button" id="ddCutGradeBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddCutGradeLabel" class="truncate text-slate-400">Select cut grade</span>
                                 </button>
@@ -384,7 +370,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Origin</label>
                             <div class="relative w-full searchable-dropdown" id="ddOriginWrapper">
-                                <input type="hidden" name="origin" id="ddOriginHidden">
+                                <input type="hidden" name="idtbl_origins" id="ddOriginHidden">
                                 <button type="button" id="ddOriginBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddOriginLabel" class="truncate text-slate-400">Select origin</span>
                                 </button>
@@ -406,7 +392,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Treatment</label>
                             <div class="relative w-full searchable-dropdown" id="ddTreatmentWrapper">
-                                <input type="hidden" name="treatment" id="ddTreatmentHidden">
+                                <input type="hidden" name="idtbl_treatments" id="ddTreatmentHidden">
                                 <button type="button" id="ddTreatmentBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddTreatmentLabel" class="truncate text-slate-400">Select treatment</span>
                                 </button>
@@ -428,7 +414,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Storage locations</label>
                             <div class="relative w-full searchable-dropdown" id="ddStorageWrapper">
-                                <input type="hidden" name="storage" id="ddStorageHidden">
+                                <input type="hidden" name="idtbl_storage_locations" id="ddStorageHidden">
                                 <button type="button" id="ddStorageBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddStorageLabel" class="truncate text-slate-400">Select storage location</span>
                                 </button>
@@ -447,7 +433,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Trays/Boxes#</label>
                             <div class="relative w-full searchable-dropdown" id="ddTraysWrapper">
-                                <input type="hidden" name="trays" id="ddTraysHidden">
+                                <input type="hidden" name="idtbl_tray_box" id="ddTraysHidden">
                                 <button type="button" id="ddTraysBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddTraysLabel" class="truncate text-slate-400">Select trays/boxes#</span>
                                 </button>
@@ -483,7 +469,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Supplier name</label>
                             <div class="relative w-full searchable-dropdown" id="ddSupplierWrapper">
-                                <input type="hidden" name="supplier" id="ddSupplierHidden">
+                                <input type="hidden" name="idtbl_suppliers" id="ddSupplierHidden">
                                 <button type="button" id="ddSupplierBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddSupplierLabel" class="truncate text-slate-400">Select Supplier ref/name</span>
                                 </button>
@@ -501,14 +487,14 @@
                         {{-- Date of purchase --}}
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Date of purchase</label>
-                            <input type="text" placeholder="Date of purchase" class="form-control px-3">
+                            <input type="text" name="date_of_purchase" placeholder="Date of purchase" class="form-control px-3">
                         </div>
 
                         {{-- Ownership type --}}
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Ownership type</label>
                             <div class="relative w-full searchable-dropdown" id="ddOwnershipWrapper">
-                                <input type="hidden" name="ownership_type" id="ddOwnershipHidden">
+                                <input type="hidden" name="idtbl_ownership_type" id="ddOwnershipHidden">
                                 <button type="button" id="ddOwnershipBtn" class="form-control flex items-center pl-3 pr-8 text-left">
                                     <span id="ddOwnershipLabel" class="truncate text-slate-400">Select Ownership Type</span>
                                 </button>
@@ -598,8 +584,9 @@
                 </div>
 
                 {{-- ================= TAB 2: PRICING ================= --}}
-                <div id="tab-pricing" class="tab-content px-6 py-6 pb-20">
+                <div id="tab-pricing" class="tab-content hidden px-6 py-6 pb-20">
                     <div class="flex items-center gap-6 mb-6">
+
                         <div class="w-64">
                             <label class="block text-[13px] text-slate-700 mb-1.5">Pricing unit</label>
                             <div class="relative searchable-dropdown" id="ddPricingUnitWrapper">
@@ -696,7 +683,7 @@
                 </div>
 
                 {{-- ================= TAB 3: HISTORY ================= --}}
-                <div id="tab-history" class="tab-content px-6 py-6 pb-20">
+                <div id="tab-history" class="tab-content hidden px-6 py-6 pb-20">
                     <div class="flex justify-between items-center mb-6">
                         <div class="relative w-64 searchable-dropdown" id="ddFilterWrapper">
                             <input type="hidden" name="history_filter" id="ddFilterHidden" value="Filter">
@@ -801,6 +788,7 @@
 
         // --- Modal Toggle Logic ---
         const modal = document.getElementById('createGemstoneModal');
+        const openBtn = document.getElementById('openGemstoneModalBtn');
         const closeBtn = document.getElementById('closeGemstoneModalBtn');
         const cancelBtn = document.getElementById('cancelGemstoneModalBtn');
 
@@ -816,28 +804,54 @@
             }
         }
 
-        // Dropdown Logic
-        const dropdownBtn = document.getElementById('createProductDropdownBtn');
-        const dropdownMenu = document.getElementById('createProductDropdownMenu');
-        
-        if (dropdownBtn && dropdownMenu) {
-            dropdownBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('hidden');
-            });
-            
-            document.addEventListener('click', (e) => {
-                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.classList.add('hidden');
-                }
-            });
-        }
+        // --- Product Type Picker → then open Modal ---
+        const productTypePickerMenu = document.getElementById('productTypePickerMenu');
 
-        document.querySelectorAll('.openGemstoneModalBtnItem').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdownMenu.classList.add('hidden');
+        openBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            productTypePickerMenu.classList.toggle('hidden');
+        });
+
+        // Close picker when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('createBtnWrapper').contains(e.target)) {
+                productTypePickerMenu.classList.add('hidden');
+            }
+        });
+
+        // When a product type is selected: set hidden field + fetch SKU + open modal
+        document.querySelectorAll('.product-type-pick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const typeId   = btn.dataset.typeId;
+                const typeName = btn.dataset.typeName;
+
+                // Set the hidden product_type_id field in the modal form
+                const hiddenField = document.getElementById('ddProductTypeHidden');
+                if (hiddenField) hiddenField.value = typeId;
+
+                // Show selected type in the modal header
+                const typeLabel = document.getElementById('selectedProductTypeLabel');
+                if (typeLabel) typeLabel.textContent = typeName;
+
+                // Close the picker and open the modal
+                productTypePickerMenu.classList.add('hidden');
                 toggleModal(true);
+
+                // AJAX: Fetch the next SKU number for this product type
+                fetch(`{{ url('Inventory/MyInventory/next-sku') }}/${typeId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        // Set SKU prefix dropdown label = sku_name from tbl_skus (e.g. "Prefix")
+                        const prefixLabel  = document.getElementById('ddSkuPrefixLabel');
+                        const prefixHidden = document.getElementById('ddSkuPrefixHidden');
+                        if (prefixLabel)  prefixLabel.textContent = data.sku_label;
+                        if (prefixHidden) prefixHidden.value      = data.sku_prefix;
+
+                        // Set SKU number input = skuname + 01,02,03... (e.g. "GM01", "CPG02")
+                        const skuNumInput = document.querySelector('input[name="sku_number"]');
+                        if (skuNumInput) skuNumInput.value = data.sku_number;
+                    })
+                    .catch(() => {/* silently fail */});
             });
         });
 
@@ -859,6 +873,8 @@
                 // Hide all tab contents
                 tabContents.forEach(c => {
                     c.classList.remove('active');
+                    c.classList.add('hidden');
+                    c.classList.remove('block');
                 });
 
                 // Set active state on clicked button
@@ -869,6 +885,8 @@
                 const target = document.querySelector(btn.dataset.target);
                 if (target) {
                     target.classList.add('active');
+                    target.classList.remove('hidden');
+                    target.classList.add('block');
                 }
             });
         });

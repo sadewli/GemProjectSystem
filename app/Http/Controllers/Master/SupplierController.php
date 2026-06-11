@@ -13,7 +13,7 @@ class SupplierController extends Controller
     {
         if (!Session::get('loggedin')) return redirect('/');
         $menuaccess = (new \App\Models\Commeninfo())->Getmenuprivilege();
-        $suppliers = Supplier::orderBy('name')->get();
+        $suppliers = Supplier::orderBy('supplier_name')->get();
 
         return view('master.suppliers', compact('suppliers', 'menuaccess'));
     }
@@ -23,7 +23,7 @@ class SupplierController extends Controller
         $data = $request->validate([
             'recordOption' => 'required|in:1,2',
             'recordID' => 'nullable|integer',
-            'name' => 'required|string|max:255',
+            'supplier_name' => 'required|string|max:255',
             'contact_name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:191',
             'phone' => 'nullable|string|max:50',
@@ -33,10 +33,10 @@ class SupplierController extends Controller
             'status' => 'required|string|max:50',
         ]);
 
-        $normalizedName = trim($data['name']);
+        $normalizedName = trim($data['supplier_name']);
 
         if ($data['recordOption'] == 1) {
-            $exists = Supplier::whereRaw('LOWER(name) = ?', [strtolower($normalizedName)])
+            $exists = Supplier::whereRaw('LOWER(supplier_name) = ?', [strtolower($normalizedName)])
                 ->exists();
 
             if ($exists) {
@@ -45,14 +45,14 @@ class SupplierController extends Controller
             }
 
             Supplier::create([
-                'name' => $normalizedName,
-                'contact_name' => $data['contact_name'] ?? null,
-                'email' => $data['email'] ?? null,
-                'phone' => $data['phone'] ?? null,
-                'address' => $data['address'] ?? null,
-                'country' => $data['country'] ?? null,
-                'currency' => $data['currency'],
-                'status' => $data['status'],
+                'supplier_name' => $normalizedName,
+                'contact_name'  => $data['contact_name'] ?? null,
+                'email'         => $data['email'] ?? null,
+                'phone'         => $data['phone'] ?? null,
+                'address'       => $data['address'] ?? null,
+                'country'       => $data['country'] ?? null,
+                'currency'      => $data['currency'],
+                'status'        => $data['status'],
             ]);
 
             Session::flash('msg', json_encode($this->makeActionResponse(true, 'Record Added Successfully', 'success')));
@@ -67,14 +67,14 @@ class SupplierController extends Controller
         }
 
         $supplier->update([
-            'name' => $normalizedName,
-            'contact_name' => $data['contact_name'] ?? null,
-            'email' => $data['email'] ?? null,
-            'phone' => $data['phone'] ?? null,
-            'address' => $data['address'] ?? null,
-            'country' => $data['country'] ?? null,
-            'currency' => $data['currency'],
-            'status' => $data['status'],
+            'supplier_name' => $normalizedName,
+            'contact_name'  => $data['contact_name'] ?? null,
+            'email'         => $data['email'] ?? null,
+            'phone'         => $data['phone'] ?? null,
+            'address'       => $data['address'] ?? null,
+            'country'       => $data['country'] ?? null,
+            'currency'      => $data['currency'],
+            'status'        => $data['status'],
         ]);
 
         Session::flash('msg', json_encode($this->makeActionResponse(true, 'Record Updated Successfully', 'primary')));

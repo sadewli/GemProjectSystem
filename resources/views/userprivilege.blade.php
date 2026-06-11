@@ -14,9 +14,7 @@
     </div>
 </div>
 
-<div class="container-fluid mt-2">
-    @include('layouts.system_users_nav_bar')
-</div>
+
 
 <div class="container-fluid mt-2 p-0 p-md-2">
     <div class="card shadow-sm">
@@ -25,10 +23,10 @@
                 <div class="col-12 col-md-4 mb-3">
                     <form action="{{ url('User/Userprivilegeinsertupdate') }}" method="post" autocomplete="off">
                         @csrf
-                        <div class="form-group mb-1">
-                            <label class="small font-weight-bold">Select User*</label>
-                            <select class="form-control form-control-sm" name="userid" id="userid" required>
-                                <option value="">-- Select User --</option>
+                        <div class="form-group mb-3">
+                            <label class="small font-weight-bold">User</label>
+                            <select class="form-control" name="userid" id="userid" required>
+                                <option value="">Select</option>
                                 @if(isset($useraccount))
                                     @foreach ($useraccount as $user)
                                         <option value="{{ $user->idtbl_user }}">{{ $user->name }}</option>
@@ -37,10 +35,10 @@
                             </select>
                         </div>
                         
-                        <div class="form-group mb-1">
-                            <label class="small font-weight-bold">Menu List*</label>
-                            <select class="form-control form-control-sm" name="menuid" id="menuid" required>
-                                <option value="">-- Select Menu --</option>
+                        <div class="form-group mb-3">
+                            <label class="small font-weight-bold">Access Menu</label>
+                            <select class="form-control" name="menuid" id="menuid" required>
+                                <option value="">Select</option>
                                 @if(isset($menulist))
                                     @foreach ($menulist as $menu)
                                         <option value="{{ $menu->idtbl_menu_list }}">{{ $menu->menu_name }}</option>
@@ -49,30 +47,32 @@
                             </select>
                         </div>
 
-                        <!-- Checkboxes for Privileges -->
-                        <div class="form-group mt-3 mb-1">
-                            <div class="custom-control custom-checkbox custom-control-inline">
+                        <div class="form-group mb-3">
+                            <label class="small font-weight-bold mb-2">User Privilege</label>
+                            
+                            <div class="custom-control custom-checkbox mb-2">
                                 <input type="checkbox" class="custom-control-input" id="can_add" name="can_add" value="1">
-                                <label class="custom-control-label small font-weight-bold" for="can_add">Can Add</label>
+                                <label class="custom-control-label small font-weight-bold" style="padding-top: 3px;" for="can_add">Add Privilege</label>
                             </div>
-                            <div class="custom-control custom-checkbox custom-control-inline">
+                            
+                            <div class="custom-control custom-checkbox mb-2">
                                 <input type="checkbox" class="custom-control-input" id="can_edit" name="can_edit" value="1">
-                                <label class="custom-control-label small font-weight-bold" for="can_edit">Can Edit</label>
+                                <label class="custom-control-label small font-weight-bold" style="padding-top: 3px;" for="can_edit">Edit Privilege</label>
                             </div>
-                        </div>
-                        <div class="form-group mb-2">
-                            <div class="custom-control custom-checkbox custom-control-inline">
+                            
+                            <div class="custom-control custom-checkbox mb-2">
                                 <input type="checkbox" class="custom-control-input" id="can_statuschange" name="can_statuschange" value="1">
-                                <label class="custom-control-label small font-weight-bold" for="can_statuschange">Can Status Change</label>
+                                <label class="custom-control-label small font-weight-bold" style="padding-top: 3px;" for="can_statuschange">Status Privilege</label>
                             </div>
-                            <div class="custom-control custom-checkbox custom-control-inline">
+                            
+                            <div class="custom-control custom-checkbox mb-3">
                                 <input type="checkbox" class="custom-control-input" id="can_remove" name="can_remove" value="1">
-                                <label class="custom-control-label small font-weight-bold" for="can_remove">Can Remove</label>
+                                <label class="custom-control-label small font-weight-bold" style="padding-top: 3px;" for="can_remove">Delete Privilege</label>
                             </div>
                         </div>
 
-                        <div class="form-group mt-3 text-right">
-                            <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4 w-100 w-md-auto"><i class="far fa-save"></i>&nbsp;Save Privileges</button>
+                        <div class="form-group mt-3">
+                            <button type="submit" id="submitBtn" class="btn btn-primary w-100"><i class="far fa-save"></i>&nbsp;Add</button>
                         </div>
                         <input type="hidden" name="recordOption" id="recordOption" value="1">
                         <input type="hidden" name="recordID" id="recordID" value="">

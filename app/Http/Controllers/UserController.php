@@ -311,4 +311,10 @@ class UserController extends Controller
 
         return redirect('User/Userprivilege');
     }
+
+    public function User4MenuAccess()
+    {
+        $menuaccess = (new Commeninfo())->Getmenuprivilege();
+        return view('user4_menu_access', compact('menuaccess'));
+    }
 }
