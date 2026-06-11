@@ -10,13 +10,13 @@ use App\Models\Commeninfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 
 class WelcomeController extends Controller
 {
     public function index()
     {
-        $companies = Company::active()->orderBy('company', 'asc')->get();
-        return view('login', compact('companies'));
+        return view('login');
     }
 
     public function getBranchesByCompany(Request $request)
@@ -44,41 +44,59 @@ class WelcomeController extends Controller
     public function LoginUser(Request $request)
     {
         $request->validate([
-            'company' => 'required|integer|exists:tbl_company,idtbl_company',
-            'branch' => 'required|integer|exists:tbl_company_branch,idtbl_company_branch',
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $company_id = $request->input('company');
-        $branch_id = $request->input('branch');
         $username = $request->input('username');
-        $password = md5($request->input('password'));
+        $plainPassword = $request->input('password');
 
-        $user = User::active()
-            ->where('username', $username)
-            ->where('password', $password)
-            ->first();
+        $user = User::active()->where('username', $username)->first();
 
         if (!$user) {
             Session::flash('msg', 'Invalid Username or password');
             return redirect('/');
         }
 
-        $company = Company::active()->find($company_id);
-        $branch = CompanyBranch::active()->find($branch_id);
+        $authenticated = false;
 
-        if (!$company || !$branch || $branch->tbl_company_idtbl_company != $company_id) {
-            Session::flash('msg', 'Invalid company or branch selection');
+        $stored = $user->password;
+
+        // Detect common modern hash prefixes to avoid passing unsupported hashes to Hash::check
+        $isBcrypt = str_starts_with($stored, '$2y$') || str_starts_with($stored, '$2a$') || str_starts_with($stored, '$2b$');
+        $isArgon = str_starts_with($stored, '$argon2');
+
+        if ($isBcrypt || $isArgon) {
+            if (Hash::check($plainPassword, $stored)) {
+                $authenticated = true;
+            }
+        } else {
+            // Legacy fallback: compare MD5 or plain (depending on old storage).
+            if ($stored === md5($plainPassword)) {
+                $authenticated = true;
+                // Rehash to bcrypt for improved security
+                $user->password = Hash::make($plainPassword);
+                $user->save();
+            }
+        }
+
+        if (!$authenticated) {
+            Session::flash('msg', 'Invalid Username or password');
             return redirect('/');
         }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
         $company_id = null;
         $branch_id = null;
 
 >>>>>>> Stashed changes
+=======
+        $company_id = null;
+        $branch_id = null;
+
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
         Session::put('userid', $user->idtbl_user);
         Session::put('name', $user->name);
         Session::put('username', $user->username);

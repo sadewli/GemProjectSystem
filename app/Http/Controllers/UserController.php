@@ -10,6 +10,7 @@ use App\Models\Commeninfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -77,7 +78,7 @@ class UserController extends Controller
             User::create([
                 'name' => $data['accountname'],
                 'username' => $data['username'],
-                'password' => md5($data['password']),
+                'password' => Hash::make($data['password']),
                 'status' => 1,
                 'insertdatetime' => now(),
                 'tbl_user_type_idtbl_user_type' => $data['usertype'],
@@ -110,7 +111,7 @@ class UserController extends Controller
             ];
 
             if (!empty($data['password'])) {
-                $updateData['password'] = md5($data['password']);
+                $updateData['password'] = Hash::make($data['password']);
             }
 
             $user->update($updateData);

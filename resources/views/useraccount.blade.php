@@ -17,6 +17,25 @@
 
 
 <div class="container-fluid mt-2 p-0 p-md-2">
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if(session('msg'))
+        @php
+            $m = session('msg');
+            $decoded = @json_decode($m);
+        @endphp
+        <div class="alert alert-info">
+            {{ is_object($decoded) && isset($decoded->message) ? $decoded->message : $m }}
+        </div>
+    @endif
     <div class="card shadow-sm">
         <div class="card-body p-2">
             <div class="row">
