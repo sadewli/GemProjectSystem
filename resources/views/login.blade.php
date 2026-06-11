@@ -1,51 +1,131 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Login - VYS International</title>
-    <!-- Msway Based & Boostrap Styles -->
+    <title>Login - Ceylon Center Gem</title>
     <link href="{{ url('/css/styles.css') }}" rel="stylesheet"/>
     <link href="{{ url('/css/custom_styles.css') }}" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js"></script>
     <style>
-        body { 
-            background: linear-gradient(135deg, #f0f4ff 0%, #e0efff 100%);
+        body {
             min-height: 100vh;
+            background: #eef2ff;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
-        .premium-card {
-            border-radius: 1.25rem;
-            box-shadow: 0 1rem 3rem rgba(0,0,0,0.075);
-            background: #ffffff;
+        .login-split {
+            min-height: 90vh;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 2rem 3.5rem rgba(15, 23, 42, 0.15);
         }
-        .premium-input {
-            border: 1px solid #e1e5eb;
-            transition: all 0.2s;
+        .login-image {
+            background-image: url('{{ asset('images/Rare_Gemstones_570832b8-247b-4ce8-8055-2a81fdece1cd_480x480.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            min-height: 100%;
         }
-        .premium-input:focus {
-            border-color: #4F46E5;
-            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+        .login-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15,23,42,0.12), rgba(15,23,42,0.55));
         }
-        .premium-btn {
-            background-color: #4F46E5;
+        .login-image-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 3rem;
             color: #fff;
-            padding: 0.75rem 2.5rem;
-            border-radius: 0.5rem;
-            border: none;
-            font-weight: 600;
-            transition: all 0.2s;
+            z-index: 1;
+            padding-top: 4rem;
         }
-        .premium-btn:hover {
-            background-color: #4338ca;
-            transform: translateY(-1px);
+        .login-image-top {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-image-content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+        .login-image-content p {
+            max-width: 380px;
+            line-height: 1.8;
+            opacity: 0.92;
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 1rem;
+        }
+        .login-card {
+            padding: 3rem;
+            background: #fff;
+        }
+        .login-card .card {
+            border: 0;
+            border-radius: 1rem;
+            box-shadow: 0 1.5rem 2.5rem rgba(15, 23, 42, 0.08);
+        }
+        .login-card .form-control {
+            border-radius: 0.85rem;
+            border: 1px solid #d6d9e6;
+            padding: 1rem 1.15rem;
+            font-size: 0.95rem;
+        }
+        .login-card .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.12);
+        }
+        .login-card .btn-primary {
+            border-radius: 0.85rem;
+            padding: 0.95rem 1.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .login-card .small-link {
+            color: #6b7280;
+            text-decoration: none;
+        }
+        .login-card .small-link:hover {
+            color: #111827;
+        }
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1.75rem;
+            color: #111827;
+        }
+        .brand-badge svg {
+            width: 2rem;
+            height: 2rem;
+            color: #4f46e5;
+        }
+        @media (max-width: 991.98px) {
+            .login-split {
+                min-height: auto;
+                border-radius: 1rem;
+            }
+            .login-image {
+                min-height: 280px;
+            }
         }
     </style>
 </head>
 <body>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     <div id="layoutAuthentication" class="w-100">
         <main>
@@ -74,6 +154,21 @@
                                 </h1>
                             </div>
                             <p>Secure login for your gemstone management dashboard. Access inventory, and reporting from one elegant system.</p>
+=======
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="row login-split g-0 overflow-hidden">
+                    <div class="col-lg-6 login-image">
+                        <div class="login-image-content">
+                            <div class="login-image-top">
+                                <span class="badge badge-pill badge-primary px-3 py-2" style="background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.24); backdrop-filter: blur(10px);">
+                                    Ceylon Center Gem
+                                </span>
+                                <h1>Welcome to Ceylon Center Gem</h1>
+                            </div>
+                            <p>Secure login for your gemstone management dashboard. Access inventory, GRN, and reporting from one elegant system.</p>
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
                         </div>
                     </div>
                     <div class="col-lg-6 login-card d-flex align-items-center">
@@ -86,9 +181,12 @@
                                 <h2 class="h4 mb-3">Sign in to your account</h2>
                                 <p class="text-muted mb-4">Enter your username and password to access the gemstone management dashboard.</p>
 
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
                                 @if(session('msg'))
-                                    <div class="alert alert-danger alert-dismissible fade show rounded" style="border-radius: 0.5rem;" role="alert">
+                                    <div class="alert alert-danger alert-dismissible fade show rounded" role="alert">
                                         <i class="feather-alert-circle mr-2"></i>{{ session('msg') }}
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -98,131 +196,48 @@
 
                                 <form action="{{ url('Welcome/LoginUser') }}" method="post" autocomplete="off" id="loginForm">
                                     @csrf
-                                    <div class="form-group mb-4">
-                                        <label class="input-label font-weight-bold text-dark" for="company">Company <span class="text-danger">*</span></label>
-                                        <select class="form-control premium-input custom-select" id="company" name="company" required>
-                                            <option value="">-- Select Company --</option>
-                                            @if(isset($companies) && $companies->isNotEmpty())
-                                                @foreach($companies as $company)
-                                                    <option value="{{ $company->idtbl_company }}">{{ $company->company }} ({{ $company->code }})</option>
-                                                @endforeach
-                                            @else
-                                                <option value="">No companies available</option>
-                                            @endif
-                                        </select>
+                                    <div class="mb-4">
+                                        <label class="form-label font-weight-bold" for="username">Username</label>
+                                        <input type="text" id="username" name="username" class="form-control" placeholder="Enter Username" required autofocus>
                                     </div>
-                                    <div class="form-group mb-4" style="position: relative;">
-                                        <label class="input-label font-weight-bold text-dark" for="branch">Branch <span class="text-danger">*</span></label>
-                                        <select class="form-control premium-input custom-select" id="branch" name="branch" required>
-                                            <option value="">-- Select Branch --</option>
-                                        </select>
-                                        <div id="branch_loading" style="display:none; position:absolute; right:15px; top:38px;">
-                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                                <span class="sr-only">Loading...</span>
-                                            </div>
+                                    <div class="mb-4">
+                                        <label class="form-label font-weight-bold" for="password">Password</label>
+                                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password" required>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                                            <label class="form-check-label small text-muted" for="rememberMe">Remember Me</label>
                                         </div>
-                                        <span id="branch_error" class="ajax-error text-danger small"></span>
+                                        <a href="#" class="small text-muted small-link">Forgot password?</a>
                                     </div>
-                                    <div class="form-group mb-4">
-                                        <label class="input-label font-weight-bold text-dark" for="username">Username <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text bg-transparent border-right-0" style="border-radius: 0.5rem 0 0 0.5rem;"><i data-feather="user" style="width: 16px;"></i></span>
-                                            </div>
-                                            <input class="form-control premium-input border-left-0 pl-1" style="border-radius: 0 0.5rem 0.5rem 0;" id="username" name="username" type="text" placeholder="Enter username" autofocus required />
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="input-label font-weight-bold text-dark" for="password">Password <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text bg-transparent border-right-0" style="border-radius: 0.5rem 0 0 0.5rem;"><i data-feather="lock" style="width: 16px;"></i></span>
-                                            </div>
-                                            <input class="form-control premium-input border-left-0 pl-1" style="border-radius: 0 0.5rem 0.5rem 0;" id="password" name="password" type="password" placeholder="••••••••" required />
-                                        </div>
-                                    </div>
-                                    <div class="form-group d-flex align-items-center justify-content-between mt-5 mb-2">
-                                        <a href="#" class="small text-muted" style="text-decoration: none; font-weight: 500;">Forgot Password?</a>
-                                        <button type="submit" class="premium-btn" id="loginBtn">
-                                            Login to Dashboard <i class="fas fa-arrow-right ml-2"></i>
-                                        </button>
-                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
                                 </form>
-                            </div>
-                            <div class="card-footer bg-transparent border-0 text-center pb-4 pt-0">
-                                <div class="small text-muted" style="font-weight: 500;">
-                                    Copyright &copy; Erav Technology {{ date('Y') }}
+                                <div class="text-center mt-4">
+                                    <span class="text-muted">Don't have login details?</span>
+                                    <a href="#" class="small font-weight-bold small-link">Register</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     $(document).ready(function() {
-        feather.replace(); // Initialize feather icons
-
-        var branchUrl = '{{ route("welcome.getBranchesByCompany") }}';
-        $('#company').change(function() {
-            var company_id = $(this).val();
-            var branchSelect = $('#branch');
-            var loading = $('#branch_loading');
-            var errorText = $('#branch_error');
-
-            errorText.text('');
-            branchSelect.empty().append('<option value="">-- Select Branch --</option>').prop('disabled', true);
-
-            if(company_id) {
-                loading.show();
-                $.ajax({
-                    url: branchUrl,
-                    type: 'POST',
-                    data: {company_id: company_id, _token: '{{ csrf_token() }}'},
-                    dataType: 'json',
-                    timeout: 30000,
-                    success: function(resp) {
-                        loading.hide();
-
-                        if (resp.status === 'success' && resp.branches && resp.branches.length > 0) {
-                            $.each(resp.branches, function(index, branch) {
-                                branchSelect.append('<option value="' + branch.idtbl_company_branch + '">' + branch.branch + ' (' + branch.code + ')</option>');
-                            });
-                            branchSelect.prop('disabled', false);
-                        } else if (resp.status === 'success') {
-                            branchSelect.append('<option value="">No branches available</option>').prop('disabled', true);
-                            errorText.text('No branches available for selected company.');
-                        } else {
-                            branchSelect.append('<option value="">Error loading branches</option>').prop('disabled', true);
-                            errorText.text(resp.message || 'Could not load branches.');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        loading.hide();
-                        var msg = 'Failed to load branches. ' + (xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : (xhr.statusText || 'Server error'));
-                        console.log('AJAX Error: ', msg);
-                        branchSelect.append('<option value="">Error loading branches</option>').prop('disabled', true);
-                        errorText.text(msg);
-                    }
-                });
-            }
-        });
+        feather.replace();
 
         $('#loginForm').on('submit', function(e) {
-            if(!$('#company').val() || !$('#branch').val() || !$('#username').val() || !$('#password').val()) {
-                alert('All fields are required');
+            if (!$('#username').val() || !$('#password').val()) {
+                alert('Username and password are required');
                 e.preventDefault();
                 return false;
             }
         });
-
-        if($('#company').val()) {
-            $('#company').trigger('change');
-        }
     });
     </script>
 </body>
