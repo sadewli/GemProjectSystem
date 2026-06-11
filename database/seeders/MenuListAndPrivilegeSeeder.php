@@ -36,7 +36,7 @@ class MenuListAndPrivilegeSeeder extends Seeder
             ['idtbl_menu_list' => 18, 'menu_name' => 'Transfer Documents',     'status' => 1],
             ['idtbl_menu_list' => 19, 'menu_name' => 'Purchase Order',         'status' => 1],
             ['idtbl_menu_list' => 20, 'menu_name' => 'Supplier Memo',          'status' => 1],
-            ['idtbl_menu_list' => 21, 'menu_name' => 'Distributor GRN',        'status' => 1],
+            ['idtbl_menu_list' => 21, 'menu_name' => 'Customer List',          'status' => 1],
             ['idtbl_menu_list' => 22, 'menu_name' => 'CRM Companies',          'status' => 1],
             ['idtbl_menu_list' => 23, 'menu_name' => 'CRM Contacts',           'status' => 1],
             ['idtbl_menu_list' => 24, 'menu_name' => 'Production Overview',    'status' => 1],

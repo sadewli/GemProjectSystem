@@ -292,6 +292,10 @@ Route::prefix('production')->name('production.')->group(function () {
 
 // Missing Inventory Route
 Route::get('Inventory/stocktake', function() { return view('dashboard'); })->name('inventory.stocktake');
+<<<<<<< HEAD
+
+=======
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
 
 
 /* Obsolete AJAX routes removed */

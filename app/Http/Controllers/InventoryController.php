@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
 use Illuminate\Support\Facades\Session;
 use App\Models\ProductType;
 use App\Models\SubCategory;
@@ -21,14 +26,27 @@ use App\Models\Supplier;
 use App\Models\Sku;
 use App\Models\WeightUnit;
 use App\Models\OwnershipType;
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
 
 class InventoryController extends Controller
 {
     // ─── MyInventory index ────────────────────────────────────────────────────
     public function myinventory()
     {
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+        return view('inventory.myinventory.myinventory');
+=======
         $productTypes = ProductType::where('status', 1)->orderBy('name')->get();
         return view('inventory.myinventory.myinventory', compact('productTypes'));
+>>>>>>> Stashed changes
+=======
+        $productTypes = ProductType::where('status', 1)->orderBy('name')->get();
+        return view('inventory.myinventory.myinventory', compact('productTypes'));
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
     }
 
     // ─── STEP 1 : Show product-type selection screen ─────────────────────────
@@ -103,6 +121,12 @@ class InventoryController extends Controller
     // ─── Existing: show (full-page) ──────────────────────────────────────────
     public function show($id = null)
     {
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+        return view('inventory.myinventory.fullpage.fullpage.show');
+=======
+=======
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
         $productTypes  = ProductType::where('status', 1)->get();
         $subCategories = SubCategory::where('status', 1)->get();
         $varieties     = Variety::where('status', 1)->get();
@@ -150,6 +174,10 @@ class InventoryController extends Controller
     public function memoOut()
     {
         return view('inventory.memo_out');
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
     }
 
     public function store(Request $request)
