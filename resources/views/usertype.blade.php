@@ -14,9 +14,7 @@
     </div>
 </div>
 
-<div class="container-fluid mt-2">
-    @include('layouts.system_users_nav_bar')
-</div>
+
 
 <div class="container-fluid mt-2 p-0 p-md-2">
     <div class="card shadow-sm">

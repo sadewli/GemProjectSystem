@@ -73,23 +73,27 @@ class WelcomeController extends Controller
             return redirect('/');
         }
 
+<<<<<<< Updated upstream
+=======
+        $company_id = null;
+        $branch_id = null;
+
+>>>>>>> Stashed changes
         Session::put('userid', $user->idtbl_user);
         Session::put('name', $user->name);
         Session::put('username', $user->username);
         Session::put('type', $user->tbl_user_type_idtbl_user_type);
         Session::put('typename', optional($user->type)->usertype);
         Session::put('company_id', $company_id);
-        Session::put('company_name', $company->company);
-        Session::put('company_code', $company->code);
+        Session::put('company_name', null);
+        Session::put('company_code', null);
         Session::put('branch_id', $branch_id);
-        Session::put('branch_name', $branch->branch);
-        Session::put('branch_code', $branch->code);
+        Session::put('branch_name', null);
+        Session::put('branch_code', null);
         Session::put('loggedin', true);
 
         LoginLog::create([
             'tbl_user_idtbl_user' => $user->idtbl_user,
-            'tbl_company_idtbl_company' => $company_id,
-            'tbl_company_branch_idtbl_company_branch' => $branch_id,
             'login_datetime' => now(),
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),

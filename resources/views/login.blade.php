@@ -46,6 +46,7 @@
     </style>
 </head>
 <body>
+<<<<<<< Updated upstream
     <div id="layoutAuthentication" class="w-100">
         <main>
             <div class="container">
@@ -60,6 +61,32 @@
                                 <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Welcome back! Please login to your account.</p>
                             </div>
                             <div class="card-body p-4 pt-3">
+=======
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="row login-split g-0 overflow-hidden">
+                    <div class="col-lg-6 login-image">
+                        <div class="login-image-content">
+                            <div class="login-image-top">
+                                <h1 style="text-align: center;">
+                                     Welcome to Ceylon Center Gem
+                                </h1>
+                            </div>
+                            <p>Secure login for your gemstone management dashboard. Access inventory, and reporting from one elegant system.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 login-card d-flex align-items-center">
+                        <div class="card w-100 p-4 p-md-5">
+                            <div class="card-body">
+                                <div class="brand-badge">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L20.4 7.5v9L12 22l-8.4-5.5v-9L12 2zm0 2.4L6.2 7.8l5.8 4.4 5.8-4.4L12 4.4zm-6.4 2.9 3.5 1.3-3.5 2.7V7.3zm12.8 0v3.1l-3.5-2.7 3.5-1.3zM12 19.3l5.3-3.5-2.2-3.7H8.9l-2.2 3.7L12 19.3z"/></svg>
+                                    <span>Ceylon Center Gem</span>
+                                </div>
+                                <h2 class="h4 mb-3">Sign in to your account</h2>
+                                <p class="text-muted mb-4">Enter your username and password to access the gemstone management dashboard.</p>
+
+>>>>>>> Stashed changes
                                 @if(session('msg'))
                                     <div class="alert alert-danger alert-dismissible fade show rounded" style="border-radius: 0.5rem;" role="alert">
                                         <i class="feather-alert-circle mr-2"></i>{{ session('msg') }}

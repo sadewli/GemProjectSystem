@@ -10,17 +10,21 @@
                 <span class="sub-label">Your unique stock keeping number</span>
                 <div class="flex gap-2">
                     <div class="relative w-[100px] custom-select-wrapper">
-                        <button type="button" class="form-control flex items-center pl-3 pr-6 text-left">
+                    <input type="hidden" name="idtbl_skus" value="">
+                    <button type="button" class="form-control flex items-center pl-3 pr-6 text-left">
                             <span class="truncate text-slate-800 selected-text">Prefix</span>
                         </button>
                         <div class="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                         <div class="custom-dropdown-panel">
-                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Prefix</div>
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Prefix</div>
+                        @foreach($skus as $sku)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $sku->idtbl_skus }}">{{ $sku->prefix ?? $sku->idtbl_skus }}</div>
+                        @endforeach
                         </div>
                     </div>
-                    <input type="text" value="CPG9" class="form-control flex-1 px-3 text-slate-800">
+                    <input type="text" name="sku_number" value="CPG9" class="form-control flex-1 px-3 text-slate-800">
                 </div>
             </div>
 
@@ -28,7 +32,8 @@
                 <label>Category</label>
                 <span class="sub-label">Category e.g "Single, Parcel, Pair, Set"</span>
                 <div class="relative">
-                    <input type="text" value="Gemstone" readonly class="form-control px-3 bg-slate-50/50 text-slate-500">
+                    <input type="hidden" name="idtbl_product_types" value="{{ $productTypes->first()->idtbl_product_types ?? '' }}">
+                    <input type="text" value="{{ $productTypes->first()->product_type ?? 'Gemstone' }}" readonly class="form-control px-3 bg-slate-50/50 text-slate-500">
                     <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                     </div>
@@ -39,6 +44,7 @@
                 <label>Sub-Category</label>
                 <span class="sub-label">Product sub-category e.g "Single, Parcel, Pair, Set"</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_sub_categories" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-800 selected-text">Unspecified</span>
                     </button>
@@ -46,9 +52,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Unspecified</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Natural</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Synthetic</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Unspecified</div>
+                        @foreach($subCategories as $subCategory)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $subCategory->idtbl_sub_categories }}">{{ $subCategory->subcategory ?? $subCategory->name ?? $subCategory->idtbl_sub_categories }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -58,6 +65,7 @@
                 <label>Variety</label>
                 <span class="sub-label">Type of gemstone(s) e.g "Sapphire, Ruby, Emerald"</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_varieties" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select variety</span>
                     </button>
@@ -65,9 +73,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select variety</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Sapphire</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Ruby</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select variety</div>
+                        @foreach($varieties as $variety)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $variety->idtbl_varieties }}">{{ $variety->variety ?? $variety->name ?? $variety->idtbl_varieties }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -76,6 +85,7 @@
                 <label>Color</label>
                 <span class="sub-label">Color of your gemstone(s) e.g "Blue, Red, Green"</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_colors" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select color</span>
                     </button>
@@ -83,9 +93,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select color</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Blue</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Red</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select color</div>
+                        @foreach($colors as $color)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $color->idtbl_colors }}">{{ $color->color ?? $color->name ?? $color->idtbl_colors }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -94,6 +105,7 @@
                 <label>Shape</label>
                 <span class="sub-label">Shape of your gemstone(s) e.g "Round, Oval, Cushion, Pear"</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_shapes" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select shape</span>
                     </button>
@@ -101,8 +113,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select shape</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Oval</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select shape</div>
+                        @foreach($shapes as $shape)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $shape->idtbl_shapes }}">{{ $shape->shape ?? $shape->name ?? $shape->idtbl_shapes }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -112,6 +126,7 @@
                 <label>Cutting type</label>
                 <span class="sub-label">Cutting type of your gemstone(s) e.g "Diamond cut, Step ..."</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_cuts" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select cutting type</span>
                     </button>
@@ -119,7 +134,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select cutting type</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select cutting type</div>
+                        @foreach($cuts as $cut)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $cut->idtbl_cuts }}">{{ $cut->cut ?? $cut->name ?? $cut->idtbl_cuts }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -128,6 +146,7 @@
                 <label>Treatment</label>
                 <span class="sub-label">Type of treatment e.g "Unheated, Heated, Oiled"</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_treatments" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select treatment</span>
                     </button>
@@ -135,7 +154,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select treatment</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select treatment</div>
+                        @foreach($treatments as $treatment)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $treatment->idtbl_treatments }}">{{ $treatment->treatment ?? $treatment->name ?? $treatment->idtbl_treatments }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -144,6 +166,7 @@
                 <label>Origin</label>
                 <span class="sub-label">Geographic origin of your gemstone(s) e.g "Sri Lanka, Mya..."</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_origins" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select origin</span>
                     </button>
@@ -151,7 +174,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select origin</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select origin</div>
+                        @foreach($origins as $origin)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $origin->idtbl_origins }}">{{ $origin->origin ?? $origin->name ?? $origin->idtbl_origins }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -161,6 +187,7 @@
                 <label>Color grade</label>
                 <span class="sub-label">Enter your own color grade. To manage your color grades <a href="#" class="text-blue-600 hover:underline">clic...</a></span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_color_grade" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select color grade</span>
                     </button>
@@ -168,7 +195,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select color grade</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select color grade</div>
+                        @foreach($colorGrades as $colorGrade)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $colorGrade->idtbl_color_grade }}">{{ $colorGrade->color_grade ?? $colorGrade->name ?? $colorGrade->idtbl_color_grade }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -177,6 +207,7 @@
                 <label>Cut grade</label>
                 <span class="sub-label">Enter your own cut grade. To manage your cut grades <a href="#" class="text-blue-600 hover:underline">clic...</a></span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_cuttinggrade" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select cut grade</span>
                     </button>
@@ -184,7 +215,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select cut grade</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select cut grade</div>
+                        @foreach($cutGrades as $cutGrade)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $cutGrade->idtbl_cuttinggrade }}">{{ $cutGrade->cuttinggrade ?? $cutGrade->name ?? $cutGrade->idtbl_cuttinggrade }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -193,6 +227,7 @@
                 <label>Clarity grade</label>
                 <span class="sub-label">Enter your own clarity grade. To manage your clarity grad...</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_clarity_grade" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select clarity grade</span>
                     </button>
@@ -200,7 +235,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select clarity grade</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select clarity grade</div>
+                        @foreach($clarityGrades as $clarityGrade)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $clarityGrade->idtbl_clarity_grade }}">{{ $clarityGrade->clarity_grade ?? $clarityGrade->name ?? $clarityGrade->idtbl_clarity_grade }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -210,11 +248,11 @@
                 <label>Dimensions</label>
                 <span class="sub-label">Dimensions of your gemstone(s) in millimeters</span>
                 <div class="flex items-center gap-1.5">
-                    <input type="text" placeholder="Length(mm)" class="form-control px-2 text-center text-[12px] !rounded-lg">
+                    <input type="text" name="length_mm" placeholder="Length(mm)" class="form-control px-2 text-center text-[12px] !rounded-lg">
                     <span class="text-slate-600 font-bold text-[11px]">x</span>
-                    <input type="text" placeholder="Width(mm)" class="form-control px-2 text-center text-[12px] !rounded-lg">
+                    <input type="text" name="width_mm" placeholder="Width(mm)" class="form-control px-2 text-center text-[12px] !rounded-lg">
                     <span class="text-slate-600 font-bold text-[11px]">x</span>
-                    <input type="text" placeholder="Height(mm)" class="form-control px-2 text-center text-[12px] !rounded-lg">
+                    <input type="text" name="height_mm" placeholder="Height(mm)" class="form-control px-2 text-center text-[12px] !rounded-lg">
                 </div>
             </div>
 
@@ -222,6 +260,7 @@
                 <label>Storage locations</label>
                 <span class="sub-label">Storage location of your product.</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_storage_locations" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select storage location</span>
                     </button>
@@ -229,7 +268,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select storage location</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select storage location</div>
+                        @foreach($storageLocations as $storageLocation)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $storageLocation->idtbl_storage_locations }}">{{ $storageLocation->storage_location ?? $storageLocation->name ?? $storageLocation->idtbl_storage_locations }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -238,6 +280,7 @@
                 <label>Select tray / box#</label>
                 <span class="sub-label">Tray/Box numbe rof your product.</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_tray_box" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select tray / box#</span>
                     </button>
@@ -245,7 +288,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select tray / box#</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select tray / box#</div>
+                        @foreach($trayBoxes as $trayBox)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $trayBox->idtbl_tray_box }}">{{ $trayBox->tray_box ?? $trayBox->name ?? $trayBox->idtbl_tray_box }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -259,12 +305,12 @@
         <div class="form-group mb-5">
             <label>Product title</label>
             <span class="sub-label">Name of the gemstone for listing and identification</span>
-            <input type="text" placeholder="Product title" class="form-control px-3">
+            <input type="text" name="product_title" placeholder="Product title" class="form-control px-3">
         </div>
         <div class="form-group">
             <label>Product description</label>
             <span class="sub-label">Product description specific to your gemstone(s) e.g "The overall quality of this gemstone(s) is exceptional and very rare"</span>
-            <textarea placeholder="Product description" class="form-control px-3 py-2 h-24 resize-none"></textarea>
+            <textarea name="product_description" placeholder="Product description" class="form-control px-3 py-2 h-24 resize-none"></textarea>
         </div>
     </div>
 
@@ -276,6 +322,7 @@
                 <label>Supplier ref/name</label>
                 <span class="sub-label">Identifies the reference or name of the supplier who provi...</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_suppliers" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select Supplier ref/name</span>
                     </button>
@@ -283,7 +330,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select Supplier ref/name</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select Supplier ref/name</div>
+                        @foreach($suppliers as $supplier)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $supplier->idtbl_suppliers }}">{{ $supplier->supplier_name ?? $supplier->name ?? $supplier->idtbl_suppliers }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -291,19 +341,20 @@
             <div class="form-group">
                 <label>Supplier stone ref.</label>
                 <span class="sub-label">A unique reference for the specific stone provided by the ...</span>
-                <input type="text" placeholder="Supplier stone ref." class="form-control px-3">
+                <input type="text" name="supplier_stone_ref" placeholder="Supplier stone ref." class="form-control px-3">
             </div>
 
             <div class="form-group">
                 <label>Date of purchase</label>
                 <span class="sub-label">The date on which the gemstone or product was acquired...</span>
-                <input type="text" placeholder="Date of purchase" class="form-control px-3">
+                <input type="text" name="date_of_purchase" placeholder="Date of purchase" class="form-control px-3">
             </div>
 
             <div class="form-group">
                 <label>Ownership Type</label>
                 <span class="sub-label">Typically who is the actual purchaser and owner of the ge...</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="idtbl_ownership_type" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select Ownership Type</span>
                     </button>
@@ -311,7 +362,10 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Select Ownership Type</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Select Ownership Type</div>
+                        @foreach($ownershipTypes as $ownershipType)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $ownershipType->idtbl_ownership_type }}">{{ $ownershipType->ownership_type ?? $ownershipType->name ?? $ownershipType->idtbl_ownership_type }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -373,7 +427,8 @@
                     <label>Selling unit</label>
                     <span class="sub-label">By weight or quantity.</span>
                     <div class="relative w-full custom-select-wrapper">
-                        <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
+                    <input type="hidden" name="idtbl_weight_units" value="">
+                    <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                             <span class="truncate text-slate-800 selected-text" id="selected-selling-unit">Weight</span>
                         </button>
                         <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
@@ -399,8 +454,10 @@
                                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </div>
                             <div class="custom-dropdown-panel">
-                                <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">ct</div>
-                                <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">g</div>
+                                <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">ct</div>
+                        @foreach($weightUnits as $weightUnit)
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $weightUnit->idtbl_weight_units }}">{{ $weightUnit->unit_name ?? $weightUnit->name ?? $weightUnit->idtbl_weight_units }}</div>
+                        @endforeach
                             </div>
                         </div>
                     </div>
