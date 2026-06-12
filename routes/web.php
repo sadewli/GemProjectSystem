@@ -281,7 +281,7 @@ Route::prefix('production')->name('production.')->group(function () {
     Route::get('/overview', [\App\Http\Controllers\production\overview::class, 'index'])->name('overview.index');
     Route::get('/excelsheet', [\App\Http\Controllers\production\excelsheet::class, 'index'])->name('excelsheet.index');
     Route::get('/excelsheetupload', [\App\Http\Controllers\production\excelsheetupload::class, 'index'])->name('excelsheetupload.index');
-    
+
     // New placeholder routes for menubar items
     Route::get('/recutting', function() { return view('dashboard'); })->name('recutting');
     Route::get('/cutting', function() { return view('dashboard'); })->name('cutting');
@@ -292,10 +292,4 @@ Route::prefix('production')->name('production.')->group(function () {
 
 // Missing Inventory Route
 Route::get('Inventory/stocktake', function() { return view('dashboard'); })->name('inventory.stocktake');
-<<<<<<< HEAD
 
-=======
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
-
-
-/* Obsolete AJAX routes removed */
