@@ -45,14 +45,8 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">My Inventory</h1>
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-        <button type="button" id="openGemstoneModalBtn" class="btn btn-primary">
-            <i class="fas fa-plus mr-2"></i> Create New Product
-        </button>
-=======
-=======
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
+
+
         <div class="relative inline-block" id="createBtnWrapper">
             <button type="button" id="openGemstoneModalBtn" class="btn btn-primary flex items-center gap-2">
                 <i class="fas fa-plus"></i> Create New Product
@@ -78,10 +72,7 @@
                 </ul>
             </div>
         </div>
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
+
     </div>
 
     {{-- You can add a table here later --}}
@@ -816,12 +807,9 @@
             }
         }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+
         openBtn.addEventListener('click', () => toggleModal(true));
-=======
-=======
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
+
         // --- Product Type Picker → then open Modal ---
         const productTypePickerMenu = document.getElementById('productTypePickerMenu');
 
@@ -873,10 +861,7 @@
             });
         });
 
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
+
         closeBtn.addEventListener('click', () => toggleModal(false));
         cancelBtn.addEventListener('click', () => toggleModal(false));
 

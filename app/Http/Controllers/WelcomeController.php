@@ -85,18 +85,14 @@ class WelcomeController extends Controller
             return redirect('/');
         }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
+
         $company_id = null;
         $branch_id = null;
 
->>>>>>> Stashed changes
-=======
+
         $company_id = null;
         $branch_id = null;
 
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
         Session::put('userid', $user->idtbl_user);
         Session::put('name', $user->name);
         Session::put('username', $user->username);
