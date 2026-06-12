@@ -83,20 +83,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-xl-3 mb-3">
-                <div class="card dashboard-summary-card shadow-sm h-100 border-0">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="icon-circle bg-warning text-white mr-3"><i class="fas fa-file-invoice"></i></div>
-                            <div>
-                                <small class="text-muted">Pending GRNs</small>
-                                <h3 class="mb-0">18</h3>
-                            </div>
-                        </div>
-                        <p class="small text-muted mb-0">GRN approvals waiting for review.</p>
-                    </div>
-                </div>
-            </div>
+
             <div class="col-sm-6 col-xl-3 mb-3">
                 <div class="card dashboard-summary-card shadow-sm h-100 border-0">
                     <div class="card-body">
