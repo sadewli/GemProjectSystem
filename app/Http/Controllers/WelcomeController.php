@@ -58,8 +58,8 @@ class WelcomeController extends Controller
             return redirect('/');
         }
 
+        // Initialize authentication flag and check password
         $authenticated = false;
-
         $stored = $user->password;
 
         // Detect common modern hash prefixes to avoid passing unsupported hashes to Hash::check
@@ -85,18 +85,9 @@ class WelcomeController extends Controller
             return redirect('/');
         }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-        $company_id = null;
+        $company_id = null; // Initialize company and branch
         $branch_id = null;
 
->>>>>>> Stashed changes
-=======
-        $company_id = null;
-        $branch_id = null;
-
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
         Session::put('userid', $user->idtbl_user);
         Session::put('name', $user->name);
         Session::put('username', $user->username);

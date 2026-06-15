@@ -224,6 +224,7 @@ Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(fu
     Route::get('/new', [InventoryController::class, 'show'])->name('new');
     Route::post('/store', [InventoryController::class, 'store'])->name('store');
     Route::get('/next-sku/{productTypeId}', [InventoryController::class, 'nextSku'])->name('next_sku');
+    Route::get('/dependent-data/{productTypeId}', [InventoryController::class, 'getDependentData'])->name('dependent_data');
     Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
 });
 
@@ -292,10 +293,4 @@ Route::prefix('production')->name('production.')->group(function () {
 
 // Missing Inventory Route
 Route::get('Inventory/stocktake', function() { return view('dashboard'); })->name('inventory.stocktake');
-<<<<<<< HEAD
-
-=======
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
-
-
 /* Obsolete AJAX routes removed */

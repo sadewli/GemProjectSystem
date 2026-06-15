@@ -125,36 +125,6 @@
     </style>
 </head>
 <body>
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-    <div id="layoutAuthentication" class="w-100">
-        <main>
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5 col-md-8 col-sm-10">
-                        <div class="card premium-card border-0">
-                            <div class="card-header bg-transparent border-0 text-center pt-5 pb-0">
-                                <img src="{{ asset('assets/images/vys.png') }}" 
-                                     alt="VYS International" 
-                                     style="max-width: 180px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));" 
-                                     class="img-fluid mb-2">
-                                <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Welcome back! Please login to your account.</p>
-                            </div>
-                            <div class="card-body p-4 pt-3">
-=======
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="row login-split g-0 overflow-hidden">
-                    <div class="col-lg-6 login-image">
-                        <div class="login-image-content">
-                            <div class="login-image-top">
-                                <h1 style="text-align: center;">
-                                     Welcome to Ceylon Center Gem
-                                </h1>
-                            </div>
-                            <p>Secure login for your gemstone management dashboard. Access inventory, and reporting from one elegant system.</p>
-=======
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -168,7 +138,6 @@
                                 <h1>Welcome to Ceylon Center Gem</h1>
                             </div>
                             <p>Secure login for your gemstone management dashboard. Access inventory, GRN, and reporting from one elegant system.</p>
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
                         </div>
                     </div>
                     <div class="col-lg-6 login-card d-flex align-items-center">
@@ -181,10 +150,6 @@
                                 <h2 class="h4 mb-3">Sign in to your account</h2>
                                 <p class="text-muted mb-4">Enter your username and password to access the gemstone management dashboard.</p>
 
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
                                 @if(session('msg'))
                                     <div class="alert alert-danger alert-dismissible fade show rounded" role="alert">
                                         <i class="feather-alert-circle mr-2"></i>{{ session('msg') }}
