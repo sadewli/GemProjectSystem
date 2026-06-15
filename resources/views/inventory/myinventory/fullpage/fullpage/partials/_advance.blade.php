@@ -15,13 +15,14 @@
             <div class="form-group">
                 <label>RFID</label>
                 <span class="sub-label">Enter custom RFID number</span>
-                <input type="text" placeholder='e.g. "A2B200000000"' class="form-control px-3">
+                <input type="text" name="rfid" placeholder='e.g. "A2B200000000"' class="form-control px-3">
             </div>
 
             <div class="form-group">
                 <label>Color distribution</label>
                 <span class="sub-label">Color distribution of your gemstone(s) e.g "Even, uneven"</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="color_distribution" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select color distribution</span>
                     </button>
@@ -40,9 +41,9 @@
                 <label>Size range Length (mm)</label>
                 <span class="sub-label">Size range (in mm) from smallest to largest stone</span>
                 <div class="flex items-center gap-1.5">
-                    <input type="text" placeholder='From e.g. "1"' class="form-control px-2 text-center text-[12px]">
+                    <input type="text" name="size_length_from" placeholder='From e.g. "1"' class="form-control px-2 text-center text-[12px]">
                     <span class="text-slate-400">-</span>
-                    <input type="text" placeholder='To e.g. "2"' class="form-control px-2 text-center text-[12px]">
+                    <input type="text" name="size_length_to" placeholder='To e.g. "2"' class="form-control px-2 text-center text-[12px]">
                 </div>
             </div>
 
@@ -50,9 +51,9 @@
                 <label>Size range Width (mm)</label>
                 <span class="sub-label">Size range (in mm) from smallest to largest stone</span>
                 <div class="flex items-center gap-1.5">
-                    <input type="text" placeholder='From e.g. "1"' class="form-control px-2 text-center text-[12px]">
+                    <input type="text" name="size_width_from" placeholder='From e.g. "1"' class="form-control px-2 text-center text-[12px]">
                     <span class="text-slate-400">-</span>
-                    <input type="text" placeholder='To e.g. "2"' class="form-control px-2 text-center text-[12px]">
+                    <input type="text" name="size_width_to" placeholder='To e.g. "2"' class="form-control px-2 text-center text-[12px]">
                 </div>
             </div>
 
@@ -61,6 +62,7 @@
                 <span class="sub-label">Enter your own color grade range.</span>
                 <div class="flex items-center gap-1.5">
                     <div class="relative flex-1 custom-select-wrapper">
+                        <input type="hidden" name="color_grade_from" value="">
                         <button type="button" class="form-control flex items-center pl-2 pr-6 text-left">
                             <span class="truncate text-slate-400 selected-text text-[11px]">From</span>
                         </button>
@@ -70,6 +72,7 @@
                     </div>
                     <span class="text-slate-400">-</span>
                     <div class="relative flex-1 custom-select-wrapper">
+                        <input type="hidden" name="color_grade_to" value="">
                         <button type="button" class="form-control flex items-center pl-2 pr-6 text-left">
                             <span class="truncate text-slate-400 selected-text text-[11px]">To</span>
                         </button>
@@ -85,6 +88,7 @@
                 <span class="sub-label">Enter your own clarity grade range.</span>
                 <div class="flex items-center gap-1.5">
                     <div class="relative flex-1 custom-select-wrapper">
+                        <input type="hidden" name="clarity_grade_from" value="">
                         <button type="button" class="form-control flex items-center pl-2 pr-6 text-left">
                             <span class="truncate text-slate-400 selected-text text-[11px]">From</span>
                         </button>
@@ -94,6 +98,7 @@
                     </div>
                     <span class="text-slate-400">-</span>
                     <div class="relative flex-1 custom-select-wrapper">
+                        <input type="hidden" name="clarity_grade_to" value="">
                         <button type="button" class="form-control flex items-center pl-2 pr-6 text-left">
                             <span class="truncate text-slate-400 selected-text text-[11px]">To</span>
                         </button>
@@ -107,13 +112,14 @@
             <div class="form-group">
                 <label>Tolerance (mm)</label>
                 <span class="sub-label">Specify the tolerance of your parcel (in mm)</span>
-                <input type="text" placeholder='Amount e.g. "0.2"' class="form-control px-3">
+                <input type="text" name="tolerance_mm" placeholder='Amount e.g. "0.2"' class="form-control px-3">
             </div>
 
             <div class="form-group">
                 <label>Allow selection?</label>
                 <span class="sub-label">Specify if you allow selection to be made</span>
                 <div class="relative w-full custom-select-wrapper">
+                    <input type="hidden" name="allow_selection" value="">
                     <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                         <span class="truncate text-slate-400 selected-text">Select allow selection?</span>
                     </button>
@@ -121,8 +127,8 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="custom-dropdown-panel">
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">Yes</div>
-                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">No</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="1">Yes</div>
+                        <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="2">No</div>
                     </div>
                 </div>
             </div>
@@ -132,6 +138,7 @@
                 <span class="sub-label">Enter your own cut grade range.</span>
                 <div class="flex items-center gap-1.5">
                     <div class="relative flex-1 custom-select-wrapper">
+                        <input type="hidden" name="cut_grade_from" value="">
                         <button type="button" class="form-control flex items-center pl-2 pr-6 text-left">
                             <span class="truncate text-slate-400 selected-text text-[11px]">From</span>
                         </button>
@@ -141,6 +148,7 @@
                     </div>
                     <span class="text-slate-400">-</span>
                     <div class="relative flex-1 custom-select-wrapper">
+                        <input type="hidden" name="cut_grade_to" value="">
                         <button type="button" class="form-control flex items-center pl-2 pr-6 text-left">
                             <span class="truncate text-slate-400 selected-text text-[11px]">To</span>
                         </button>
@@ -241,6 +249,7 @@
                     <label>Selling unit</label>
                     <span class="sub-label">By weight or quantity.</span>
                     <div class="relative w-full custom-select-wrapper">
+                        <input type="hidden" name="selling_unit" value="1">
                         <button type="button" class="form-control flex items-center pl-3 pr-8 text-left">
                             <span class="truncate text-slate-800 selected-text" id="selected-selling-unit">Weight</span>
                         </button>
@@ -260,6 +269,7 @@
                     <div class="flex gap-2">
                         <input type="number" step="0.001" name="weight" id="input-weight" placeholder='Weight e.g. "1.2"' class="form-control flex-1 px-3 calc-trigger">
                         <div class="relative w-[100px] custom-select-wrapper">
+                            <input type="hidden" name="idtbl_weight_units" value="1">
                             <button type="button" class="form-control flex items-center pl-3 pr-6 text-left">
                                 <span class="truncate text-slate-800 selected-text">ct</span>
                             </button>

@@ -73,16 +73,7 @@
         <h1 class="text-[20px] font-bold text-gray-900 m-0">Archived products</h1>
     </div>
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 
-
->>>>>>> Stashed changes
-=======
-
-
->>>>>>> d2c05ed855d9a42e15dcf1f216f9b3838959b3d1
     <!-- Filter Card -->
     <div class="bg-white border border-gray-200 rounded-md shadow-sm w-full mb-10 relative z-20">
 

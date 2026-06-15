@@ -45,8 +45,6 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">My Inventory</h1>
-
-
         <div class="relative inline-block" id="createBtnWrapper">
             <button type="button" id="openGemstoneModalBtn" class="btn btn-primary flex items-center gap-2">
                 <i class="fas fa-plus"></i> Create New Product
@@ -72,7 +70,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 
     {{-- You can add a table here later --}}
@@ -119,6 +116,7 @@
         <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
             <form id="createGemstoneForm" action="{{ route('inventory.myinventory.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="idtbl_product_types" id="ddProductTypeHidden" value="">
 
                 {{-- ================= TAB 1: QUICK VIEW ================= --}}
                 <div id="tab-quick-view" class="tab-content active block px-6 py-6 pb-20">
@@ -140,21 +138,28 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">SKU</label>
                             <div class="flex gap-2">
-                                <div class="relative w-1/2 searchable-dropdown" id="ddSkuPrefixWrapper">
-                                    <input type="hidden" name="sku_prefix" id="ddSkuPrefixHidden" value="Prefix">
-                                    <button type="button" id="ddSkuPrefixBtn" class="form-control flex items-center pl-3 pr-8 text-left">
-                                        <span id="ddSkuPrefixLabel" class="truncate text-slate-800">Prefix</span>
-                                    </button>
-                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </div>
-                                    <div id="ddSkuPrefixPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
-                                        <ul id="ddSkuPrefixList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
-                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Prefix" data-label="Prefix">Prefix</li>
-                                        </ul>
+                                <div class="w-1/2">
+                                    <label class="block text-[13px] text-slate-500 mb-1">Prefix</label>
+                                    <div class="relative searchable-dropdown" id="ddSkuPrefixWrapper">
+                                        <input type="hidden" name="idtbl_skus" id="ddSkuPrefixHidden" value="">
+                                        <button type="button" id="ddSkuPrefixBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                                            <span id="ddSkuPrefixLabel" class="truncate text-slate-800">Prefix</span>
+                                        </button>
+                                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <div id="ddSkuPrefixPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                                            <ul id="ddSkuPrefixList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Prefix" data-label="Prefix">Prefix</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                                <input type="text" name="sku_number" value="CPG8" class="form-control w-1/2 px-3">
+
+                                <div class="w-1/2">
+                                    <label class="block text-[13px] text-slate-500 mb-1">SKU</label>
+                                    <input type="text" name="sku_number" id="skuNumberInput" value="{{ old('sku_number','') }}" class="form-control w-full px-3">
+                                </div>
                             </div>
                         </div>
 
@@ -408,6 +413,9 @@
                                     </div>
                                     <ul id="ddTreatmentList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select treatment">Select treatment</li>
+                                        @foreach($treatments as $treatment)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $treatment->idtbl_treatments }}" data-label="{{ $treatment->treatment_name }}">{{ $treatment->treatment_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -427,6 +435,9 @@
                                 <div id="ddStoragePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddStorageList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select storage location">Select storage location</li>
+                                        @foreach($storageLocations as $location)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $location->idtbl_storage_locations }}" data-label="{{ $location->location_name }}">{{ $location->location_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -482,6 +493,9 @@
                                 <div id="ddSupplierPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddSupplierList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select Supplier ref/name">Select Supplier ref/name</li>
+                                        @foreach($suppliers as $supplier)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $supplier->idtbl_suppliers }}" data-label="{{ $supplier->supplier_name }}">{{ $supplier->supplier_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -507,6 +521,9 @@
                                 <div id="ddOwnershipPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddOwnershipList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select Ownership Type">Select Ownership Type</li>
+                                        @foreach($ownershipTypes as $ownership)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $ownership->idtbl_ownership_type }}" data-label="{{ $ownership->ownership_type_name }}">{{ $ownership->ownership_type_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -800,15 +817,28 @@
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
+                const existingType = document.getElementById('ddProductTypeHidden');
+                if (existingType && existingType.value) {
+                    const typeId = existingType.value;
+                    fetch(`{{ url('Inventory/MyInventory/next-sku') }}/${typeId}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const prefixLabel = document.getElementById('ddSkuPrefixLabel');
+                            const prefixHidden = document.getElementById('ddSkuPrefixHidden');
+                            if (prefixLabel) prefixLabel.textContent = data.prefix_name || 'Prefix';
+                            if (prefixHidden) prefixHidden.value = data.idtbl_skus || '';
+
+                            const skuNumInput = document.querySelector('input[name="sku_number"]');
+                            if (skuNumInput) skuNumInput.value = data.sku_code || '';
+                        })
+                        .catch(() => {});
+                }
             } else {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
             }
         }
-
-
-        openBtn.addEventListener('click', () => toggleModal(true));
 
         // --- Product Type Picker → then open Modal ---
         const productTypePickerMenu = document.getElementById('productTypePickerMenu');
@@ -843,27 +873,53 @@
                 productTypePickerMenu.classList.add('hidden');
                 toggleModal(true);
 
-                // AJAX: Fetch the next SKU number for this product type
+                // AJAX: Fetch the next SKU info and available prefixes for this product type
                 fetch(`{{ url('Inventory/MyInventory/next-sku') }}/${typeId}`)
                     .then(r => r.json())
                     .then(data => {
-                        // Set SKU prefix dropdown label = sku_name from tbl_skus (e.g. "Prefix")
-                        const prefixLabel  = document.getElementById('ddSkuPrefixLabel');
+                        const prefixLabel = document.getElementById('ddSkuPrefixLabel');
                         const prefixHidden = document.getElementById('ddSkuPrefixHidden');
-                        if (prefixLabel)  prefixLabel.textContent = data.sku_label;
-                        if (prefixHidden) prefixHidden.value      = data.sku_prefix;
+                        if (prefixLabel) prefixLabel.textContent = data.prefix_name || 'Prefix';
+                        if (prefixHidden) prefixHidden.value = data.idtbl_skus || '';
 
-                        // Set SKU number input = skuname + 01,02,03... (e.g. "GM01", "CPG02")
                         const skuNumInput = document.querySelector('input[name="sku_number"]');
-                        if (skuNumInput) skuNumInput.value = data.sku_number;
+                        if (skuNumInput) skuNumInput.value = data.sku_code || '';
                     })
                     .catch(() => {/* silently fail */});
+
+                // AJAX: Fetch dependent data
+                fetch(`{{ url('Inventory/MyInventory/dependent-data') }}/${typeId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        populateDropdown('ddVarietyList', data.varieties, 'idtbl_varieties', 'name', 'Select variety');
+                        populateDropdown('ddSubCategoryList', data.subCategories, 'idtbl_sub_categories', 'sub_category_name', 'Unspecified');
+                        populateDropdown('ddColorList', data.colors, 'idtbl_colors', 'color_name', 'Select color');
+                        populateDropdown('ddShapeList', data.shapes, 'idtbl_shapes', 'name', 'Select shape');
+                        populateDropdown('ddCuttingList', data.cuts, 'idtbl_cuts', 'name', 'Select cutting type');
+                        populateDropdown('ddOriginList', data.origins, 'idtbl_origins', 'origin_name', 'Select origin');
+                        populateDropdown('ddColorGradeList', data.colorGrades, 'idtbl_color_grade', 'grade_name', 'Select color grade');
+                        populateDropdown('ddCutGradeList', data.cuttingGrades, 'idtbl_cuttinggrade', 'cuttinggradename', 'Select cut grade');
+                        populateDropdown('ddClarityList', data.clarityGrades, 'idtbl_clarity_grade', 'clarity_grade_name', 'Select clarity grade');
+                    })
+                    .catch(err => console.error(err));
             });
         });
 
+        function populateDropdown(listId, items, valKey, labelKey, defaultText) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            let html = `<li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="${defaultText}">${defaultText}</li>`;
+            items.forEach(item => {
+                html += `<li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="${item[valKey]}" data-label="${item[labelKey]}">${item[labelKey]}</li>`;
+            });
+            list.innerHTML = html;
+        }
 
+    // (openBtn click is handled by the product type picker)
         closeBtn.addEventListener('click', () => toggleModal(false));
         cancelBtn.addEventListener('click', () => toggleModal(false));
+
+
 
         // --- Tabs Logic ---
         const tabBtns = document.querySelectorAll('.tab-btn');
@@ -902,6 +958,25 @@
         function setupSearchableDropdown(wrapperId) {
             const wrapper = document.getElementById(wrapperId);
             if (!wrapper) return;
+
+            // Special: SKU prefix dropdown click handling (delegated from list)
+            if (wrapperId === 'ddSkuPrefixWrapper') {
+                const list = wrapper.querySelector('#ddSkuPrefixList');
+                if (list) {
+                    list.addEventListener('click', (e) => {
+                        const li = e.target.closest('li');
+                        if (!li) return;
+                        const value = li.dataset.value ?? '';
+                        const label = li.dataset.label ?? li.textContent ?? '';
+                        const btnLabel = wrapper.querySelector('#ddSkuPrefixLabel');
+                        const hidden = wrapper.querySelector('#ddSkuPrefixHidden');
+                        if (btnLabel) btnLabel.textContent = label;
+                        if (hidden) hidden.value = value;
+                        // close panel
+                        wrapper.querySelector('#ddSkuPrefixPanel').classList.add('hidden');
+                    });
+                }
+            }
 
             const btn = wrapper.querySelector('button');
             const panel = wrapper.querySelector('.hidden.absolute');

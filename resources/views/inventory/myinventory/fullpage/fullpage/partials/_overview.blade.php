@@ -10,9 +10,9 @@
                 <span class="sub-label">Your unique stock keeping number</span>
                 <div class="flex gap-2">
                     <div class="relative w-[100px] custom-select-wrapper">
-                    <input type="hidden" name="idtbl_skus" value="">
-                    <button type="button" class="form-control flex items-center pl-3 pr-6 text-left">
-                            <span class="truncate text-slate-800 selected-text">Prefix</span>
+                    <input type="hidden" name="idtbl_skus" id="hiddenPrefixIdFullpage" value="">
+                    <button type="button" id="prefixDropdownBtnFullpage" class="form-control flex items-center pl-3 pr-6 text-left">
+                            <span class="truncate text-slate-800 selected-text" id="skuPrefixTextFullpage">Prefix</span>
                         </button>
                         <div class="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -20,11 +20,11 @@
                         <div class="custom-dropdown-panel">
                             <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="">Prefix</div>
                         @foreach($skus as $sku)
-                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $sku->idtbl_skus }}">{{ $sku->prefix ?? $sku->idtbl_skus }}</div>
+                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-value="{{ $sku->idtbl_skus }}">{{ $sku->name ?? $sku->idtbl_skus }}</div>
                         @endforeach
                         </div>
                     </div>
-                    <input type="text" name="sku_number" value="CPG9" class="form-control flex-1 px-3 text-slate-800">
+                    <input type="text" name="sku_number" id="skuNumberInputFullpage" value="{{ old('sku_number','') }}" class="form-control flex-1 px-3 text-slate-800">
                 </div>
             </div>
 

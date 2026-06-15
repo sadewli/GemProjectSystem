@@ -23,7 +23,6 @@ try {
     // Check if user exists
     $userStmt = $pdo->prepare("SELECT idtbl_user FROM tbl_user WHERE idtbl_user = ?");
     $userStmt->execute([$userId]);
-
     if (!$userStmt->fetch()) {
         echo "✗ ERROR: User with ID 4 does not exist in the database.\n";
         exit(1);
@@ -79,7 +78,7 @@ try {
     echo "  Inventory: My Inventory, Memo In, Memo Out, Archived, Inventory List,\n";
     echo "             Stock Take, Inventory Adjustment, Negative Inventory, Product Code\n";
     echo "  Sales: Invoice, Customer Memo, Quotation, Shipping Invoice, Transfer Docs,\n";
-    echo "         Purchase Order, Supplier Memo,\n\n";
+    echo "         Purchase Order, Supplier Memo, Distributor GRN\n\n";
 
 } catch (PDOException $e) {
     echo "✗ Database ERROR: " . $e->getMessage() . "\n";

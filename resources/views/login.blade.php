@@ -130,39 +130,39 @@
     </style>
 </head>
 <body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="row login-split g-0 overflow-hidden">
+                    <div class="col-lg-6 login-image">
+                        <div class="login-image-content">
+                            <div class="login-image-top">
+                                <span class="badge badge-pill badge-primary px-3 py-2" style="background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.24); backdrop-filter: blur(10px);">
+                                    Ceylon Center Gem
+                                </span>
+                                <h1>Welcome to Ceylon Center Gem</h1>
+                            </div>
+                            <p>Secure login for your gemstone management dashboard. Access inventory, GRN, and reporting from one elegant system.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 login-card d-flex align-items-center">
+                        <div class="card w-100 p-4 p-md-5">
+                            <div class="card-body">
+                                <div class="brand-badge">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L20.4 7.5v9L12 22l-8.4-5.5v-9L12 2zm0 2.4L6.2 7.8l5.8 4.4 5.8-4.4L12 4.4zm-6.4 2.9 3.5 1.3-3.5 2.7V7.3zm12.8 0v3.1l-3.5-2.7 3.5-1.3zM12 19.3l5.3-3.5-2.2-3.7H8.9l-2.2 3.7L12 19.3z"/></svg>
+                                    <span>Ceylon Center Gem</span>
+                                </div>
+                                <h2 class="h4 mb-3">Sign in to your account</h2>
+                                <p class="text-muted mb-4">Enter your username and password to access the gemstone management dashboard.</p>
 
-    <div id="layoutAuthentication" class="w-100">
-        <main>
-            <div class="container py-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="row login-split g-0 overflow-hidden">
-                            <div class="col-lg-5 login-image">
-                                <div class="login-image-content">
-                                    <div class="login-image-top">
-                                        <h1 style="text-align: center;">Welcome to Ceylon Center Gem</h1>
+                                @if(session('msg'))
+                                    <div class="alert alert-danger alert-dismissible fade show rounded" role="alert">
+                                        <i class="feather-alert-circle mr-2"></i>{{ session('msg') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
-
-                                    </div>
-                                    </div>
-                            <div class="col-lg-7 login-card d-flex align-items-center">
-                                <div class="card w-100 p-3">
-                                    <div class="card-body">
-                                        <div class="brand-badge">
-                                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L20.4 7.5v9L12 22l-8.4-5.5v-9L12 2zm0 2.4L6.2 7.8l5.8 4.4 5.8-4.4L12 4.4zm-6.4 2.9 3.5 1.3-3.5 2.7V7.3zm12.8 0v3.1l-3.5-2.7 3.5-1.3zM12 19.3l5.3-3.5-2.2-3.7H8.9l-2.2 3.7L12 19.3z"/></svg>
-                                            <span>Ceylon Center Gem</span>
-                                        </div>
-                                        <h2 class="h4 mb-3">Sign in to your account</h2>
-                                        <p class="text-muted mb-4">Enter your username and password to access the gemstone management dashboard.</p>
-
-                                        @if(session('msg'))
-                                            <div class="alert alert-danger alert-dismissible fade show rounded" role="alert">
-                                                <i class="feather-alert-circle mr-2"></i>{{ session('msg') }}
-                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                        @endif
+                                @endif
 
                                         <form action="/Welcome/LoginUser" method="post" autocomplete="off" id="loginForm">
                                             @csrf

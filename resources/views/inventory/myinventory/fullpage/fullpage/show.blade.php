@@ -305,6 +305,35 @@
                     wrapper.classList.remove('open');
                 });
             });
+
+            // Fetch SKU for fullpage
+            const productTypeInput = document.querySelector('input[name="idtbl_product_types"]');
+            if (productTypeInput && productTypeInput.value) {
+                const productTypeId = productTypeInput.value;
+                fetch(`/Inventory/MyInventory/next-sku/${productTypeId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.prefix_name && data.sku_code) {
+                            const prefixSpan = document.querySelector('#skuPrefixTextFullpage');
+                            const skuInput = document.querySelector('#skuNumberInputFullpage');
+                            const hiddenPrefix = document.querySelector('#hiddenPrefixIdFullpage');
+                            const prefixBtn = document.querySelector('#prefixDropdownBtnFullpage');
+                            
+                            if (prefixSpan) prefixSpan.innerText = data.prefix_name;
+                            if (hiddenPrefix) hiddenPrefix.value = data.idtbl_skus;
+                            if (skuInput) {
+                                skuInput.value = data.sku_code;
+                                skuInput.setAttribute('readonly', 'true');
+                                skuInput.classList.add('bg-slate-50/50', 'text-slate-500');
+                            }
+                            if (prefixBtn) {
+                                prefixBtn.disabled = true;
+                                prefixBtn.classList.add('bg-slate-50/50');
+                            }
+                        }
+                    })
+                    .catch(err => console.error("Error fetching SKU:", err));
+            }
         });
     </script>
 @endsection
