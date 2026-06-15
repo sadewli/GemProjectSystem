@@ -44,7 +44,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <h2 class="h4 text-white">Welcome back, {{ Session::get('name', 'User') }}!</h2>
-                        <p class="text-white-50 mb-3">Here's a quick overview of your gem system. Use the shortcuts below to jump into inventory, GRN and master data.</p>
+                        <p class="text-white-50 mb-3">Here's a quick overview of your gem system. Use the shortcuts below to jump into inventory, Production and master data.</p>
                         <a href="{{ url('Inventory/MyInventory') }}" class="btn btn-outline-light btn-sm">View Inventory</a>
                     </div>
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
