@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 use App\Models\ProductType;
 use App\Models\SubCategory;
 use App\Models\Variety;
@@ -198,8 +199,9 @@ class InventoryController extends Controller
 			'status' => 1,
 		]);
 
+		$productPurchasing = null;
 		if ($request->idtbl_suppliers || $request->supplier_stone_ref || $request->date_of_purchase || $request->idtbl_ownership_type) {
-			\App\Models\Inventory\ProductPurchasing::create([
+			$productPurchasing = \App\Models\Inventory\ProductPurchasing::create([
 				'idtbl_products' => $product->idtbl_products,
 				'idtbl_suppliers' => $request->idtbl_suppliers ?: null,
 				'supplier_stone_ref' => $request->supplier_stone_ref,
@@ -207,6 +209,51 @@ class InventoryController extends Controller
 				'idtbl_ownership_type' => $request->idtbl_ownership_type ?: null,
 				'status' => 1,
 			]);
+
+			// If ownership type is Partner (3) or empty, save partners master/details
+			$ownershipType = $request->input('idtbl_ownership_type');
+			if ($ownershipType === '3' || $ownershipType === '') {
+				$partnerIds = $request->input('partner_ids', []);
+				$ownerships = $request->input('ownership_percentages', []);
+				$profits = $request->input('profit_percentages', []);
+				$myCompanyId = $request->input('my_company_id', 1);
+				$myOwnership = floatval($request->input('my_ownership_percentage', 100));
+				$myProfit = floatval($request->input('my_profit_share_percentage', 100));
+
+				$sumOtherOwnership = array_sum(array_map('floatval', (array)$ownerships));
+				$sumOtherProfits = array_sum(array_map('floatval', (array)$profits));
+
+				$totalOwnership = $myOwnership + $sumOtherOwnership;
+				$totalProfit = $myProfit + $sumOtherProfits;
+
+				if (abs($totalOwnership - 100.0) > 0.01 || abs($totalProfit - 100.0) > 0.01) {
+					return redirect()->back()->withInput()->with('error', 'Ownership and profit totals must equal 100%');
+				}
+
+				DB::transaction(function() use ($productPurchasing, $myCompanyId, $myOwnership, $myProfit, $partnerIds, $ownerships, $profits) {
+					$masterId = DB::table('tbl_partners_master')->insertGetId([
+						'idtbl_product_purchasing' => $productPurchasing->idtbl_product_purchasing ?? $productPurchasing->id,
+						'idtbl_partners' => $myCompanyId,
+						'ownership_percentage' => $myOwnership,
+						'profit_share_percentage' => $myProfit,
+						'status' => 1,
+					]);
+
+					for ($i = 0; $i < count($partnerIds); $i++) {
+						$pid = $partnerIds[$i] ?? null;
+						if (!$pid) continue;
+						$own = isset($ownerships[$i]) ? floatval($ownerships[$i]) : 0;
+						$prof = isset($profits[$i]) ? floatval($profits[$i]) : 0;
+						DB::table('tbl_partners_details')->insert([
+							'idtbl_partners_master' => $masterId,
+							'idtbl_partners' => $pid,
+							'ownership_percentage' => $own,
+							'profit_share_percentage' => $prof,
+							'status' => 1,
+						]);
+					}
+				});
+			}
 		}
 
 		if ($request->weight || $request->quantity || $request->cost_per_unit) {
@@ -230,6 +277,18 @@ class InventoryController extends Controller
 		}
 
 		if ($request->hasAny(['color_distribution', 'size_length_from', 'size_length_to', 'size_width_from', 'size_width_to', 'color_grade_from', 'color_grade_to', 'clarity_grade_from', 'clarity_grade_to', 'tolerance_mm', 'allow_selection', 'cut_grade_from', 'cut_grade_to', 'barcode', 'traceability_no', 'rfid', 'direct_sales'])) {
+            $validated = $request->validate([
+            'supplier_id'           => 'required|exists:suppliers,id',
+            'supplier_stone_ref'    => 'nullable|string|max:255',
+            'purchase_date'        => 'required|date',
+            'idtbl_ownership_type' => 'required|string',
+            // partner arrays – support both old and new field names
+            'partner_ids.*'        => 'nullable|exists:tbl_partners,idtbl_partners',
+            'partner_ownership.*'   => 'nullable|numeric|min:0|max:100',
+            'partner_profit.*'     => 'nullable|numeric|min:0|max:100',
+            'ownership_percentages.*' => 'nullable|numeric|min:0|max:100',
+            'profit_percentages.*'    => 'nullable|numeric|min:0|max:100',
+        ]);
             \Illuminate\Support\Facades\DB::table('tbl_product_advance_details')->insert([
                 'idtbl_products' => $product->idtbl_products,
                 'barcode' => $request->barcode,
