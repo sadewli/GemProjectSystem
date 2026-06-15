@@ -78,7 +78,7 @@ try {
     echo "  Inventory: My Inventory, Memo In, Memo Out, Archived, Inventory List,\n";
     echo "             Stock Take, Inventory Adjustment, Negative Inventory, Product Code\n";
     echo "  Sales: Invoice, Customer Memo, Quotation, Shipping Invoice, Transfer Docs,\n";
-    echo "         Purchase Order, Supplier Memo, Distributor GRN\n\n";
+    echo "         Purchase Order, Supplier Memo\n\n";
 
 } catch (PDOException $e) {
     echo "✗ Database ERROR: " . $e->getMessage() . "\n";
