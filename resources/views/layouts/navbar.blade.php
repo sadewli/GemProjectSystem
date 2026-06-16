@@ -491,8 +491,8 @@
                             @endif
                             @if ($prodReCutting)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('production/recutting*') ? ' active' : '' }}"
-                                        href="{{ url('production/recutting') }}">
+                                    <a class="menu-link{{ request()->is('production/overview') && request()->query('type') === 're-cutting' ? ' active' : '' }}"
+                                        href="{{ url('production/overview') }}?type=re-cutting">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Re-cutting</span>
                                     </a>
@@ -500,8 +500,8 @@
                             @endif
                             @if ($prodCutting)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('production/cutting*') ? ' active' : '' }}"
-                                        href="{{ url('production/cutting') }}">
+                                    <a class="menu-link{{ request()->is('production/overview') && request()->query('type') === 'cutting' ? ' active' : '' }}"
+                                        href="{{ url('production/overview') }}?type=cutting">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Cutting</span>
                                     </a>
@@ -509,8 +509,8 @@
                             @endif
                             @if ($prodReAssortment)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('production/reassortment*') ? ' active' : '' }}"
-                                        href="{{ url('production/reassortment') }}">
+                                    <a class="menu-link{{ request()->is('production/overview') && request()->query('type') === 're-assortment' ? ' active' : '' }}"
+                                        href="{{ url('production/overview') }}?type=re-assortment">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Re-assortment</span>
                                     </a>
@@ -518,8 +518,8 @@
                             @endif
                             @if ($prodTreatment)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('production/treatment*') ? ' active' : '' }}"
-                                        href="{{ url('production/treatment') }}">
+                                    <a class="menu-link{{ request()->is('production/overview') && request()->query('type') === 'treatment' ? ' active' : '' }}"
+                                        href="{{ url('production/overview') }}?type=treatment">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Treatment</span>
                                     </a>
@@ -527,8 +527,8 @@
                             @endif
                             @if ($prodTransfer)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('production/producttransfer*') ? ' active' : '' }}"
-                                        href="{{ url('production/producttransfer') }}">
+                                    <a class="menu-link{{ request()->is('production/overview') && request()->query('type') === 'product-transfer' ? ' active' : '' }}"
+                                        href="{{ url('production/overview') }}?type=product-transfer">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Product Transfer</span>
                                     </a>
