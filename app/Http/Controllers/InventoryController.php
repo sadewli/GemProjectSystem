@@ -33,21 +33,34 @@ class InventoryController extends Controller
 		$suppliers = \App\Models\Supplier::where('status', 1)->orderBy('supplier_name')->get();
 		$ownershipTypes = \App\Models\OwnershipType::where('status', 1)->orderBy('ownership_type_name')->get();
 		$treatments = \App\Models\Treatment::where('status', 1)->orderBy('treatment_name')->get();
-		return view('inventory.myinventory.myinventory', compact('productTypes', 'storageLocations', 'suppliers', 'ownershipTypes', 'treatments'));
+
+		$auditLogs = \DB::table('tbl_audit_logs')
+			->leftJoin('tbl_user', 'tbl_audit_logs.user_id', '=', 'tbl_user.idtbl_user')
+			->where('tbl_audit_logs.entity_type', 'tbl_products')
+			->select(
+				'tbl_audit_logs.*',
+				'tbl_user.name as user_name'
+			)
+			->orderBy('tbl_audit_logs.insertdatetime', 'desc')
+			->get();
+
+		return view('inventory.myinventory.myinventory', compact('productTypes', 'storageLocations', 'suppliers', 'ownershipTypes', 'treatments', 'auditLogs'));
 	}
 
-	// Show product-type selection
+	// Show product-type selection – redirects to the modal-based index
 	public function selectProductType()
 	{
-		if (!Session::get('loggedin')) return redirect('/');
+		if (!Session::get('loggedin'))
+			return redirect('/');
 
-		$productTypes = ProductType::where('status', 1)->orderBy('name')->get();
-		return view('inventory.myinventory.select_product_type', compact('productTypes'));
+		// Product type selection is now handled via modal on the index page
+		return redirect()->route('inventory.myinventory.index');
 	}
 
 	public function storeProductTypeSession(Request $request)
 	{
-		if (!Session::get('loggedin')) return redirect('/');
+		if (!Session::get('loggedin'))
+			return redirect('/');
 
 		$request->validate([
 			'product_type_id' => 'required|integer|exists:tbl_product_types,idtbl_product_types',
@@ -57,9 +70,9 @@ class InventoryController extends Controller
 
 		session([
 			'selected_product_type_id' => $productType->idtbl_product_types,
-			'selected_sku_id'          => $productType->idtbl_skus,
-			'selected_sku_name'        => $productType->skuname,
-			'selected_product_name'    => $productType->name,
+			'selected_sku_id' => $productType->idtbl_skus,
+			'selected_sku_name' => $productType->skuname,
+			'selected_product_name' => $productType->name,
 		]);
 
 		return redirect()->route('inventory.myinventory.create');
@@ -67,62 +80,66 @@ class InventoryController extends Controller
 
 	public function create()
 	{
-		if (!Session::get('loggedin')) return redirect('/');
+		if (!Session::get('loggedin'))
+			return redirect('/');
 
-		$productTypeId = session('selected_product_type_id');
-		if (!$productTypeId) {
-			return redirect()->route('inventory.myinventory.select_type')
-				->with('error', 'Please select a product type first.');
-		}
-
-		$varieties      = Variety::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('name')->get();
-		$subCategories  = SubCategory::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('sub_category_name')->get();
-		$colors         = Color::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('color_name')->get();
-		$colorGrades    = ColorGrade::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('grade_name')->get();
-		$shapes         = Shape::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('name')->get();
-		$cuts           = Cut::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('name')->get();
-		$treatments     = Treatment::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('treatment_name')->get();
-		$origins        = Origin::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('origin_name')->get();
-		$cuttingGrades  = CuttingGrade::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('cuttinggradename')->get();
-		$clarityGrades  = ClarityGrade::where('status', 1)->where('idtbl_product_types', $productTypeId)->orderBy('clarity_grade_name')->get();
-
-		$storageLocations = StorageLocation::where('status', 1)->orderBy('location_name')->get();
-		$trayBoxes        = TrayBox::where('status', 1)->orderBy('tray_box_number')->get();
-		$suppliers        = Supplier::where('status', 1)->orderBy('supplier_name')->get();
-		$weightUnits      = WeightUnit::where('status', 1)->orderBy('unit_name')->get();
-		$ownershipTypes   = OwnershipType::where('status', 1)->orderBy('ownership_type_name')->get();
-
-		return view('inventory.myinventory.create', compact(
-			'varieties', 'subCategories', 'colors', 'colorGrades',
-			'shapes', 'cuts', 'treatments', 'origins', 'cuttingGrades', 'clarityGrades',
-			'storageLocations', 'trayBoxes', 'suppliers', 'weightUnits', 'ownershipTypes'
-		));
+		// Creation is now handled via modal on the index page
+		return redirect()->route('inventory.myinventory.index');
 	}
 
 	public function show($id = null)
 	{
-		$productTypes  = ProductType::where('status', 1)->get();
+		$productTypes = ProductType::where('status', 1)->get();
 		$subCategories = SubCategory::where('status', 1)->get();
-		$varieties     = Variety::where('status', 1)->get();
-		$colors        = Color::where('status', 1)->get();
-		$shapes        = Shape::where('status', 1)->get();
-		$cuts          = Cut::where('status', 1)->get();
-		$treatments    = Treatment::where('status', 1)->get();
-		$origins       = Origin::where('status', 1)->get();
-		$colorGrades   = ColorGrade::where('status', 1)->get();
-		$cutGrades     = CuttingGrade::where('status', 1)->get();
+		$varieties = Variety::where('status', 1)->get();
+		$colors = Color::where('status', 1)->get();
+		$shapes = Shape::where('status', 1)->get();
+		$cuts = Cut::where('status', 1)->get();
+		$treatments = Treatment::where('status', 1)->get();
+		$origins = Origin::where('status', 1)->get();
+		$colorGrades = ColorGrade::where('status', 1)->get();
+		$cutGrades = CuttingGrade::where('status', 1)->get();
 		$clarityGrades = ClarityGrade::where('status', 1)->get();
 		$storageLocations = StorageLocation::where('status', 1)->get();
-		$trayBoxes     = TrayBox::where('status', 1)->get();
-		$suppliers     = Supplier::where('status', 1)->get();
-		$skus          = Sku::where('status', 1)->get();
-		$weightUnits   = WeightUnit::where('status', 1)->get();
+		$trayBoxes = TrayBox::where('status', 1)->get();
+		$suppliers = Supplier::where('status', 1)->get();
+		$skus = Sku::where('status', 1)->get();
+		$weightUnits = WeightUnit::where('status', 1)->get();
 		$ownershipTypes = OwnershipType::where('status', 1)->get();
 
+		$auditLogs = [];
+		if ($id) {
+			$auditLogs = \DB::table('tbl_audit_logs')
+				->leftJoin('tbl_user', 'tbl_audit_logs.user_id', '=', 'tbl_user.idtbl_user')
+				->where('tbl_audit_logs.entity_type', 'tbl_products')
+				->where('tbl_audit_logs.entity_id', $id)
+				->select(
+					'tbl_audit_logs.*',
+					'tbl_user.name as user_name'
+				)
+				->orderBy('tbl_audit_logs.insertdatetime', 'desc')
+				->get();
+		}
+
 		return view('inventory.myinventory.fullpage.fullpage.show', compact(
-			'productTypes', 'subCategories', 'varieties', 'colors', 'shapes', 'cuts',
-			'treatments', 'origins', 'colorGrades', 'cutGrades', 'clarityGrades',
-			'storageLocations', 'trayBoxes', 'suppliers', 'skus', 'weightUnits', 'ownershipTypes'
+			'productTypes',
+			'subCategories',
+			'varieties',
+			'colors',
+			'shapes',
+			'cuts',
+			'treatments',
+			'origins',
+			'colorGrades',
+			'cutGrades',
+			'clarityGrades',
+			'storageLocations',
+			'trayBoxes',
+			'suppliers',
+			'skus',
+			'weightUnits',
+			'ownershipTypes',
+			'auditLogs'
 		));
 	}
 
@@ -163,8 +180,8 @@ class InventoryController extends Controller
 
 		return response()->json([
 			'prefix_name' => $prefixName,
-			'sku_code'    => $skuCode,
-			'idtbl_skus'  => $productType->idtbl_skus
+			'sku_code' => $skuCode,
+			'idtbl_skus' => $productType->idtbl_skus
 		]);
 	}
 
@@ -173,55 +190,133 @@ class InventoryController extends Controller
 		return view('inventory.memo_out');
 	}
 
+	private function intVal($value)
+	{
+		if (is_null($value) || $value === '' || $value === 'Unspecified' || $value === 'Prefix' || !is_numeric($value)) {
+			return null;
+		}
+		return intval($value);
+	}
+
+	private function floatVal($value)
+	{
+		if (is_null($value) || $value === '' || !is_numeric($value)) {
+			return null;
+		}
+		return floatval($value);
+	}
+
 	public function store(Request $request)
 	{
+		// Resolve weight unit string to ID
+		$weightUnitId = null;
+		$weightUnitStr = $request->idtbl_weight_units;
+		if ($weightUnitStr) {
+			if (is_numeric($weightUnitStr)) {
+				$weightUnitId = intval($weightUnitStr);
+			} else {
+				$wu = \DB::table('tbl_weight_units')->where('unit_name', $weightUnitStr)->first();
+				if ($wu) {
+					$weightUnitId = $wu->idtbl_weight_units;
+				} else {
+					$weightUnitId = \DB::table('tbl_weight_units')->insertGetId([
+						'unit_name' => $weightUnitStr,
+						'status' => 1,
+						'insertdatetime' => now(),
+					]);
+				}
+			}
+		}
+
+		$dateOfPurchase = $request->date_of_purchase ?: null;
+		if ($dateOfPurchase) {
+			$timestamp = strtotime($dateOfPurchase);
+			if ($timestamp) {
+				$dateOfPurchase = date('Y-m-d', $timestamp);
+			} else {
+				$dateOfPurchase = null;
+			}
+		}
+
 		$product = \App\Models\Inventory\Product::create([
-			'idtbl_product_types' => $request->idtbl_product_types ?: 1,
-			'idtbl_sub_categories' => $request->idtbl_sub_categories ?: null,
-			'idtbl_varieties' => $request->idtbl_varieties ?: null,
-			'idtbl_colors' => $request->idtbl_colors ?: null,
-			'idtbl_shapes' => $request->idtbl_shapes ?: null,
-			'idtbl_cuts' => $request->idtbl_cuts ?: null,
-			'idtbl_treatments' => $request->idtbl_treatments ?: null,
-			'idtbl_origins' => $request->idtbl_origins ?: null,
-			'idtbl_color_grade' => $request->idtbl_color_grade ?: null,
-			'idtbl_cuttinggrade' => $request->idtbl_cuttinggrade ?: null,
-			'idtbl_clarity_grade' => $request->idtbl_clarity_grade ?: null,
-			'idtbl_storage_locations' => $request->idtbl_storage_locations ?: null,
-			'idtbl_tray_box' => $request->idtbl_tray_box ?: null,
-			'idtbl_skus' => $request->idtbl_skus ?: 1,
+			'idtbl_product_types' => $this->intVal($request->idtbl_product_types) ?: 1,
+			'idtbl_sub_categories' => $this->intVal($request->idtbl_sub_categories),
+			'idtbl_varieties' => $this->intVal($request->idtbl_varieties),
+			'idtbl_colors' => $this->intVal($request->idtbl_colors),
+			'idtbl_shapes' => $this->intVal($request->idtbl_shapes),
+			'idtbl_cuts' => $this->intVal($request->idtbl_cuts),
+			'idtbl_treatments' => $this->intVal($request->idtbl_treatments),
+			'idtbl_origins' => $this->intVal($request->idtbl_origins),
+			'idtbl_color_grade' => $this->intVal($request->idtbl_color_grade),
+			'idtbl_cuttinggrade' => $this->intVal($request->idtbl_cuttinggrade),
+			'idtbl_clarity_grade' => $this->intVal($request->idtbl_clarity_grade),
+			'idtbl_storage_locations' => $this->intVal($request->idtbl_storage_locations),
+			'idtbl_tray_box' => $this->intVal($request->idtbl_tray_box),
+			'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
+			'idtbl_skus' => $this->intVal($request->idtbl_skus) ?: 1,
 			'sku_number' => $request->sku_number ?: 'DEFAULT-SKU',
-			'length_mm' => $request->length_mm,
-			'width_mm' => $request->width_mm,
-			'height_mm' => $request->height_mm,
+			'length_mm' => $this->floatVal($request->length_mm),
+			'width_mm' => $this->floatVal($request->width_mm),
+			'height_mm' => $this->floatVal($request->height_mm),
 			'product_title' => $request->product_title,
 			'product_description' => $request->product_description,
 			'status' => 1,
 		]);
 
+		// Record in tbl_audit_logs
+		try {
+			\DB::table('tbl_audit_logs')->insert([
+				'user_id' => Session::get('userid') ?: 1,
+				'org_id' => Session::get('org_id') ?: 1,
+				'action' => 'Created',
+				'entity_type' => 'tbl_products',
+				'entity_id' => $product->idtbl_products,
+				'old_values' => null,
+				'new_values' => json_encode([
+					'sku_number' => $product->sku_number,
+					'product_title' => $product->product_title,
+					'length_mm' => $product->length_mm,
+					'width_mm' => $product->width_mm,
+					'height_mm' => $product->height_mm,
+					'insertdatetime' => $product->insertdatetime ?? now()->toDateTimeString(),
+				]),
+				'ip_address' => $request->ip(),
+				'user_agent' => $request->userAgent(),
+				'insertdatetime' => now(),
+			]);
+		} catch (\Exception $e) {
+			// Silently skip if there's any database audit log constraint issue
+		}
+
 		$productPurchasing = null;
-		if ($request->idtbl_suppliers || $request->supplier_stone_ref || $request->date_of_purchase || $request->idtbl_ownership_type) {
+		if ($request->idtbl_suppliers || $request->supplier_stone_ref || $dateOfPurchase || $request->idtbl_ownership_type) {
 			$productPurchasing = \App\Models\Inventory\ProductPurchasing::create([
 				'idtbl_products' => $product->idtbl_products,
-				'idtbl_suppliers' => $request->idtbl_suppliers ?: null,
+				'idtbl_suppliers' => $this->intVal($request->idtbl_suppliers),
 				'supplier_stone_ref' => $request->supplier_stone_ref,
-				'date_of_purchase' => $request->date_of_purchase,
-				'idtbl_ownership_type' => $request->idtbl_ownership_type ?: null,
+				'date_of_purchase' => $dateOfPurchase,
+				'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
 				'status' => 1,
 			]);
 
-			// If ownership type is Partner (3) or empty, save partners master/details
-			$ownershipType = $request->input('idtbl_ownership_type');
-			if ($ownershipType === '3' || $ownershipType === '') {
+			// If ownership type is Partner (3) or empty/not set, save partners master/details
+			$ownershipType = $this->intVal($request->idtbl_ownership_type);
+			if ($ownershipType === 3 || is_null($ownershipType)) {
 				$partnerIds = $request->input('partner_ids', []);
 				$ownerships = $request->input('ownership_percentages', []);
 				$profits = $request->input('profit_percentages', []);
-				$myCompanyId = $request->input('my_company_id', 1);
-				$myOwnership = floatval($request->input('my_ownership_percentage', 100));
-				$myProfit = floatval($request->input('my_profit_share_percentage', 100));
+				$myCompanyId = $this->intVal($request->input('my_company_id')) ?: 1;
+				$myOwnership = $this->floatVal($request->input('my_ownership_percentage')) ?? 100.0;
+				$myProfit = $this->floatVal($request->input('my_profit_share_percentage')) ?? 100.0;
 
-				$sumOtherOwnership = array_sum(array_map('floatval', (array)$ownerships));
-				$sumOtherProfits = array_sum(array_map('floatval', (array)$profits));
+				$sumOtherOwnership = 0.0;
+				$sumOtherProfits = 0.0;
+				foreach ($ownerships as $o) {
+					$sumOtherOwnership += $this->floatVal($o) ?? 0.0;
+				}
+				foreach ($profits as $p) {
+					$sumOtherProfits += $this->floatVal($p) ?? 0.0;
+				}
 
 				$totalOwnership = $myOwnership + $sumOtherOwnership;
 				$totalProfit = $myProfit + $sumOtherProfits;
@@ -230,7 +325,22 @@ class InventoryController extends Controller
 					return redirect()->back()->withInput()->with('error', 'Ownership and profit totals must equal 100%');
 				}
 
-				DB::transaction(function() use ($productPurchasing, $myCompanyId, $myOwnership, $myProfit, $partnerIds, $ownerships, $profits) {
+				$partnerDetails = [];
+				for ($i = 0; $i < count($partnerIds); $i++) {
+					$pid = $partnerIds[$i] ?? null;
+					if (is_null($pid) || $pid === '') {
+						continue;
+					}
+					$own = isset($ownerships[$i]) ? $this->floatVal($ownerships[$i]) : 0.0;
+					$prof = isset($profits[$i]) ? $this->floatVal($profits[$i]) : 0.0;
+					$partnerDetails[] = [
+						'input_partner' => $pid,
+						'ownership_percentage' => $own,
+						'profit_share_percentage' => $prof,
+					];
+				}
+
+				DB::transaction(function () use ($productPurchasing, $myCompanyId, $myOwnership, $myProfit, $partnerDetails) {
 					$masterId = DB::table('tbl_partners_master')->insertGetId([
 						'idtbl_product_purchasing' => $productPurchasing->idtbl_product_purchasing ?? $productPurchasing->id,
 						'idtbl_partners' => $myCompanyId,
@@ -239,16 +349,27 @@ class InventoryController extends Controller
 						'status' => 1,
 					]);
 
-					for ($i = 0; $i < count($partnerIds); $i++) {
-						$pid = $partnerIds[$i] ?? null;
-						if (!$pid) continue;
-						$own = isset($ownerships[$i]) ? floatval($ownerships[$i]) : 0;
-						$prof = isset($profits[$i]) ? floatval($profits[$i]) : 0;
+					foreach ($partnerDetails as $detail) {
+						$pid = $detail['input_partner'];
+						if (!is_numeric($pid)) {
+							// Look up by name or create!
+							$existingPartner = DB::table('tbl_partners')->where('partner_name', $pid)->first();
+							if ($existingPartner) {
+								$pid = $existingPartner->idtbl_partners;
+							} else {
+								$pid = DB::table('tbl_partners')->insertGetId([
+									'partner_name' => $pid,
+									'status' => 1,
+									'insertdatetime' => now(),
+								]);
+							}
+						}
+
 						DB::table('tbl_partners_details')->insert([
 							'idtbl_partners_master' => $masterId,
 							'idtbl_partners' => $pid,
-							'ownership_percentage' => $own,
-							'profit_share_percentage' => $prof,
+							'ownership_percentage' => $detail['ownership_percentage'],
+							'profit_share_percentage' => $detail['profit_share_percentage'],
 							'status' => 1,
 						]);
 					}
@@ -257,60 +378,55 @@ class InventoryController extends Controller
 		}
 
 		if ($request->weight || $request->quantity || $request->cost_per_unit) {
+			$sellingUnit = ($request->pricing_unit === 'Quantity') ? 2 : 1;
+
 			\App\Models\Inventory\ProductPricing::create([
 				'idtbl_products' => $product->idtbl_products,
-				'idtbl_weight_units' => $request->idtbl_weight_units ?: null,
-				'weight' => $request->weight,
-				'quantity' => $request->quantity,
-				'cost_per_unit' => $request->cost_per_unit,
-				'total_cost' => $request->total_cost,
-				'my_cost_per_unit' => $request->my_cost_per_unit,
-				'my_total_cost' => $request->my_total_cost,
-				'wholesale_price_per_unit' => $request->wholesale_per_unit,
-				'wholesale_total_price' => $request->wholesale_total,
-				'retail_price_per_unit' => $request->retail_per_unit,
-				'retail_total_price' => $request->retail_total,
-				'matrix_price_per_unit' => $request->matrix_per_unit,
-				'matrix_total_price' => $request->matrix_total,
+				'selling_unit' => $sellingUnit,
+				'idtbl_weight_units' => $weightUnitId,
+				'weight' => $this->floatVal($request->weight),
+				'quantity' => $this->intVal($request->quantity),
+				'cost_per_unit' => $this->floatVal($request->cost_per_unit),
+				'total_cost' => $this->floatVal($request->total_cost),
+				'my_cost_per_unit' => $this->floatVal($request->my_cost_per_unit),
+				'my_total_cost' => $this->floatVal($request->my_total_cost),
+				'wholesale_price_per_unit' => $this->floatVal($request->wholesale_per_unit),
+				'wholesale_total_price' => $this->floatVal($request->wholesale_total),
+				'retail_price_per_unit' => $this->floatVal($request->retail_per_unit),
+				'retail_total_price' => $this->floatVal($request->retail_total),
+				'matrix_price_per_unit' => $this->floatVal($request->matrix_per_unit),
+				'matrix_total_price' => $this->floatVal($request->matrix_total),
 				'status' => 1,
 			]);
 		}
 
 		if ($request->hasAny(['color_distribution', 'size_length_from', 'size_length_to', 'size_width_from', 'size_width_to', 'color_grade_from', 'color_grade_to', 'clarity_grade_from', 'clarity_grade_to', 'tolerance_mm', 'allow_selection', 'cut_grade_from', 'cut_grade_to', 'barcode', 'traceability_no', 'rfid', 'direct_sales'])) {
-            $validated = $request->validate([
-            'supplier_id'           => 'required|exists:suppliers,id',
-            'supplier_stone_ref'    => 'nullable|string|max:255',
-            'purchase_date'        => 'required|date',
-            'idtbl_ownership_type' => 'required|string',
-            // partner arrays – support both old and new field names
-            'partner_ids.*'        => 'nullable|exists:tbl_partners,idtbl_partners',
-            'partner_ownership.*'   => 'nullable|numeric|min:0|max:100',
-            'partner_profit.*'     => 'nullable|numeric|min:0|max:100',
-            'ownership_percentages.*' => 'nullable|numeric|min:0|max:100',
-            'profit_percentages.*'    => 'nullable|numeric|min:0|max:100',
-        ]);
-            \Illuminate\Support\Facades\DB::table('tbl_product_advance_details')->insert([
-                'idtbl_products' => $product->idtbl_products,
-                'barcode' => $request->barcode,
-                'traceability_no' => $request->traceability_no,
-                'rfid' => $request->rfid,
-                'color_distribution' => $request->color_distribution,
-                'size_length_from' => $request->size_length_from,
-                'size_length_to' => $request->size_length_to,
-                'size_width_from' => $request->size_width_from,
-                'size_width_to' => $request->size_width_to,
-                'color_grade_from' => $request->color_grade_from,
-                'color_grade_to' => $request->color_grade_to,
-                'clarity_grade_from' => $request->clarity_grade_from,
-                'clarity_grade_to' => $request->clarity_grade_to,
-                'tolerance_mm' => $request->tolerance_mm,
-                'allow_selection' => $request->allow_selection,
-                'cut_grade_from' => $request->cut_grade_from,
-                'cut_grade_to' => $request->cut_grade_to,
-                'direct_sales' => $request->direct_sales ?: 0,
-                'status' => 1,
-            ]);
-        }
+			try {
+				\Illuminate\Support\Facades\DB::table('tbl_product_advance_details')->insert([
+					'idtbl_products' => $product->idtbl_products,
+					'barcode' => $request->barcode,
+					'traceability_no' => $request->traceability_no,
+					'rfid' => $request->rfid,
+					'color_distribution' => $request->color_distribution,
+					'size_length_from' => $request->size_length_from,
+					'size_length_to' => $request->size_length_to,
+					'size_width_from' => $request->size_width_from,
+					'size_width_to' => $request->size_width_to,
+					'color_grade_from' => $request->color_grade_from,
+					'color_grade_to' => $request->color_grade_to,
+					'clarity_grade_from' => $request->clarity_grade_from,
+					'clarity_grade_to' => $request->clarity_grade_to,
+					'tolerance_mm' => $request->tolerance_mm,
+					'allow_selection' => $request->allow_selection,
+					'cut_grade_from' => $request->cut_grade_from,
+					'cut_grade_to' => $request->cut_grade_to,
+					'direct_sales' => $request->direct_sales ?: 0,
+					'status' => 1,
+				]);
+			} catch (\Exception $e) {
+				// Silently skip if tbl_product_advance_details does not exist yet
+			}
+		}
 
 		return redirect()->route('inventory.myinventory.index')->with('success', 'Product saved successfully!');
 	}

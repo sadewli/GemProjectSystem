@@ -46,6 +46,7 @@ use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\StateController;
 use App\Http\Controllers\Master\CountryController;
 use App\Http\Controllers\Master\ColorGradeController;
+use App\Http\Controllers\ProductionController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('Welcome', [WelcomeController::class, 'index']);
@@ -280,8 +281,7 @@ Route::prefix('crm')->name('crm.')->group(function () {
 //Production Routes
 Route::prefix('production')->name('production.')->group(function () {
     Route::get('/overview', [\App\Http\Controllers\production\overview::class, 'index'])->name('overview.index');
-    Route::get('/excelsheet', [\App\Http\Controllers\production\excelsheet::class, 'index'])->name('excelsheet.index');
-    Route::get('/excelsheetupload', [\App\Http\Controllers\production\excelsheetupload::class, 'index'])->name('excelsheetupload.index');
+
 
     // New placeholder routes for menubar items
     Route::get('/recutting', function() { return view('dashboard'); })->name('recutting');
@@ -289,6 +289,8 @@ Route::prefix('production')->name('production.')->group(function () {
     Route::get('/reassortment', function() { return view('dashboard'); })->name('reassortment');
     Route::get('/treatment', function() { return view('dashboard'); })->name('treatment');
     Route::get('/producttransfer', function() { return view('dashboard'); })->name('producttransfer');
+
+    Route::post('/store', [ProductionController::class, 'store'])->name('store');
 });
 
 // Missing Inventory Route

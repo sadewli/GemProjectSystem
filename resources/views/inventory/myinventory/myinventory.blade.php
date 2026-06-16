@@ -116,6 +116,7 @@
         <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
             <form id="createGemstoneForm" action="{{ route('inventory.myinventory.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="my_company_id" value="1">
                 <input type="hidden" name="idtbl_product_types" id="ddProductTypeHidden" value="">
 
                 {{-- ================= TAB 1: QUICK VIEW ================= --}}
@@ -533,7 +534,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Partners</label>
                             <div class="relative">
-                                <input type="text" value="My company" class="form-control pl-3 pr-8">
+                                <input type="text" value="My company" readonly class="form-control pl-3 pr-8">
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                 </div>
@@ -544,7 +545,7 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">% of ownership</label>
                             <div class="relative">
-                                <input type="text" value="100" class="form-control pl-3 pr-8">
+                                <input type="text" name="my_ownership_percentage" value="100" class="form-control pl-3 pr-8">
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                 </div>
@@ -556,7 +557,7 @@
                             <label class="block text-[13px] text-slate-700 mb-1.5">% of profit share</label>
                             <div class="flex items-center gap-2">
                                 <div class="relative flex-1">
-                                    <input type="text" value="100" class="form-control pl-3 pr-8">
+                                    <input type="text" name="my_profit_share_percentage" value="100" class="form-control pl-3 pr-8">
                                     <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                     </div>
@@ -637,19 +638,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mb-3">
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Cost/unit</label>
-                            <input type="text" placeholder="Cost Per/unit" class="form-control px-3">
+                            <input type="text" name="cost_per_unit" placeholder="Cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5 flex items-center gap-1">Total cost <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></label>
-                            <input type="text" placeholder="Total Cost" class="form-control px-3">
+                            <input type="text" name="total_cost" placeholder="Total Cost" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">My cost/unit</label>
-                            <input type="text" placeholder="My cost Per/unit" class="form-control px-3">
+                            <input type="text" name="my_cost_per_unit" placeholder="My cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5 flex items-center gap-1">My total cost <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></label>
-                            <input type="text" placeholder="My total cost" class="form-control px-3">
+                            <input type="text" name="my_total_cost" placeholder="My total cost" class="form-control px-3">
                         </div>
                     </div>
                     <div class="flex justify-end mb-6">
@@ -661,27 +662,27 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mb-6">
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Wholesale / unit</label>
-                            <input type="text" placeholder="Wholesale Cost Per/unit" class="form-control px-3">
+                            <input type="text" name="wholesale_per_unit" placeholder="Wholesale Cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Wholesale total</label>
-                            <input type="text" placeholder="Total Wholesale Cost" class="form-control px-3">
+                            <input type="text" name="wholesale_total" placeholder="Total Wholesale Cost" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Retail / unit</label>
-                            <input type="text" placeholder="Retail Cost Per/unit" class="form-control px-3">
+                            <input type="text" name="retail_per_unit" placeholder="Retail Cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Retail total</label>
-                            <input type="text" placeholder="Total Retail Cost" class="form-control px-3">
+                            <input type="text" name="retail_total" placeholder="Total Retail Cost" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Matrix / unit</label>
-                            <input type="text" placeholder="Matrix Price Per/unit" class="form-control px-3">
+                            <input type="text" name="matrix_per_unit" placeholder="Matrix Price Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Matrix total</label>
-                            <input type="text" placeholder="Total Matrix Price" class="form-control px-3">
+                            <input type="text" name="matrix_total" placeholder="Total Matrix Price" class="form-control px-3">
                         </div>
                     </div>
 
@@ -742,15 +743,25 @@
                                 </tr>
                             </thead>
                             <tbody class="text-slate-700 bg-white">
-                                <tr class="border-b border-slate-50 hover:bg-slate-50">
-                                    <td class="px-4 py-3">2026-04-23</td>
-                                    <td class="px-4 py-3">13:37:24</td>
-                                    <td class="px-4 py-3">Sachintha Kaveen</td>
-                                    <td class="px-4 py-3">Created</td>
-                                    <td class="px-4 py-3">-</td>
-                                    <td class="px-4 py-3">-</td>
-                                    <td class="px-4 py-3 truncate max-w-[200px]">Manually created From a...</td>
-                                </tr>
+                                @forelse($auditLogs ?? [] as $log)
+                                    <tr class="border-b border-slate-50 hover:bg-slate-50">
+                                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($log->insertdatetime)->format('Y-m-d') }}</td>
+                                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($log->insertdatetime)->format('H:i:s') }}</td>
+                                        <td class="px-4 py-3">{{ $log->user_name ?? 'System' }}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2.5 py-1 rounded-md text-[12px] font-semibold {{ $log->action === 'Created' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700' }}">
+                                                {{ $log->action }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 truncate max-w-[150px]" title="{{ $log->old_values }}">{{ $log->old_values ?: '-' }}</td>
+                                        <td class="px-4 py-3 truncate max-w-[150px]" title="{{ $log->new_values }}">{{ $log->new_values ?: '-' }}</td>
+                                        <td class="px-4 py-3 truncate max-w-[200px]">Product ID: {{ $log->entity_id }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="px-4 py-8 text-center text-slate-400">No activity history found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -1092,9 +1103,30 @@
                     const btnContainer = profitDiv.querySelector('.flex.mt-2');
                     if(btnContainer) btnContainer.remove();
 
-                    partnersDiv.querySelector('input').value = '';
-                    ownershipDiv.querySelector('input').value = '';
-                    profitDiv.querySelector('input').value = '';
+                    // Adjust input names for the new partner row
+                    const pInput = partnersDiv.querySelector('input');
+                    const oInput = ownershipDiv.querySelector('input');
+                    const prInput = profitDiv.querySelector('input');
+
+                    pInput.name = 'partner_ids[]';
+                    pInput.removeAttribute('readonly');
+                    oInput.name = 'ownership_percentages[]';
+                    prInput.name = 'profit_percentages[]';
+
+                    // Clear values and remove locks/icons
+                    pInput.value = '';
+                    oInput.value = '';
+                    prInput.value = '';
+
+                    // Remove any lock icons from the cloned divs if they exist
+                    partnersDiv.querySelectorAll('.absolute').forEach(el => el.remove());
+                    ownershipDiv.querySelectorAll('.absolute').forEach(el => el.remove());
+                    profitDiv.querySelectorAll('.absolute').forEach(el => el.remove());
+
+                    // Re-adjust padding of inputs after removing absolute icons
+                    pInput.className = 'form-control px-3 w-full';
+                    oInput.className = 'form-control px-3 w-full';
+                    prInput.className = 'form-control px-3 w-full';
 
                     grid.appendChild(partnersDiv);
                     grid.appendChild(ownershipDiv);

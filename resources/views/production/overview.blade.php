@@ -50,14 +50,6 @@
         <div class="flex items-center justify-between mb-5">
             <h1 class="text-2xl font-bold text-slate-800">Production overview</h1>
             <div class="flex gap-3">
-                <a href="{{ route('production.excelsheet.index') }}"
-                    class="flex items-center gap-2 px-4 h-9 text-[13px] font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 shadow-sm transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Excel Import
-                </a>
                 <button id="btn-create"
                     class="flex items-center gap-2 px-5 h-9 text-[13px] font-bold text-white bg-[#2563eb] rounded-md hover:bg-blue-700 shadow-sm transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,7 +138,6 @@
                     </div>
                 </div>
 
-
                 {{-- Creator + Buttons --}}
                 <div class="flex items-end gap-2">
                     <div class="flex-1">
@@ -172,7 +163,7 @@
                             <div id="panel-creator"
                                 class="prod-panel hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                 <div class="p-2 border-b border-slate-100">
-                                    <input id="search-creator" type="text" placeholder=""
+                                    <input id="search-creator" type="text" placeholder="Search..."
                                         class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
                                 <ul class="py-1 max-h-40 overflow-y-auto">
@@ -210,8 +201,8 @@
                     class="status-tab tab-all flex items-start justify-between px-5 py-4 border-r border-slate-200 hover:bg-slate-50 transition-colors bg-slate-50">
                     <div class="text-left">
                         <p class="text-sm font-bold text-blue-700 mb-1">All</p>
-                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">—</span></p>
-                        <p class="text-xs text-blue-600 font-semibold mt-0.5">VEF: — VEF</p>
+                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">{{ $counts['all'] ?? '0' }}</span></p>
+                        <p class="text-xs text-blue-600 font-semibold mt-0.5">VEF: {{ $totals['all'] ?? '0.00 VEF' }}</p>
                     </div>
                     <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -223,8 +214,8 @@
                     class="status-tab tab-prod flex items-start justify-between px-5 py-4 border-r border-slate-200 hover:bg-slate-50 transition-colors">
                     <div class="text-left">
                         <p class="text-sm font-bold text-amber-600 mb-1">In production</p>
-                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">—</span></p>
-                        <p class="text-xs text-amber-600 font-semibold mt-0.5">VEF: — VEF</p>
+                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">{{ $counts['in_production'] ?? '0' }}</span></p>
+                        <p class="text-xs text-amber-600 font-semibold mt-0.5">VEF: {{ $totals['in_production'] ?? '0.00 VEF' }}</p>
                     </div>
                     <svg class="w-5 h-5 text-amber-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -236,8 +227,8 @@
                     class="status-tab tab-done flex items-start justify-between px-5 py-4 border-r border-slate-200 hover:bg-slate-50 transition-colors">
                     <div class="text-left">
                         <p class="text-sm font-bold text-green-600 mb-1">Completed</p>
-                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">—</span></p>
-                        <p class="text-xs text-green-600 font-semibold mt-0.5">VEF: — VEF</p>
+                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">{{ $counts['completed'] ?? '0' }}</span></p>
+                        <p class="text-xs text-green-600 font-semibold mt-0.5">VEF: {{ $totals['completed'] ?? '0.00 VEF' }}</p>
                     </div>
                     <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -249,8 +240,8 @@
                     class="status-tab tab-del flex items-start justify-between px-5 py-4 hover:bg-slate-50 transition-colors">
                     <div class="text-left">
                         <p class="text-sm font-bold text-red-500 mb-1">Deleted</p>
-                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">—</span></p>
-                        <p class="text-xs text-red-500 font-semibold mt-0.5">VEF: — VEF</p>
+                        <p class="text-xs text-slate-500">items: <span class="font-semibold text-slate-700">{{ $counts['deleted'] ?? '0' }}</span></p>
+                        <p class="text-xs text-red-500 font-semibold mt-0.5">VEF: {{ $totals['deleted'] ?? '0.00 VEF' }}</p>
                     </div>
                     <svg class="w-5 h-5 text-red-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -339,10 +330,458 @@
         </div>
     </div>
 
+    {{-- ===== CREATE PRODUCTION SHEET MODAL ===== --}}
+    <div id="create-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6" style="background:rgba(0,0,0,0.5); z-index: 9999;">
+        <div class="bg-white rounded-md shadow-2xl w-full max-w-5xl flex flex-col relative overflow-hidden" style="height:95vh;">
+
+            {{-- Header --}}
+            <div class="px-6 py-4 flex-shrink-0 bg-[#f8fafc] rounded-t-md border-b border-slate-200">
+                <div class="flex justify-between items-start">
+                    <button type="button" id="create-close" class="text-slate-500 hover:text-slate-700 transition-colors p-1 -ml-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-amber-100 text-amber-800 text-[12px] font-semibold px-2.5 py-0.5 rounded-full">Draft</span>
+                        <span id="mc-badge-type" class="bg-blue-100 text-blue-800 text-[12px] font-semibold px-2.5 py-0.5 rounded-full hidden"></span>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <h2 class="text-[20px] font-bold text-slate-800 leading-tight">Create production sheet</h2>
+                    <p class="text-[13px] text-slate-500 mt-1">
+                        Created by {{ auth()->user()->name ?? 'User' }} &nbsp;&middot;&nbsp; {{ date('d M Y') }}
+                    </p>
+                </div>
+            </div>
+
+            {{-- Tab Navigation --}}
+            <div class="px-6 border-b border-slate-200 flex-shrink-0 bg-white flex w-full">
+                <button type="button" class="mc-tab-btn active py-3.5 font-semibold text-[14px] flex-1 text-center" data-target="mc-tab-details">Details</button>
+                <button type="button" class="mc-tab-btn py-3.5 font-semibold text-[14px] flex-1 text-center text-slate-500" data-target="mc-tab-items">Items</button>
+                <button type="button" class="mc-tab-btn py-3.5 font-semibold text-[14px] flex-1 text-center text-slate-500" data-target="mc-tab-costs">Costs</button>
+                <button type="button" class="mc-tab-btn py-3.5 font-semibold text-[14px] flex-1 text-center text-slate-500" data-target="mc-tab-history">History</button>
+            </div>
+
+            {{-- Scrollable Body --}}
+            <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
+                <form id="createProductionForm" action="{{ route('production.store') }}" method="POST">
+                    @csrf
+
+                    {{-- ===== TAB 1: DETAILS ===== --}}
+                    <div id="mc-tab-details" class="mc-tab-content block px-6 py-6 pb-20">
+
+                        <div class="bg-amber-50 border-l-4 border-amber-500 rounded-md p-3 mb-5">
+                            <p class="text-[13px] text-slate-700">
+                                <span class="font-bold text-slate-800">Note:</span>
+                                You will only be able to work on one product category at a time.
+                            </p>
+                        </div>
+
+                        <div class="w-[120px] h-[90px] bg-[#f1f5f9] rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors mb-6 border border-transparent hover:border-blue-200">
+                            <svg class="w-8 h-8 text-blue-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812-1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span class="text-blue-600 text-[12px] font-medium">Upload</span>
+                        </div>
+
+                        <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4">Production attributes</div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+
+                            {{-- Production Type --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Production type <span class="text-rose-500">*</span></label>
+                                <div class="relative searchable-dropdown" id="ddMcTypeWrapper">
+                                    <input type="hidden" name="production_type" id="ddMcTypeHidden">
+                                    <button type="button" id="ddMcTypeBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                                        <span id="ddMcTypeLabel" class="truncate text-slate-400">Select type</span>
+                                    </button>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                    <div id="ddMcTypePanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                        <div class="p-2 border-b border-slate-100">
+                                            <input type="text" id="ddMcTypeSearch" placeholder="Search..." class="form-control !h-9 px-3">
+                                        </div>
+                                        <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                            @foreach($productionTypes as $t)
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600"
+                                                    data-value="{{ $t['value'] ?? $t['label'] }}"
+                                                    data-label="{{ $t['label'] }}">{{ $t['label'] }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Production Category --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Production category <span class="text-rose-500">*</span></label>
+                                <div class="relative searchable-dropdown" id="ddMcCatWrapper">
+                                    <input type="hidden" name="production_category" id="ddMcCatHidden">
+                                    <button type="button" id="ddMcCatBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                                        <span id="ddMcCatLabel" class="truncate text-slate-400">Select category</span>
+                                    </button>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                    <div id="ddMcCatPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                        <div class="p-2 border-b border-slate-100">
+                                            <input type="text" id="ddMcCatSearch" placeholder="Search..." class="form-control !h-9 px-3">
+                                        </div>
+                                        <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select category">Select category</li>
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="gemstones" data-label="Gemstones">Gemstones</li>
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="rough" data-label="Rough &amp; Specimen">Rough &amp; Specimen</li>
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="diamond" data-label="Diamond">Diamond</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Template --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Template</label>
+                                <div class="relative searchable-dropdown" id="ddMcTplWrapper">
+                                    <input type="hidden" name="template" id="ddMcTplHidden" value="default">
+                                    <button type="button" id="ddMcTplBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                                        <span id="ddMcTplLabel" class="truncate text-slate-800">Default</span>
+                                    </button>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                    <div id="ddMcTplPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                        <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="default" data-label="Default">Default</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Reference --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Reference</label>
+                                <input type="text" name="reference" placeholder="e.g. REF-0001" class="form-control px-3">
+                            </div>
+
+                            {{-- Due Date --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Due date</label>
+                                <input type="date" name="due_date" class="form-control px-3">
+                            </div>
+
+                            {{-- Creator --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Creator</label>
+                                <div class="relative searchable-dropdown" id="ddMcCreatorWrapper">
+                                    <input type="hidden" name="creator_id" id="ddMcCreatorHidden">
+                                    <button type="button" id="ddMcCreatorBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                                        <span id="ddMcCreatorLabel" class="truncate text-slate-400">Select creator</span>
+                                    </button>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                    <div id="ddMcCreatorPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                        <div class="p-2 border-b border-slate-100">
+                                            <input type="text" id="ddMcCreatorSearch" placeholder="Search..." class="form-control !h-9 px-3">
+                                        </div>
+                                        <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                            @foreach($creators as $c)
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600"
+                                                    data-value="{{ $c['value'] ?? $c['label'] }}"
+                                                    data-label="{{ $c['label'] }}">{{ $c['label'] }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Original Quantity --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Original quantity</label>
+                                <input type="number" name="original_quantity" placeholder="e.g. 10" class="form-control px-3">
+                            </div>
+
+                            {{-- Original Weight --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Original weight</label>
+                                <div class="flex gap-2">
+                                    <input type="text" name="original_weight" placeholder='e.g. "5.20"' class="form-control flex-1 px-3">
+                                    <div class="relative w-[85px] searchable-dropdown" id="ddMcWeightUnitWrapper">
+                                        <input type="hidden" name="weight_unit" id="ddMcWeightUnitHidden" value="ct">
+                                        <button type="button" id="ddMcWeightUnitBtn" class="form-control flex items-center pl-3 pr-7 text-left">
+                                            <span id="ddMcWeightUnitLabel" class="truncate text-slate-800">ct</span>
+                                        </button>
+                                        <div class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                        </div>
+                                        <div id="ddMcWeightUnitPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                            <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="ct" data-label="ct">ct</li>
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="g" data-label="g">g</li>
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="kg" data-label="kg">kg</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Original Total Cost --}}
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Original total cost</label>
+                                <div class="flex gap-2">
+                                    <div class="relative w-[90px] searchable-dropdown" id="ddMcCurrencyWrapper">
+                                        <input type="hidden" name="currency" id="ddMcCurrencyHidden" value="VEF">
+                                        <button type="button" id="ddMcCurrencyBtn" class="form-control flex items-center pl-3 pr-7 text-left">
+                                            <span id="ddMcCurrencyLabel" class="truncate text-slate-800">VEF</span>
+                                        </button>
+                                        <div class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                        </div>
+                                        <div id="ddMcCurrencyPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                            <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="VEF" data-label="VEF">VEF</li>
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="USD" data-label="USD">USD</li>
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="EUR" data-label="EUR">EUR</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <input type="text" name="original_total_cost" placeholder="0.00" class="form-control flex-1 px-3">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 mt-6">Discrepancy</div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Discrepancy reason</label>
+                                <div class="relative searchable-dropdown" id="ddMcDiscWrapper">
+                                    <input type="hidden" name="discrepancy_reason" id="ddMcDiscHidden">
+                                    <button type="button" id="ddMcDiscBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                                        <span id="ddMcDiscLabel" class="truncate text-slate-400">Select reason</span>
+                                    </button>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                    <div id="ddMcDiscPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                        <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select reason">Select reason</li>
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="natural_loss" data-label="Natural loss">Natural loss</li>
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="cutting_loss" data-label="Cutting loss">Cutting loss</li>
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="breakage" data-label="Breakage">Breakage</li>
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="other" data-label="Other">Other</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Notes</label>
+                                <input type="text" name="notes" placeholder="Optional notes..." class="form-control px-3">
+                            </div>
+                        </div>
+
+                        <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 mt-6">Documents</div>
+                        <div class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm">
+                            <svg class="w-6 h-6 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-slate-800 text-[13px] font-medium">Add document(s)</span>
+                        </div>
+
+                    </div>
+
+                    {{-- ===== TAB 2: ITEMS ===== --}}
+                    <div id="mc-tab-items" class="mc-tab-content hidden px-6 py-6 pb-20">
+
+                        <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4">Production items</div>
+                        <p class="text-[13px] text-slate-400 mb-4">Add the items to be processed in this production sheet.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 mb-4">
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Item / SKU</label>
+                                <input type="text" class="form-control px-3" placeholder="Search SKU...">
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Quantity</label>
+                                <input type="number" class="form-control px-3" placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Weight</label>
+                                <div class="flex gap-2">
+                                    <input type="text" class="form-control flex-1 px-3" placeholder="0.00">
+                                    <div class="relative w-[85px] searchable-dropdown" id="ddMcItemUnitWrapper">
+                                        <input type="hidden" name="item_weight_unit" id="ddMcItemUnitHidden" value="ct">
+                                        <button type="button" id="ddMcItemUnitBtn" class="form-control flex items-center pl-3 pr-7 text-left">
+                                            <span id="ddMcItemUnitLabel" class="truncate text-slate-800">ct</span>
+                                        </button>
+                                        <div class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                        </div>
+                                        <div id="ddMcItemUnitPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                            <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="ct" data-label="ct">ct</li>
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="g" data-label="g">g</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="px-4 py-2 bg-[#f1f5f9] border border-slate-200 rounded-md text-[13px] font-medium text-slate-700 hover:bg-slate-200 mb-5">+ Add item</button>
+
+                        <div class="border border-slate-200 rounded-md overflow-hidden">
+                            <table class="w-full text-left text-[13px]">
+                                <thead class="bg-[#f8fafc] text-slate-700 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-4 py-3">SKU</th>
+                                        <th class="px-4 py-3">Description</th>
+                                        <th class="px-4 py-3">Qty</th>
+                                        <th class="px-4 py-3">Weight</th>
+                                        <th class="px-4 py-3">Cost</th>
+                                        <th class="px-4 py-3"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400 text-[13px]">No items added yet</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    {{-- ===== TAB 3: COSTS ===== --}}
+                    <div id="mc-tab-costs" class="mc-tab-content hidden px-6 py-6 pb-20">
+
+                        <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4">Costing module</div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mb-3">
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Cost / unit</label>
+                                <input type="text" name="cost_per_unit" id="mc-cost-unit" placeholder="Cost per unit" class="form-control px-3">
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Total cost</label>
+                                <input type="text" name="total_cost" id="mc-cost-total" placeholder="Total cost" class="form-control px-3 bg-slate-50" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">My cost / unit</label>
+                                <input type="text" name="my_cost_per_unit" id="mc-my-cost-unit" placeholder="My cost per unit" class="form-control px-3">
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">My total cost</label>
+                                <input type="text" name="my_total_cost" id="mc-my-cost-total" placeholder="My total cost" class="form-control px-3 bg-slate-50" readonly>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end mb-6">
+                            <button type="button" class="px-4 py-2 bg-[#f1f5f9] text-[13px] text-slate-800 font-medium rounded-md hover:bg-slate-200">Add cost</button>
+                        </div>
+
+                        <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4">Output value</div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Expected output weight</label>
+                                <div class="flex gap-2">
+                                    <input type="text" name="expected_output_weight" placeholder="0.00" class="form-control flex-1 px-3">
+                                    <div class="relative w-[85px] searchable-dropdown" id="ddMcOutUnitWrapper">
+                                        <input type="hidden" name="output_weight_unit" id="ddMcOutUnitHidden" value="ct">
+                                        <button type="button" id="ddMcOutUnitBtn" class="form-control flex items-center pl-3 pr-7 text-left">
+                                            <span id="ddMcOutUnitLabel" class="truncate text-slate-800">ct</span>
+                                        </button>
+                                        <div class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                        </div>
+                                        <div id="ddMcOutUnitPanel" class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden" style="top:100%;">
+                                            <ul class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="ct" data-label="ct">ct</li>
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="g" data-label="g">g</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Expected output quantity</label>
+                                <input type="number" name="expected_output_quantity" placeholder="0" class="form-control px-3">
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Loss %</label>
+                                <input type="text" name="loss_percent" id="mc-loss-pct" placeholder="0.00 %" class="form-control px-3 bg-slate-50" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] text-slate-700 mb-1.5">Loss weight</label>
+                                <input type="text" name="loss_weight" id="mc-loss-wt" placeholder="0.00" class="form-control px-3 bg-slate-50" readonly>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{-- ===== TAB 4: HISTORY ===== --}}
+                    <div id="mc-tab-history" class="mc-tab-content hidden px-6 py-6 pb-20">
+
+                        <div class="flex justify-between items-center mb-5">
+                            <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide">History</div>
+                            <div class="flex">
+                                <input type="text" placeholder="Search history..." class="form-control !rounded-r-none !border-r-0 w-56 px-3">
+                                <button type="button" class="bg-blue-700 hover:bg-blue-800 text-white px-4 rounded-r-md h-[42px] flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-md overflow-hidden shadow-sm">
+                            <table class="w-full text-left text-[13px]">
+                                <thead class="bg-[#f8fafc] text-slate-700 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-4 py-3">Date</th>
+                                        <th class="px-4 py-3">Time</th>
+                                        <th class="px-4 py-3">User</th>
+                                        <th class="px-4 py-3">Action</th>
+                                        <th class="px-4 py-3">Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-slate-600 bg-white">
+                                    <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400 text-[13px]">No history yet — save the sheet to begin tracking.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+
+            {{-- Footer --}}
+            <div class="px-6 py-4 border-t border-slate-200 bg-white flex justify-end gap-3 flex-shrink-0">
+                <button type="button" id="create-cancel"
+                    class="px-5 py-2.5 text-[14px] font-medium text-rose-500 bg-white border border-rose-300 rounded-md hover:bg-rose-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" id="create-save-draft"
+                    class="px-5 py-2.5 text-[14px] font-medium text-slate-700 bg-[#f1f5f9] border border-slate-200 rounded-md hover:bg-slate-200 transition-colors">
+                    Save as draft
+                </button>
+                <button type="submit" form="createProductionForm"
+                    class="px-8 py-2.5 text-[14px] font-medium text-white bg-blue-700 rounded-md hover:bg-blue-800 transition-colors shadow-sm active:scale-95">
+                    Create
+                </button>
+            </div>
+
+        </div>
+    </div>
+@endsection
+
+@section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // ── Dropdown Manager ──────────────────────────────────────────
+            // —— Dropdown Manager —————————————————————————————————————————————
             const DROPS = [
                 { btn: 'btn-prodtype', panel: 'panel-prodtype' },
                 { btn: 'btn-template', panel: 'panel-template' },
@@ -373,7 +812,7 @@
 
             document.addEventListener('click', closeAll);
 
-            // ── Option selection helpers ──────────────────────────────────
+            // —— Option selection helpers —————————————————————————————————————
             function bindOptions(selector, labelId) {
                 document.querySelectorAll(selector).forEach(el => {
                     el.addEventListener('click', function () {
@@ -390,7 +829,7 @@
             bindOptions('.opt-template', 'lbl-template');
             bindOptions('.opt-creator', 'lbl-creator');
 
-            // ── Creator search ────────────────────────────────────────────
+            // —— Creator search ———————————————————————————————————————————————
             const cs = document.getElementById('search-creator');
             if (cs) {
                 cs.addEventListener('click', e => e.stopPropagation());
@@ -402,7 +841,7 @@
                 });
             }
 
-            // ── Reset ─────────────────────────────────────────────────────
+            // —— Reset ————————————————————————————————————————————————————————
             document.getElementById('btn-reset').addEventListener('click', () => {
                 document.getElementById('lbl-prodtype').textContent = 'Select';
                 ['lbl-template', 'lbl-creator'].forEach(id => {
@@ -415,13 +854,13 @@
                 document.getElementById('date-to').value = '';
             });
 
-            // ── Date guard ────────────────────────────────────────────────
+            // —— Date guard ———————————————————————————————————————————————————
             const df = document.getElementById('date-from');
             const dt = document.getElementById('date-to');
             df.addEventListener('change', () => { if (dt.value && df.value > dt.value) dt.value = df.value; });
             dt.addEventListener('change', () => { if (df.value && dt.value < df.value) df.value = dt.value; });
 
-            // ── Status tabs ───────────────────────────────────────────────
+            // —— Status tabs ——————————————————————————————————————————————————
             document.querySelectorAll('.status-tab').forEach(btn => {
                 btn.addEventListener('click', function () {
                     document.querySelectorAll('.status-tab').forEach(b => b.classList.remove('bg-slate-50'));
@@ -429,235 +868,183 @@
                 });
             });
 
-            // ── Placeholder actions ───────────────────────────────────────
+            // —— Placeholder actions ——————————————————————————————————————————
             ['btn-excel', 'btn-manage-cols'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('click', () => alert(id + ' — coming soon.'));
             });
 
-            // ── Create Modal Toggle ───────────────────────────────────────
-            const createModal = document.getElementById('create-modal');
-            const modalContent = document.getElementById('create-modal-content');
-            const backdrop = document.getElementById('create-backdrop');
+            // —— Create Modal Open/Close ——————————————————————————————————————
+            var modal   = document.getElementById('create-modal');
+            var btnOpen = document.getElementById('btn-create');
 
-            function openCreateModal() {
-                createModal.classList.remove('hidden');
-                setTimeout(() => {
-                    modalContent.classList.remove('scale-95', 'opacity-0');
-                    modalContent.classList.add('scale-100', 'opacity-100');
-                }, 10);
+            function openModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
             }
 
-            function closeCreateModal() {
-                modalContent.classList.remove('scale-100', 'opacity-100');
-                modalContent.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => {
-                    createModal.classList.add('hidden');
-                    // reset labels
-                    const typeLbl = document.getElementById('mc-type-lbl');
-                    typeLbl.textContent = 'Select product type';
-                    typeLbl.classList.add('text-slate-400');
-                    typeLbl.classList.remove('text-slate-700');
-
-                    const catLbl = document.getElementById('mc-cat-lbl');
-                    catLbl.textContent = 'Select product category';
-                    catLbl.classList.add('text-slate-400');
-                    catLbl.classList.remove('text-slate-700');
-
-                    document.getElementById('mc-type-search').value = '';
-                    document.getElementById('mc-cat-search').value = '';
-
-                    document.querySelectorAll('.mc-type-opt').forEach(opt => opt.style.display = '');
-                    document.querySelectorAll('.mc-cat-opt').forEach(opt => opt.style.display = '');
-                }, 200);
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                resetModal();
             }
 
-            const btnCreate = document.getElementById('btn-create');
-            if (btnCreate) btnCreate.addEventListener('click', openCreateModal);
+            function resetModal() {
+                var resets = [
+                    ['ddMcTypeLabel',    'Select type',     'ddMcTypeHidden'],
+                    ['ddMcCatLabel',     'Select category', 'ddMcCatHidden'],
+                    ['ddMcTplLabel',     'Default',         'ddMcTplHidden'],
+                    ['ddMcCreatorLabel', 'Select creator',  'ddMcCreatorHidden'],
+                    ['ddMcDiscLabel',    'Select reason',   'ddMcDiscHidden'],
+                ];
+                resets.forEach(function (r) {
+                    var lbl = document.getElementById(r[0]);
+                    var hid = document.getElementById(r[2]);
+                    if (lbl) { lbl.textContent = r[1]; lbl.className = 'truncate text-slate-400'; }
+                    if (hid) hid.value = '';
+                });
+                var badge = document.getElementById('mc-badge-type');
+                badge.classList.add('hidden');
+                badge.textContent = '';
+                document.getElementById('createProductionForm').reset();
+                activateTab('mc-tab-details');
+            }
 
-            [document.getElementById('create-close'),
-            document.getElementById('create-cancel'),
-                backdrop
-            ].forEach(el => { if (el) el.addEventListener('click', closeCreateModal); });
+            if (btnOpen) btnOpen.addEventListener('click', openModal);
+            document.getElementById('create-close').addEventListener('click', closeModal);
+            document.getElementById('create-cancel').addEventListener('click', closeModal);
+            modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
 
-            document.getElementById('create-submit').addEventListener('click', () => {
-                const type = document.getElementById('mc-type-lbl').textContent;
-                const cat = document.getElementById('mc-cat-lbl').textContent;
-                if (type === 'Select product type' || cat === 'Select product category') {
-                    alert('Please select both a production type and category.');
-                    return;
-                }
-                alert('Production sheet created successfully!\nType: ' + type + '\nCategory: ' + cat);
-                closeCreateModal();
+            // —— Create Modal Tab Navigation —————————————————————————————————
+            function activateTab(targetId) {
+                document.querySelectorAll('.mc-tab-btn').forEach(function (b) {
+                    b.classList.remove('active');
+                    b.classList.add('text-slate-500');
+                });
+                document.querySelectorAll('.mc-tab-content').forEach(function (c) {
+                    c.classList.add('hidden');
+                    c.classList.remove('block');
+                });
+                var target = document.getElementById(targetId);
+                if (target) { target.classList.remove('hidden'); target.classList.add('block'); }
+                var btn = document.querySelector('.mc-tab-btn[data-target="' + targetId + '"]');
+                if (btn) { btn.classList.add('active'); btn.classList.remove('text-slate-500'); }
+            }
+
+            document.querySelectorAll('.mc-tab-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () { activateTab(btn.dataset.target); });
             });
 
-            // Prevent clicks inside modal content from bubbling to backdrop
-            modalContent.addEventListener('click', e => e.stopPropagation());
-
-            // ── Create Modal Dropdowns ────────────────────────────────────
-            const createDrops = [
-                { btn: 'mc-type-btn', panel: 'mc-type-panel', opts: '.mc-type-opt', lbl: 'mc-type-lbl', search: 'mc-type-search' },
-                { btn: 'mc-cat-btn', panel: 'mc-cat-panel', opts: '.mc-cat-opt', lbl: 'mc-cat-lbl', search: 'mc-cat-search' }
-            ];
-
-            function closeCreateDrops() {
-                createDrops.forEach(d => {
-                    const p = document.getElementById(d.panel);
-                    if (p) p.classList.add('hidden');
+            // —— Create Modal Custom Searchable Dropdowns —————————————————————
+            function closeAllDropdowns() {
+                document.querySelectorAll('.searchable-dropdown [id$="Panel"]').forEach(function (p) {
+                    p.classList.add('hidden');
                 });
             }
 
-            createDrops.forEach(d => {
-                const btn = document.getElementById(d.btn);
-                const panel = document.getElementById(d.panel);
-                const searchInput = document.getElementById(d.search);
+            function updateBadge() {
+                var type  = document.getElementById('ddMcTypeLabel')  ? document.getElementById('ddMcTypeLabel').textContent  : '';
+                var cat   = document.getElementById('ddMcCatLabel')   ? document.getElementById('ddMcCatLabel').textContent   : '';
+                var badge = document.getElementById('mc-badge-type');
+                var parts = [];
+                if (type && type !== 'Select type')     parts.push(type);
+                if (cat  && cat  !== 'Select category') parts.push(cat);
+                if (parts.length) {
+                    badge.textContent = parts.join(' · ');
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            function setupDropdown(wrapperId) {
+                var wrapper = document.getElementById(wrapperId);
+                if (!wrapper) return;
+
+                var btn    = wrapper.querySelector('button');
+                var panel  = wrapper.querySelector('[id$="Panel"]');
+                var hidden = wrapper.querySelector('input[type="hidden"]');
+                var label  = wrapper.querySelector('.truncate');
+                var search = wrapper.querySelector('input[type="text"]');
+
                 if (!btn || !panel) return;
 
-                btn.addEventListener('click', e => {
+                btn.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    const wasHidden = panel.classList.contains('hidden');
-                    closeCreateDrops();
+                    var wasHidden = panel.classList.contains('hidden');
+                    closeAllDropdowns();
                     if (wasHidden) {
                         panel.classList.remove('hidden');
-                        if (searchInput) searchInput.focus();
+                        if (search) setTimeout(function () { search.focus(); }, 50);
                     }
                 });
 
-                panel.addEventListener('click', e => e.stopPropagation());
-
-                document.querySelectorAll(d.opts).forEach(opt => {
-                    opt.addEventListener('click', function () {
-                        const lbl = document.getElementById(d.lbl);
-                        lbl.textContent = this.dataset.label;
-                        lbl.classList.remove('text-slate-400');
-                        lbl.classList.add('text-slate-700');
-                        closeCreateDrops();
-                    });
-                });
-
-                if (searchInput) {
-                    searchInput.addEventListener('input', function () {
-                        const q = this.value.toLowerCase();
-                        document.querySelectorAll(d.opts).forEach(opt => {
-                            opt.style.display = opt.dataset.label.toLowerCase().includes(q) ? '' : 'none';
+                if (search) {
+                    search.addEventListener('click', function (e) { e.stopPropagation(); });
+                    search.addEventListener('input', function () {
+                        var q = this.value.toLowerCase();
+                        wrapper.querySelectorAll('.dd-option').forEach(function (o) {
+                            o.style.display = (o.dataset.label || '').toLowerCase().includes(q) ? '' : 'none';
                         });
                     });
                 }
+
+                wrapper.addEventListener('click', function (e) {
+                    var opt = e.target.closest('.dd-option');
+                    if (!opt) return;
+
+                    if (hidden) hidden.value = opt.dataset.value || '';
+                    if (label)  { label.textContent = opt.dataset.label || opt.textContent.trim(); label.className = 'truncate text-slate-800'; }
+
+                    wrapper.querySelectorAll('.dd-option').forEach(function (o) {
+                        o.classList.remove('bg-slate-100', 'text-slate-800', 'font-semibold');
+                        o.classList.add('text-slate-600');
+                    });
+                    opt.classList.add('bg-slate-100', 'text-slate-800', 'font-semibold');
+                    opt.classList.remove('text-slate-600');
+
+                    if (search) {
+                        search.value = '';
+                        wrapper.querySelectorAll('.dd-option').forEach(function (o) { o.style.display = ''; });
+                    }
+                    panel.classList.add('hidden');
+
+                    if (wrapperId === 'ddMcTypeWrapper' || wrapperId === 'ddMcCatWrapper') updateBadge();
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!wrapper.contains(e.target)) panel.classList.add('hidden');
+                });
+            }
+
+            [
+                'ddMcTypeWrapper', 'ddMcCatWrapper', 'ddMcTplWrapper', 'ddMcCreatorWrapper',
+                'ddMcWeightUnitWrapper', 'ddMcCurrencyWrapper', 'ddMcDiscWrapper',
+                'ddMcItemUnitWrapper', 'ddMcOutUnitWrapper'
+            ].forEach(setupDropdown);
+
+            // —— Modal Form Submission ————————————————————————————————————————
+            document.getElementById('createProductionForm').addEventListener('submit', function (e) {
+                var type = document.getElementById('ddMcTypeHidden') ? document.getElementById('ddMcTypeHidden').value : '';
+                var cat  = document.getElementById('ddMcCatHidden')  ? document.getElementById('ddMcCatHidden').value  : '';
+                if (!type || !cat) {
+                    e.preventDefault();
+                    alert('Please select a production type and category before creating.');
+                }
             });
 
-            // Close dropdowns on document click
-            document.addEventListener('click', closeCreateDrops);
+            document.getElementById('create-save-draft').addEventListener('click', function () {
+                var form  = document.getElementById('createProductionForm');
+                var input = document.createElement('input');
+                input.type  = 'hidden';
+                input.name  = 'status';
+                input.value = 'draft';
+                form.appendChild(input);
+                form.submit();
+            });
 
         });
     </script>
-
-    {{-- ===== CREATE NEW SHEET MODAL ===== --}}
-    <div id="create-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
-        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="create-backdrop"></div>
-        <div id="create-modal-content"
-            class="relative bg-white rounded-md shadow-2xl w-full max-w-[540px] z-10 transform scale-95 opacity-0 transition-all duration-200">
-            {{-- Header --}}
-            <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100">
-                <h3 class="text-[15px] font-bold text-slate-800">Create new</h3>
-                <button type="button" id="create-close" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            {{-- Amber Note --}}
-            <div class="px-5 pt-3">
-                <div class="bg-amber-50/50 border-l-4 border-amber-500 rounded-md p-3 flex items-start gap-2">
-                    <div class="text-xs text-slate-700 leading-relaxed">
-                        <span class="font-bold text-slate-800">Note:</span> You will only be able to work on only one
-                        product category at a time.
-                    </div>
-                </div>
-            </div>
-
-            {{-- Body --}}
-            <div class="px-5 py-3.5 flex flex-col gap-3.5">
-                {{-- Production Type --}}
-                <div class="relative" id="mc-type-wrapper">
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Production type</label>
-                    <button type="button" id="mc-type-btn"
-                        class="w-full flex items-center justify-between pl-3 pr-8 py-2 text-sm bg-white border border-slate-300 rounded-md hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors">
-                        <span id="mc-type-lbl" class="text-slate-400">Select product type</span>
-                    </button>
-                    <div class="absolute inset-y-0 right-3 top-5 flex items-center pointer-events-none"
-                        style="top:auto;bottom:0;height:38px;">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                    <div id="mc-type-panel"
-                        class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden"
-                        style="top:100%;">
-                        {{-- Search --}}
-                        <div class="p-2 border-b border-slate-100">
-                            <input type="text" id="mc-type-search" placeholder="Search..."
-                                class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
-                        </div>
-                        <ul class="py-1 max-h-40 overflow-y-auto" id="mc-type-list">
-                            <li class="mc-type-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Re-assortment">Re-assortment</li>
-                            <li class="mc-type-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Cutting">Cutting</li>
-                            <li class="mc-type-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Re-cutting">Re-cutting</li>
-                            <li class="mc-type-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Product transfer">Product transfer</li>
-                            <li class="mc-type-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Treatment">Treatment</li>
-                        </ul>
-                    </div>
-                </div>
-
-                {{-- Production Category --}}
-                <div class="relative" id="mc-cat-wrapper">
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Production category</label>
-                    <button type="button" id="mc-cat-btn"
-                        class="w-full flex items-center justify-between pl-3 pr-8 py-2 text-sm bg-white border border-slate-300 rounded-md hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors">
-                        <span id="mc-cat-lbl" class="text-slate-400">Select product category</span>
-                    </button>
-                    <div class="absolute inset-y-0 right-3 top-5 flex items-center pointer-events-none"
-                        style="top:auto;bottom:0;height:38px;">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                    <div id="mc-cat-panel"
-                        class="hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden"
-                        style="top:100%;">
-                        {{-- Search --}}
-                        <div class="p-2 border-b border-slate-100">
-                            <input type="text" id="mc-cat-search" placeholder="Search..."
-                                class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
-                        </div>
-                        <ul class="py-1 max-h-40 overflow-y-auto" id="mc-cat-list">
-                            <li class="mc-cat-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Gemstones">Gemstones</li>
-                            <li class="mc-cat-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Rough &amp; Specimen">Rough &amp; Specimen</li>
-                            <li class="mc-cat-opt px-4 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors"
-                                data-label="Diamond">Diamond</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Footer --}}
-            <div class="px-5 pb-4 flex items-center gap-3">
-                <button type="button" id="create-cancel"
-                    class="px-4.5 py-1.5 text-sm font-semibold text-red-500 bg-white border border-red-400 rounded-md hover:bg-red-50 transition-colors">
-                    Cancel
-                </button>
-                <button type="button" id="create-submit"
-                    class="px-5 py-1.5 text-sm font-bold text-white bg-[#2563eb] rounded-md hover:bg-blue-700 shadow-sm transition-colors">
-                    Create
-                </button>
-            </div>
-        </div>
-    </div>
 @endsection

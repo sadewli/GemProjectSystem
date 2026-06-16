@@ -36,12 +36,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-b border-slate-100">
-                        <td class="p-4 text-[13px] text-slate-800">{{ date('d M Y, h:i A') }}</td>
-                        <td class="p-4 text-[13px] text-slate-800 font-medium">Sachintha Kaveen</td>
-                        <td class="p-4"><span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md text-[12px] font-semibold">Created</span></td>
-                        <td class="p-4 text-[13px] text-slate-600">Product draft created.</td>
-                    </tr>
+                    @forelse($auditLogs ?? [] as $log)
+                        <tr class="border-b border-slate-100">
+                            <td class="p-4 text-[13px] text-slate-800">{{ \Carbon\Carbon::parse($log->insertdatetime)->format('d M Y, h:i A') }}</td>
+                            <td class="p-4 text-[13px] text-slate-800 font-medium">{{ $log->user_name ?? 'System' }}</td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-1 rounded-md text-[12px] font-semibold {{ $log->action === 'Created' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700' }}">
+                                    {{ $log->action }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-[13px] text-slate-600">Product ID: {{ $log->entity_id }} (New values: {{ $log->new_values }})</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="p-4 text-center text-slate-400">No activity history found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
