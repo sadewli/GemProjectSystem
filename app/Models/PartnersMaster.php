@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Model representing tbl_partners_master
+ * Model representing tbl_partners_master (My Company % per product purchasing)
  *
- * @property int $idtbl_partners_master
- * @property int $idtbl_product_purchasing
- * @property int $idtbl_partners
- * @property float $ownership_percentage
- * @property float $profit_share_percentage
- * @property int $status
+ * @property int    $idtbl_partners_master
+ * @property int    $idtbl_product_purchasing   Purchasing reference
+ * @property int    $idtbl_partners             My Company reference
+ * @property float  $ownership_percentage       % of ownership
+ * @property float  $profit_share_percentage    % of profit share
+ * @property int    $status                     1=Active, 2=Inactive, 0=Deleted
  * @property int|null $insertuser
- * @property \Carbon\Carbon $insertdatetime
+ * @property \Carbon\Carbon|null $insertdatetime
  * @property string|null $updateuser
  * @property \Carbon\Carbon|null $updatedatetime
  */
@@ -38,11 +38,35 @@ class PartnersMaster extends Model
     ];
 
     /**
-     * Relationship to partner details rows.
+     * Relationship to partner details rows (Other companies).
      */
     public function details()
     {
         return $this->hasMany(PartnersDetail::class, 'idtbl_partners_master', 'idtbl_partners_master');
+    }
+
+    /**
+     * The partner (My Company) this master record belongs to.
+     */
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class, 'idtbl_partners', 'idtbl_partners');
+    }
+
+    /**
+     * The product purchasing record this master belongs to.
+     */
+    public function productPurchasing()
+    {
+        return $this->belongsTo(\App\Models\ProductPurchasing::class, 'idtbl_product_purchasing', 'idtbl_product_purchasing');
+    }
+
+    /**
+     * The user who created this record.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'insertuser', 'idtbl_user');
     }
 
     /**
@@ -106,5 +130,3 @@ class PartnersMaster extends Model
         });
     }
 }
-
-?>

@@ -124,6 +124,8 @@ Route::post('Master/Storagelocationedit', [StorageLocationController::class, 'ed
 Route::post('Master/Storagelocationdelete', [StorageLocationController::class, 'delete']);
 Route::get('Master/Suppliers', [SupplierController::class, 'index']);
 Route::post('Master/Suppliersinsertupdate', [SupplierController::class, 'insertupdate']);
+Route::get('Master/Partners', [\App\Http\Controllers\Master\PartnerController::class, 'index']);
+Route::post('Master/Partnersinsertupdate', [\App\Http\Controllers\Master\PartnerController::class, 'insertupdate']);
 Route::post('Master/Colorinsertupdate', [ColorController::class, 'insertupdate']);
 Route::post('Master/Colorcategoryinsertupdate', [ColorCategoryController::class, 'insertupdate']);
 
@@ -217,6 +219,8 @@ Route::prefix('Inventory/inventoryadjustment')->name('inventoryadjustment.')->gr
     Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'restore'])->name('restore');
 });
 
+Route::post('Inventory/create-dropdown-value', [InventoryController::class, 'createDropdownValue'])->name('inventory.createDropdownValue');
+
 Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(function () {
     Route::get('/', [InventoryController::class, 'myinventory'])->name('index');
     Route::get('/select-type', [InventoryController::class, 'selectProductType'])->name('select_type');
@@ -226,6 +230,9 @@ Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(fu
     Route::post('/store', [InventoryController::class, 'store'])->name('store');
     Route::get('/next-sku/{productTypeId}', [InventoryController::class, 'nextSku'])->name('next_sku');
     Route::get('/dependent-data/{productTypeId}', [InventoryController::class, 'getDependentData'])->name('dependent_data');
+    Route::post('/audit-log/update', [InventoryController::class, 'updateAuditLog'])->name('auditlog.update');
+    Route::post('/audit-log/delete', [InventoryController::class, 'deleteAuditLog'])->name('auditlog.delete');
+    Route::get('/product-details/{id}', [InventoryController::class, 'getProductDetails'])->name('product_details');
     Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
 });
 
