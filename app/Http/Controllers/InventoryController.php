@@ -47,7 +47,8 @@ class InventoryController extends Controller
 
 		$partners = \App\Models\Partner::where('status', 1)->orderBy('partner_name')->get();
 
-		return view('inventory.myinventory.myinventory', compact('productTypes', 'storageLocations', 'suppliers', 'ownershipTypes', 'treatments', 'auditLogs', 'partners'));
+		$certificateLabs = \App\Models\CertificateLab::where('status', 1)->orderBy('lab_name')->get();
+		return view('inventory.myinventory.myinventory', compact('productTypes', 'storageLocations', 'suppliers', 'ownershipTypes', 'treatments', 'auditLogs', 'partners', 'certificateLabs'));
 	}
 
 	// Show product-type selection – redirects to the modal-based index
@@ -110,6 +111,7 @@ class InventoryController extends Controller
 		$weightUnits = WeightUnit::where('status', 1)->get();
 		$ownershipTypes = OwnershipType::where('status', 1)->get();
 		$partners = \App\Models\Partner::where('status', 1)->orderBy('partner_name')->get();
+		$certificateLabs = \App\Models\CertificateLab::where('status', 1)->orderBy('lab_name')->get();
 
 		$auditLogs = [];
 		if ($id) {
@@ -145,7 +147,8 @@ class InventoryController extends Controller
 			'weightUnits',
 			'ownershipTypes',
 			'auditLogs',
-			'partners'
+			'partners',
+			'certificateLabs'
 		));
 	}
 

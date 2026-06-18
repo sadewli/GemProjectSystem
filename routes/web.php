@@ -30,6 +30,7 @@ use App\Http\Controllers\Master\ProductTypeController;
 use App\Http\Controllers\Master\SubCategoryController;
 use App\Http\Controllers\Master\ColorController;
 use App\Http\Controllers\Master\ColorCategoryController;
+use App\Http\Controllers\Master\CertificateLabController;
 use App\Http\Controllers\Master\ShapeController;
 use App\Http\Controllers\Master\CutController;
 use App\Http\Controllers\Master\GradeTypeController;
@@ -82,6 +83,7 @@ Route::post('Master/Subcategoryinsertupdate', [SubCategoryController::class, 'in
 Route::post('Master/Subcategorydelete', [SubCategoryController::class, 'delete']);
 Route::get('Master/Color', [ColorController::class, 'index']);
 Route::get('Master/ColorCategory', [ColorCategoryController::class, 'index']);
+Route::get('Master/CertificateLab', [CertificateLabController::class, 'index']);
 Route::get('Master/Shape', [ShapeController::class, 'index']);
 Route::post('Master/Shapeinsertupdate', [ShapeController::class, 'insertupdate']);
 Route::post('Master/Shapeedit', [ShapeController::class, 'edit']);
@@ -128,6 +130,9 @@ Route::get('Master/Partners', [\App\Http\Controllers\Master\PartnerController::c
 Route::post('Master/Partnersinsertupdate', [\App\Http\Controllers\Master\PartnerController::class, 'insertupdate']);
 Route::post('Master/Colorinsertupdate', [ColorController::class, 'insertupdate']);
 Route::post('Master/Colorcategoryinsertupdate', [ColorCategoryController::class, 'insertupdate']);
+Route::post('Master/CertificateLabinsertupdate', [CertificateLabController::class, 'insertupdate']);
+Route::post('Master/CertificateLabstatus', [CertificateLabController::class, 'status']);
+Route::post('Master/CertificateLabdelete', [CertificateLabController::class, 'delete']);
 
 Route::get('Master/CompanyType', [CompanyTypeController::class, 'index'])->name('master.companytype');
 Route::post('Master/CompanyTypeinsertupdate', [CompanyTypeController::class, 'insertupdate'])->name('master.companytype.insertupdate');

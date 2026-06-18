@@ -111,6 +111,9 @@
                         <a href="{{ url('Master/Color') }}" class="btn btn-outline-secondary btn-block">Manage Colors</a>
                     </div>
                     <div class="col-md-4 mb-3">
+                        <a href="{{ url('Master/CertificateLab') }}" class="btn btn-outline-secondary btn-block">Manage Certificate Labs</a>
+                    </div>
+                    <div class="col-md-4 mb-3">
                         <a href="{{ url('Inventory/MyInventory') }}" class="btn btn-outline-secondary btn-block">Review Inventory</a>
                     </div>
                 </div>

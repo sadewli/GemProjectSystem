@@ -1,8 +1,8 @@
 @php
     // ── Ceylon Center Gem — Privilege System ──────────────────────────────────
-    $functionmenu        = trim(request()->path(), '/');
-    $functionmenu2       = last(explode('/', $functionmenu));
-    $menuprivilegearray  = $menuaccess ?? [];
+    $functionmenu = trim(request()->path(), '/');
+    $functionmenu2 = last(explode('/', $functionmenu));
+    $menuprivilegearray = $menuaccess ?? [];
 
     if (!function_exists('menucheck')) {
         function menucheck($arraymenu, $menuID)
@@ -20,10 +20,14 @@
         {
             foreach ($arraymenu as $array) {
                 if ($array->menuid == $menuID) {
-                    if ($type == 1) return $array->add;
-                    if ($type == 2) return $array->edit;
-                    if ($type == 3) return $array->statuschange;
-                    if ($type == 4) return $array->remove;
+                    if ($type == 1)
+                        return $array->add;
+                    if ($type == 2)
+                        return $array->edit;
+                    if ($type == 3)
+                        return $array->statuschange;
+                    if ($type == 4)
+                        return $array->remove;
                 }
             }
             return 0;
@@ -35,9 +39,9 @@
     $menuMaps = ['Useraccount' => 2, 'Usertype' => 3, 'Userprivilege' => 4];
 
     if (array_key_exists($functionmenu2, $menuMaps)) {
-        $id          = $menuMaps[$functionmenu2];
-        $addcheck    = checkprivilege($menuprivilegearray, $id, 1);
-        $editcheck   = checkprivilege($menuprivilegearray, $id, 2);
+        $id = $menuMaps[$functionmenu2];
+        $addcheck = checkprivilege($menuprivilegearray, $id, 1);
+        $editcheck = checkprivilege($menuprivilegearray, $id, 2);
         $statuscheck = checkprivilege($menuprivilegearray, $id, 3);
         $deletecheck = checkprivilege($menuprivilegearray, $id, 4);
     }
@@ -81,70 +85,71 @@
     // 36 = Storage Locations
 
     // Inventory
-    $myInventory       = menucheck($menuprivilegearray, 5)  == 1;
-    $memoIn            = menucheck($menuprivilegearray, 6)  == 1;
-    $memoOut           = menucheck($menuprivilegearray, 7)  == 1;
-    $archived          = menucheck($menuprivilegearray, 8)  == 1;
-    $inventoryList     = menucheck($menuprivilegearray, 9)  == 1;
-    $stockTake         = menucheck($menuprivilegearray, 10) == 1;
-    $invAdjustment     = menucheck($menuprivilegearray, 11) == 1;
+    $myInventory = menucheck($menuprivilegearray, 5) == 1;
+    $memoIn = menucheck($menuprivilegearray, 6) == 1;
+    $memoOut = menucheck($menuprivilegearray, 7) == 1;
+    $archived = menucheck($menuprivilegearray, 8) == 1;
+    $inventoryList = menucheck($menuprivilegearray, 9) == 1;
+    $stockTake = menucheck($menuprivilegearray, 10) == 1;
+    $invAdjustment = menucheck($menuprivilegearray, 11) == 1;
     $negativeInventory = menucheck($menuprivilegearray, 12) == 1;
-    $productCode       = menucheck($menuprivilegearray, 13) == 1;
-    $showInventory     = $myInventory || $memoIn || $memoOut || $archived
-                       || $inventoryList || $stockTake || $invAdjustment
-                       || $negativeInventory || $productCode;
+    $productCode = menucheck($menuprivilegearray, 13) == 1;
+    $showInventory = $myInventory || $memoIn || $memoOut || $archived
+        || $inventoryList || $stockTake || $invAdjustment
+        || $negativeInventory || $productCode;
 
     // Sales & Purchases
-    $salesInvoice    = menucheck($menuprivilegearray, 14) == 1;
-    $customerMemo    = menucheck($menuprivilegearray, 15) == 1;
-    $quotation       = menucheck($menuprivilegearray, 16) == 1;
+    $salesInvoice = menucheck($menuprivilegearray, 14) == 1;
+    $customerMemo = menucheck($menuprivilegearray, 15) == 1;
+    $quotation = menucheck($menuprivilegearray, 16) == 1;
     $shippingInvoice = menucheck($menuprivilegearray, 17) == 1;
-    $transferDocs    = menucheck($menuprivilegearray, 18) == 1;
-    $purchaseOrder   = menucheck($menuprivilegearray, 19) == 1;
-    $supplierMemo    = menucheck($menuprivilegearray, 20) == 1;
-    $showSales       = $salesInvoice || $customerMemo || $quotation || $shippingInvoice
-                     || $transferDocs || $purchaseOrder || $supplierMemo;
+    $transferDocs = menucheck($menuprivilegearray, 18) == 1;
+    $purchaseOrder = menucheck($menuprivilegearray, 19) == 1;
+    $supplierMemo = menucheck($menuprivilegearray, 20) == 1;
+    $showSales = $salesInvoice || $customerMemo || $quotation || $shippingInvoice
+        || $transferDocs || $purchaseOrder || $supplierMemo;
 
     // CRM
     $crmCompanies = menucheck($menuprivilegearray, 22) == 1;
-    $crmContacts  = menucheck($menuprivilegearray, 23) == 1;
-    $showCRM      = $crmCompanies || $crmContacts;
+    $crmContacts = menucheck($menuprivilegearray, 23) == 1;
+    $showCRM = $crmCompanies || $crmContacts;
 
     // Production
-    $prodOverview     = menucheck($menuprivilegearray, 24) == 1;
-    $prodReCutting    = menucheck($menuprivilegearray, 25) == 1;
-    $prodCutting      = menucheck($menuprivilegearray, 26) == 1;
+    $prodOverview = menucheck($menuprivilegearray, 24) == 1;
+    $prodReCutting = menucheck($menuprivilegearray, 25) == 1;
+    $prodCutting = menucheck($menuprivilegearray, 26) == 1;
     $prodReAssortment = menucheck($menuprivilegearray, 27) == 1;
-    $prodTreatment    = menucheck($menuprivilegearray, 28) == 1;
-    $prodTransfer     = menucheck($menuprivilegearray, 29) == 1;
-    $prodExcelSheet   = menucheck($menuprivilegearray, 38) == 1;
-    $prodExcelUpload  = menucheck($menuprivilegearray, 39) == 1;
-    $showProduction   = $prodOverview || $prodReCutting || $prodCutting
-                      || $prodReAssortment || $prodTreatment || $prodTransfer
-                      || $prodExcelSheet || $prodExcelUpload;
+    $prodTreatment = menucheck($menuprivilegearray, 28) == 1;
+    $prodTransfer = menucheck($menuprivilegearray, 29) == 1;
+    $prodExcelSheet = menucheck($menuprivilegearray, 38) == 1;
+    $prodExcelUpload = menucheck($menuprivilegearray, 39) == 1;
+    $showProduction = $prodOverview || $prodReCutting || $prodCutting
+        || $prodReAssortment || $prodTreatment || $prodTransfer
+        || $prodExcelSheet || $prodExcelUpload;
 
     // System Users
-    $userAccount     = menucheck($menuprivilegearray, 2) == 1;
-    $userType        = menucheck($menuprivilegearray, 3) == 1;
-    $userPrivilege   = menucheck($menuprivilegearray, 4) == 1;
+    $userAccount = menucheck($menuprivilegearray, 2) == 1;
+    $userType = menucheck($menuprivilegearray, 3) == 1;
+    $userPrivilege = menucheck($menuprivilegearray, 4) == 1;
     $showSystemUsers = $userAccount || $userType || $userPrivilege;
 
     // Master Data
-    $masterVariety    = menucheck($menuprivilegearray, 30) == 1;
-    $masterSubCat     = menucheck($menuprivilegearray, 31) == 1;
-    $masterColor      = menucheck($menuprivilegearray, 32) == 1;
-    $masterColorCat   = menucheck($menuprivilegearray, 33) == 1;
-    $masterShapeCut   = menucheck($menuprivilegearray, 34) == 1;
-    $masterGrades     = menucheck($menuprivilegearray, 35) == 1;
-    $masterOrigin     = menucheck($menuprivilegearray, 36) == 1;
-    $masterStorage    = menucheck($menuprivilegearray, 37) == 1;
-    $masterCompType   = menucheck($menuprivilegearray, 40) == 1;
-    $masterRole       = menucheck($menuprivilegearray, 41) == 1;
-    $masterState      = menucheck($menuprivilegearray, 42) == 1;
-    $masterCountry    = menucheck($menuprivilegearray, 43) == 1;
-    $showMasterData   = $masterVariety || $masterSubCat || $masterColor || $masterColorCat
-                      || $masterShapeCut || $masterGrades || $masterOrigin || $masterStorage
-                      || $masterCompType || $masterRole || $masterState || $masterCountry;
+    $masterVariety = menucheck($menuprivilegearray, 30) == 1;
+    $masterSubCat = menucheck($menuprivilegearray, 31) == 1;
+    $masterColor = menucheck($menuprivilegearray, 32) == 1;
+    $masterColorCat = menucheck($menuprivilegearray, 33) == 1;
+    $masterShapeCut = menucheck($menuprivilegearray, 34) == 1;
+    $masterGrades = menucheck($menuprivilegearray, 35) == 1;
+    $masterOrigin = menucheck($menuprivilegearray, 36) == 1;
+    $masterStorage = menucheck($menuprivilegearray, 37) == 1;
+    $masterCertificateLab = menucheck($menuprivilegearray, 44) == 1;
+    $masterCompType = menucheck($menuprivilegearray, 40) == 1;
+    $masterRole = menucheck($menuprivilegearray, 41) == 1;
+    $masterState = menucheck($menuprivilegearray, 42) == 1;
+    $masterCountry = menucheck($menuprivilegearray, 43) == 1;
+    $showMasterData = $masterVariety || $masterSubCat || $masterColor || $masterColorCat
+        || $masterShapeCut || $masterGrades || $masterOrigin || $masterStorage
+        || $masterCompType || $masterRole || $masterState || $masterCountry || $masterCertificateLab;
 @endphp
 
 <textarea class="hidden" id="actiontext" style="display: none;">{{ session('msg') }}</textarea>
@@ -156,10 +161,12 @@
         border-top: none !important;
         box-shadow: none !important;
     }
+
     .app-sidebar-wrapper {
         border: none !important;
         box-shadow: none !important;
     }
+
     .app-sidebar-separator {
         display: none !important;
     }
@@ -186,12 +193,15 @@
     .app-sidebar-menu::after {
         display: none !important;
     }
+
     .app-sidebar-menu::before {
         display: none !important;
     }
+
     .app-sidebar-logo::after {
         display: none !important;
     }
+
     .app-sidebar-logo::before {
         display: none !important;
     }
@@ -206,24 +216,18 @@
     {{-- begin::Menu wrapper --}}
     <div id="kt_app_sidebar_menu_wrapper" class="app-sidebar-wrapper">
         {{-- begin::Scroll wrapper --}}
-        <div id="kt_app_sidebar_menu_scroll" class="scroll-y my-5 mx-3"
-            data-kt-scroll="true"
-            data-kt-scroll-activate="true"
-            data-kt-scroll-height="auto"
+        <div id="kt_app_sidebar_menu_scroll" class="scroll-y my-5 mx-3" data-kt-scroll="true"
+            data-kt-scroll-activate="true" data-kt-scroll-height="auto"
             data-kt-scroll-dependencies="#kt_app_sidebar_logo, #kt_app_sidebar_footer"
-            data-kt-scroll-wrappers="#kt_app_sidebar_menu"
-            data-kt-scroll-offset="5px"
-            data-kt-scroll-save-state="true">
+            data-kt-scroll-wrappers="#kt_app_sidebar_menu" data-kt-scroll-offset="5px" data-kt-scroll-save-state="true">
 
             {{-- begin::Menu --}}
-            <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold fs-6"
-                id="#kt_app_sidebar_menu"
-                data-kt-menu="true"
-                data-kt-menu-expand="false">
+            <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold fs-6" id="#kt_app_sidebar_menu"
+                data-kt-menu="true" data-kt-menu-expand="false">
 
 
                 {{-- ══════════════════════════════════════════
-                     DASHBOARD
+                DASHBOARD
                 ══════════════════════════════════════════ --}}
                 <div class="menu-item">
                     <a class="menu-link{{ request()->is('Welcome/Dashboard*') || request()->is('Welcome') || request()->is('/') ? ' active' : '' }}"
@@ -240,7 +244,7 @@
 
 
                 {{-- ══════════════════════════════════════════
-                     INVENTORY
+                INVENTORY
                 ══════════════════════════════════════════ --}}
                 @if ($showInventory)
                     <div data-kt-menu-trigger="click"
@@ -342,7 +346,7 @@
 
 
                 {{-- ══════════════════════════════════════════
-                     SALES & PURCHASES
+                SALES & PURCHASES
                 ══════════════════════════════════════════ --}}
                 @if ($showSales)
                     <div data-kt-menu-trigger="click"
@@ -426,7 +430,7 @@
 
 
                 {{-- ══════════════════════════════════════════
-                     CRM
+                CRM
                 ══════════════════════════════════════════ --}}
                 @if ($showCRM)
                     <div data-kt-menu-trigger="click"
@@ -465,7 +469,7 @@
 
 
                 {{-- ══════════════════════════════════════════
-                     PRODUCTION
+                PRODUCTION
                 ══════════════════════════════════════════ --}}
                 @if ($showProduction)
                     <div data-kt-menu-trigger="click"
@@ -558,7 +562,7 @@
 
 
                 {{-- ══════════════════════════════════════════
-                     SYSTEM USERS
+                SYSTEM USERS
                 ══════════════════════════════════════════ --}}
                 @if ($showSystemUsers)
                     <div data-kt-menu-trigger="click"
@@ -606,7 +610,7 @@
 
 
                 {{-- ══════════════════════════════════════════
-                     MASTER DATA
+                MASTER DATA
                 ══════════════════════════════════════════ --}}
                 @if ($showMasterData)
                     <div data-kt-menu-trigger="click"
@@ -622,159 +626,228 @@
                         </span>
                         <div class="menu-sub menu-sub-accordion">
                             <!-- Variety Master -->
-                            <div class="menu-item"><div class="menu-content pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Variety Master</span></div></div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Variety*') ? ' active' : '' }}" href="{{ url('Master/Variety') }}">
+                                <div class="menu-content pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Variety Master</span></div>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/Variety*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Variety') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Variety</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Subcategory*') ? ' active' : '' }}" href="{{ url('Master/Subcategory') }}">
+                                <a class="menu-link{{ request()->is('Master/Subcategory*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Subcategory') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Sub-Category</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/ProductType*') ? ' active' : '' }}" href="{{ url('Master/ProductType') }}">
+                                <a class="menu-link{{ request()->is('Master/ProductType*') ? ' active' : '' }}"
+                                    href="{{ url('Master/ProductType') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Product Type</span>
                                 </a>
                             </div>
 
                             <!-- Color Master -->
-                            <div class="menu-item"><div class="menu-content pt-4 pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Color Master</span></div></div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Color*') && !request()->is('Master/ColorCategory*') && !request()->is('Master/ColorGrade*') ? ' active' : '' }}" href="{{ url('Master/Color') }}">
+                                <div class="menu-content pt-4 pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Color Master</span></div>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/Color*') && !request()->is('Master/ColorCategory*') && !request()->is('Master/ColorGrade*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Color') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Color</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/ColorCategory*') ? ' active' : '' }}" href="{{ url('Master/ColorCategory') }}">
+                                <a class="menu-link{{ request()->is('Master/ColorCategory*') ? ' active' : '' }}"
+                                    href="{{ url('Master/ColorCategory') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Color Category</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/ColorGrade*') ? ' active' : '' }}" href="{{ url('Master/ColorGrade') }}">
+                                <a class="menu-link{{ request()->is('Master/ColorGrade*') ? ' active' : '' }}"
+                                    href="{{ url('Master/ColorGrade') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Color Grade</span>
                                 </a>
                             </div>
 
-                            <!-- Product Master -->
-                            <div class="menu-item"><div class="menu-content pt-4 pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Product Master</span></div></div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Shape*') ? ' active' : '' }}" href="{{ url('Master/Shape') }}">
+                                <a class="menu-link{{ request()->is('Master/CertificateLab*') ? ' active' : '' }}"
+                                    href="{{ url('Master/CertificateLab') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Certificate Labs</span>
+                                </a>
+                            </div>
+
+                            <!-- Product Master -->
+                            <div class="menu-item">
+                                <div class="menu-content pt-4 pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Product Master</span></div>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/Shape*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Shape') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Shape</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Cut*') ? ' active' : '' }}" href="{{ url('Master/Cut') }}">
+                                <a class="menu-link{{ request()->is('Master/Cut*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Cut') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Cut</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Grade*') && !request()->is('Master/GradeType*') ? ' active' : '' }}" href="{{ url('Master/Grade') }}">
+                                <a class="menu-link{{ request()->is('Master/Grade*') && !request()->is('Master/GradeType*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Grade') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Grade</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/GradeType*') ? ' active' : '' }}" href="{{ url('Master/GradeType') }}">
+                                <a class="menu-link{{ request()->is('Master/GradeType*') ? ' active' : '' }}"
+                                    href="{{ url('Master/GradeType') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Grade Type</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/CuttingGrade*') ? ' active' : '' }}" href="{{ url('Master/CuttingGrade') }}">
+                                <a class="menu-link{{ request()->is('Master/CuttingGrade*') ? ' active' : '' }}"
+                                    href="{{ url('Master/CuttingGrade') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Cutting Grade</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/ClarityGrade*') ? ' active' : '' }}" href="{{ url('Master/ClarityGrade') }}">
+                                <a class="menu-link{{ request()->is('Master/ClarityGrade*') ? ' active' : '' }}"
+                                    href="{{ url('Master/ClarityGrade') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Clarity Grade</span>
                                 </a>
                             </div>
 
                             <!-- Origin & Treatment -->
-                            <div class="menu-item"><div class="menu-content pt-4 pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Origin & Treatment</span></div></div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Origin*') ? ' active' : '' }}" href="{{ url('Master/Origin') }}">
+                                <div class="menu-content pt-4 pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Origin & Treatment</span>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/Origin*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Origin') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Origin</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Treatment*') ? ' active' : '' }}" href="{{ url('Master/Treatment') }}">
+                                <a class="menu-link{{ request()->is('Master/Treatment*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Treatment') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Treatment</span>
                                 </a>
                             </div>
 
                             <!-- Storage & Location -->
-                            <div class="menu-item"><div class="menu-content pt-4 pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Storage & Location</span></div></div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/StorageLocation*') ? ' active' : '' }}" href="{{ url('Master/StorageLocation') }}">
+                                <div class="menu-content pt-4 pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Storage & Location</span>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/StorageLocation*') ? ' active' : '' }}"
+                                    href="{{ url('Master/StorageLocation') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Storage Locations</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/TrayBox*') ? ' active' : '' }}" href="{{ url('Master/TrayBox') }}">
+                                <a class="menu-link{{ request()->is('Master/TrayBox*') ? ' active' : '' }}"
+                                    href="{{ url('Master/TrayBox') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Tray/Box</span>
                                 </a>
                             </div>
 
                             <!-- Inventory -->
-                            <div class="menu-item"><div class="menu-content pt-4 pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Inventory</span></div></div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Sku*') ? ' active' : '' }}" href="{{ url('Master/Sku') }}">
+                                <div class="menu-content pt-4 pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Inventory</span></div>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/Sku*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Sku') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">SKU</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Suppliers*') ? ' active' : '' }}" href="{{ url('Master/Suppliers') }}">
+                                <a class="menu-link{{ request()->is('Master/Suppliers*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Suppliers') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Supplier</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Partners*') ? ' active' : '' }}" href="{{ url('Master/Partners') }}">
+                                <a class="menu-link{{ request()->is('Master/Partners*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Partners') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Partner</span>
                                 </a>
                             </div>
 
-                            <!-- Company & Organization -->
-                            <div class="menu-item"><div class="menu-content pt-4 pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Company & Org</span></div></div>
+                            <!-- Certificate Labs -->
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/CompanyType*') ? ' active' : '' }}" href="{{ url('Master/CompanyType') }}">
+                                <div class="menu-content pt-4 pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Certificates</span></div>
+                            </div>
+                            @if ($masterCertificateLab)
+                                <div class="menu-item">
+                                    <a class="menu-link{{ request()->is('Master/CertificateLab*') ? ' active' : '' }}"
+                                        href="{{ url('Master/CertificateLab') }}">
+                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                        <span class="menu-title">Certificate Labs</span>
+                                    </a>
+                                </div>
+                            @endif
+
+                            <!-- Company & Organization -->
+                            <div class="menu-item">
+                                <div class="menu-content pt-4 pb-2"><span
+                                        class="menu-section text-muted text-uppercase fs-8 ls-1">Company & Org</span></div>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/CompanyType*') ? ' active' : '' }}"
+                                    href="{{ url('Master/CompanyType') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Company Type</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Role*') ? ' active' : '' }}" href="{{ url('Master/Role') }}">
+                                <a class="menu-link{{ request()->is('Master/Role*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Role') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Role</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/State*') ? ' active' : '' }}" href="{{ url('Master/State') }}">
+                                <a class="menu-link{{ request()->is('Master/State*') ? ' active' : '' }}"
+                                    href="{{ url('Master/State') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">State</span>
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link{{ request()->is('Master/Country*') ? ' active' : '' }}" href="{{ url('Master/Country') }}">
+                                <a class="menu-link{{ request()->is('Master/Country*') ? ' active' : '' }}"
+                                    href="{{ url('Master/Country') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Country</span>
                                 </a>
