@@ -53,6 +53,7 @@ class MenuListAndPrivilegeSeeder extends Seeder
             ['idtbl_menu_list' => 35, 'menu_name' => 'Grades',                 'status' => 1],
             ['idtbl_menu_list' => 36, 'menu_name' => 'Origin Treatment',       'status' => 1],
             ['idtbl_menu_list' => 37, 'menu_name' => 'Storage Locations',      'status' => 1],
+            ['idtbl_menu_list' => 44, 'menu_name' => 'Certificate Labs',       'status' => 1],
         ];
 
         // Skip if already seeded

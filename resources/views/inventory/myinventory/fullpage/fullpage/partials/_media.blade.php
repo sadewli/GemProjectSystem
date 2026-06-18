@@ -97,14 +97,15 @@
             <div class="p-6 space-y-4">
                 <div class="form-group !mb-0">
                     <label class="!text-[14px] !font-medium !text-slate-700 !mb-1">Certificate Lab*</label>
-                    <div class="relative w-full custom-select-wrapper">
+                    <div class="relative w-full custom-select-wrapper" id="certificateLabSelect">
                         <button type="button" class="form-control flex items-center pl-3 pr-8 text-left !bg-white">
-                            <span class="truncate text-slate-800 selected-text">SSEF</span>
+                            <span class="truncate text-slate-800 selected-text">{{ $certificateLabs->first()->lab_name ?? 'Select' }}</span>
                         </button>
+                        <input type="hidden" name="certificate_lab" id="certificate_lab_input" value="{{ $certificateLabs->first()->idtbl_certificate_labs ?? '' }}">
                         <div class="custom-dropdown-panel z-50">
-                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item selected">SSEF</div>
-                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">GIA</div>
-                            <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item">GRS</div>
+                            @foreach($certificateLabs as $lab)
+                                <div class="p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item" data-id="{{ $lab->idtbl_certificate_labs }}">{{ $lab->lab_name }}</div>
+                            @endforeach
                         </div>
                     </div>
                 </div>

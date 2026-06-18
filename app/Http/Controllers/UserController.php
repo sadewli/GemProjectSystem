@@ -220,11 +220,14 @@ class UserController extends Controller
 
     public function Userprivilegeinsertupdate(Request $request)
     {
+        // Accept both new form names (`userlist`/`menulist`) and legacy single-select names (`userid`/`menuid`)
         $data = $request->validate([
             'recordOption' => 'required|in:1,2',
-            'userlist' => 'required|integer|exists:tbl_user,idtbl_user',
-            'menulist' => 'required|array',
+            'userlist' => 'nullable|integer|exists:tbl_user,idtbl_user',
+            'userid' => 'nullable|integer|exists:tbl_user,idtbl_user',
+            'menulist' => 'nullable|array',
             'menulist.*' => 'integer|exists:tbl_menu_list,idtbl_menu_list',
+            'menuid' => 'nullable|integer|exists:tbl_menu_list,idtbl_menu_list',
             'addcheck' => 'nullable',
             'editcheck' => 'nullable',
             'statuscheck' => 'nullable',
@@ -232,13 +235,47 @@ class UserController extends Controller
             'recordID' => 'nullable|integer',
         ]);
 
-        $addcheck = $request->has('addcheck') ? 1 : 0;
-        $editcheck = $request->has('editcheck') ? 1 : 0;
-        $statuscheck = $request->has('statuscheck') ? 1 : 0;
-        $removecheck = $request->has('removecheck') ? 1 : 0;
+        $addcheck = $request->has('can_add') || $request->has('addcheck') ? 1 : 0;
+        $editcheck = $request->has('can_edit') || $request->has('editcheck') ? 1 : 0;
+        $statuscheck = $request->has('can_statuschange') || $request->has('statuscheck') ? 1 : 0;
+        $removecheck = $request->has('can_remove') || $request->has('removecheck') ? 1 : 0;
+
+        // Normalize user id and menu list values
+        $userId = $data['userlist'] ?? $data['userid'] ?? null;
+        $menuList = $data['menulist'] ?? null;
+        if (empty($menuList) && !empty($data['menuid'])) {
+            $menuList = [(int)$data['menuid']];
+        }
+
+        // Ensure required params exist after normalization
+        if (empty($userId) || empty($menuList)) {
+            Session::flash('msg', json_encode($this->makeActionResponse(false, 'User and Menu selection are required.', 'warning')));
+            return redirect('User/Userprivilege');
+        }
 
         if ($data['recordOption']==1) {
-            foreach ($data['menulist'] as $menu_id) {
+            foreach ($menuList as $menu_id) {
+                // Skip if privilege already exists for this user+menu
+                $exists = Privilege::where('tbl_user_idtbl_user', $userId)
+                    ->where('tbl_menu_list_idtbl_menu_list', $menu_id)
+                    ->where('status', '!=', 3)
+                    ->first();
+
+                if ($exists) {
+                    // update existing privilege flags
+                    $exists->update([
+                        'can_add' => $addcheck,
+                        'can_edit' => $editcheck,
+                        'can_statuschange' => $statuscheck,
+                        'can_remove' => $removecheck,
+                        'access_status' => 1,
+                        'status' => 1,
+                        'updateuser' => Session::get('userid'),
+                        'updatedatetime' => now(),
+                    ]);
+                    continue;
+                }
+
                 Privilege::create([
                     'can_add' => $addcheck,
                     'can_edit' => $editcheck,
@@ -247,7 +284,7 @@ class UserController extends Controller
                     'access_status' => 1,
                     'status' => 1,
                     'insertdatetime' => now(),
-                    'tbl_user_idtbl_user' => $data['userlist'],
+                    'tbl_user_idtbl_user' => $userId,
                     'tbl_menu_list_idtbl_menu_list' => $menu_id,
                 ]);
             }
@@ -258,7 +295,6 @@ class UserController extends Controller
                 Session::flash('msg', json_encode($this->makeActionResponse(false, 'Record not found', 'danger')));
                 return redirect('User/Userprivilege');
             }
-
             $privilege->update([
                 'can_add' => $addcheck,
                 'can_edit' => $editcheck,
@@ -267,8 +303,8 @@ class UserController extends Controller
                 'access_status' => 1,
                 'updateuser' => Session::get('userid'),
                 'updatedatetime' => now(),
-                'tbl_user_idtbl_user' => $data['userlist'],
-                'tbl_menu_list_idtbl_menu_list' => $data['menulist'][0],
+                'tbl_user_idtbl_user' => $userId,
+                'tbl_menu_list_idtbl_menu_list' => $menuList[0],
             ]);
             Session::flash('msg', json_encode($this->makeActionResponse(true, 'Record Updated Successfully', 'primary')));
         }
