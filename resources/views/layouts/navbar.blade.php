@@ -746,6 +746,12 @@
                                     <span class="menu-title">Supplier</span>
                                 </a>
                             </div>
+                            <div class="menu-item">
+                                <a class="menu-link{{ request()->is('Master/Partners*') ? ' active' : '' }}" href="{{ url('Master/Partners') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Partner</span>
+                                </a>
+                            </div>
 
                             <!-- Company & Organization -->
                             <div class="menu-item"><div class="menu-content pt-4 pb-2"><span class="menu-section text-muted text-uppercase fs-8 ls-1">Company & Org</span></div></div>

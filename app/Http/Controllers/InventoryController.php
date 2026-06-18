@@ -37,6 +37,7 @@ class InventoryController extends Controller
 		$auditLogs = \DB::table('tbl_audit_logs')
 			->leftJoin('tbl_user', 'tbl_audit_logs.user_id', '=', 'tbl_user.idtbl_user')
 			->where('tbl_audit_logs.entity_type', 'tbl_products')
+			->where('tbl_audit_logs.status', 1)
 			->select(
 				'tbl_audit_logs.*',
 				'tbl_user.name as user_name'
@@ -44,7 +45,9 @@ class InventoryController extends Controller
 			->orderBy('tbl_audit_logs.insertdatetime', 'desc')
 			->get();
 
-		return view('inventory.myinventory.myinventory', compact('productTypes', 'storageLocations', 'suppliers', 'ownershipTypes', 'treatments', 'auditLogs'));
+		$partners = \App\Models\Partner::where('status', 1)->orderBy('partner_name')->get();
+
+		return view('inventory.myinventory.myinventory', compact('productTypes', 'storageLocations', 'suppliers', 'ownershipTypes', 'treatments', 'auditLogs', 'partners'));
 	}
 
 	// Show product-type selection – redirects to the modal-based index
@@ -106,6 +109,7 @@ class InventoryController extends Controller
 		$skus = Sku::where('status', 1)->get();
 		$weightUnits = WeightUnit::where('status', 1)->get();
 		$ownershipTypes = OwnershipType::where('status', 1)->get();
+		$partners = \App\Models\Partner::where('status', 1)->orderBy('partner_name')->get();
 
 		$auditLogs = [];
 		if ($id) {
@@ -113,6 +117,7 @@ class InventoryController extends Controller
 				->leftJoin('tbl_user', 'tbl_audit_logs.user_id', '=', 'tbl_user.idtbl_user')
 				->where('tbl_audit_logs.entity_type', 'tbl_products')
 				->where('tbl_audit_logs.entity_id', $id)
+				->where('tbl_audit_logs.status', 1)
 				->select(
 					'tbl_audit_logs.*',
 					'tbl_user.name as user_name'
@@ -139,7 +144,8 @@ class InventoryController extends Controller
 			'skus',
 			'weightUnits',
 			'ownershipTypes',
-			'auditLogs'
+			'auditLogs',
+			'partners'
 		));
 	}
 
@@ -161,19 +167,25 @@ class InventoryController extends Controller
 
 		$prefixName = $sku ? $sku->sku_name : 'Prefix';
 
-		// 3. Calculate the next sequential number for the SKU based on how many products already exist with that prefix.
-		// Assuming the products table is `tbl_products` and the SKU column is `sku_number`.
-		// We count how many products have this product type to determine the next number.
-		try {
-			$count = \Illuminate\Support\Facades\DB::table('tbl_products')
-				->where('idtbl_product_types', $productTypeId)
-				->count();
-		} catch (\Exception $e) {
-			// Fallback to 0 if tbl_products does not exist yet
-			$count = 0;
+		// 3. Get next number from sku_counters
+		$counter = \Illuminate\Support\Facades\DB::table('sku_counters')
+			->where('idtbl_product_types', $productTypeId)
+			->first();
+
+		if ($counter) {
+			$next = $counter->last_number + 1;
+		} else {
+			try {
+				$count = \Illuminate\Support\Facades\DB::table('tbl_products')
+					->where('idtbl_product_types', $productTypeId)
+					->count();
+				$next = $count + 1;
+			} catch (\Exception $e) {
+				$next = 1;
+			}
 		}
 
-		$nextNumber = str_pad($count + 1, 2, '0', STR_PAD_LEFT);
+		$nextNumber = str_pad($next, 2, '0', STR_PAD_LEFT);
 
 		// 4. Return a JSON response
 		$skuCode = ($productType->skuname ?? '') . $nextNumber;
@@ -238,6 +250,47 @@ class InventoryController extends Controller
 			}
 		}
 
+		$skuNumber = $request->sku_number ?: 'DEFAULT-SKU';
+		
+		// If the requested SKU already exists or is default, generate a new one using the counter.
+		if ($skuNumber === 'DEFAULT-SKU' || \Illuminate\Support\Facades\DB::table('tbl_products')->where('sku_number', $skuNumber)->exists()) {
+			$productTypeId = $this->intVal($request->idtbl_product_types) ?: 1;
+			$skuNumber = \Illuminate\Support\Facades\DB::transaction(function () use ($productTypeId) {
+				$productType = \Illuminate\Support\Facades\DB::table('tbl_product_types')
+					->where('idtbl_product_types', $productTypeId)
+					->first();
+					
+				do {
+					$counter = \Illuminate\Support\Facades\DB::table('sku_counters')
+						->where('idtbl_product_types', $productTypeId)
+						->lockForUpdate()
+						->first();
+						
+					if ($counter) {
+						$next = $counter->last_number + 1;
+						\Illuminate\Support\Facades\DB::table('sku_counters')
+							->where('idtbl_product_types', $productTypeId)
+							->update(['last_number' => $next, 'updated_at' => now()]);
+					} else {
+						$count = \Illuminate\Support\Facades\DB::table('tbl_products')
+							->where('idtbl_product_types', $productTypeId)
+							->count();
+						$next = $count + 1;
+						\Illuminate\Support\Facades\DB::table('sku_counters')->insert([
+							'idtbl_product_types' => $productTypeId,
+							'last_number' => $next,
+							'created_at' => now(),
+							'updated_at' => now(),
+						]);
+					}
+					
+					$proposedSku = ($productType->skuname ?? '') . str_pad($next, 2, '0', STR_PAD_LEFT);
+				} while (\Illuminate\Support\Facades\DB::table('tbl_products')->where('sku_number', $proposedSku)->exists());
+				
+				return $proposedSku;
+			});
+		}
+
 		$product = \App\Models\Inventory\Product::create([
 			'idtbl_product_types' => $this->intVal($request->idtbl_product_types) ?: 1,
 			'idtbl_sub_categories' => $this->intVal($request->idtbl_sub_categories),
@@ -254,7 +307,7 @@ class InventoryController extends Controller
 			'idtbl_tray_box' => $this->intVal($request->idtbl_tray_box),
 			'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
 			'idtbl_skus' => $this->intVal($request->idtbl_skus) ?: 1,
-			'sku_number' => $request->sku_number ?: 'DEFAULT-SKU',
+			'sku_number' => $skuNumber,
 			'length_mm' => $this->floatVal($request->length_mm),
 			'width_mm' => $this->floatVal($request->width_mm),
 			'height_mm' => $this->floatVal($request->height_mm),
@@ -428,7 +481,7 @@ class InventoryController extends Controller
 			}
 		}
 
-		return redirect()->route('inventory.myinventory.index')->with('success', 'Product saved successfully!');
+		return redirect()->route('inventory.myinventory.show', ['id' => $product->idtbl_products])->with('success', 'Product saved successfully!');
 	}
 
 	public function getDependentData($productTypeId)
@@ -456,5 +509,197 @@ class InventoryController extends Controller
 			'cuttingGrades' => $cuttingGrades,
 			'clarityGrades' => $clarityGrades
 		]);
+	}
+
+	public function updateAuditLog(Request $request)
+	{
+		if (!Session::get('loggedin')) {
+			return response()->json(['success' => false, 'message' => 'Not authenticated'], 401);
+		}
+
+		$request->validate([
+			'log_id' => 'required|integer',
+			'note' => 'required|string|max:1000'
+		]);
+
+		\DB::table('tbl_audit_logs')
+			->where('idtbl_audit_logs', $request->log_id)
+			->update([
+				'note' => $request->note,
+				'updateuser' => Session::get('userid'),
+				'updatedatetime' => now()
+			]);
+
+		return response()->json(['success' => true, 'message' => 'Log updated successfully']);
+	}
+
+	public function deleteAuditLog(Request $request)
+	{
+		if (!Session::get('loggedin')) {
+			return response()->json(['success' => false, 'message' => 'Not authenticated'], 401);
+		}
+
+		$request->validate([
+			'log_id' => 'required|integer'
+		]);
+
+		\DB::table('tbl_audit_logs')
+			->where('idtbl_audit_logs', $request->log_id)
+			->update([
+				'status' => 0,
+				'updateuser' => Session::get('userid'),
+				'updatedatetime' => now()
+			]);
+
+		return response()->json(['success' => true, 'message' => 'Log deleted successfully']);
+	}
+
+	public function getProductDetails($id)
+	{
+		if (!Session::get('loggedin')) {
+			return response()->json(['success' => false, 'message' => 'Not authenticated'], 401);
+		}
+
+		$product = \DB::table('tbl_products')
+			->leftJoin('tbl_product_types', 'tbl_products.idtbl_product_types', '=', 'tbl_product_types.idtbl_product_types')
+			->leftJoin('tbl_varieties', 'tbl_products.idtbl_varieties', '=', 'tbl_varieties.idtbl_varieties')
+			->leftJoin('tbl_colors', 'tbl_products.idtbl_colors', '=', 'tbl_colors.idtbl_colors')
+			->leftJoin('tbl_color_grade', 'tbl_products.idtbl_color_grade', '=', 'tbl_color_grade.idtbl_color_grade')
+			->leftJoin('tbl_shapes', 'tbl_products.idtbl_shapes', '=', 'tbl_shapes.idtbl_shapes')
+			->leftJoin('tbl_cuts', 'tbl_products.idtbl_cuts', '=', 'tbl_cuts.idtbl_cuts')
+			->leftJoin('tbl_treatments', 'tbl_products.idtbl_treatments', '=', 'tbl_treatments.idtbl_treatments')
+			->leftJoin('tbl_origins', 'tbl_products.idtbl_origins', '=', 'tbl_origins.idtbl_origins')
+			->leftJoin('tbl_storage_locations', 'tbl_products.idtbl_storage_locations', '=', 'tbl_storage_locations.idtbl_storage_locations')
+			->leftJoin('tbl_tray_box', 'tbl_products.idtbl_tray_box', '=', 'tbl_tray_box.idtbl_tray_box')
+			->where('tbl_products.idtbl_products', $id)
+			->select(
+				'tbl_products.*',
+				'tbl_product_types.name as category_name',
+				'tbl_varieties.name as variety_name',
+				'tbl_colors.color_name',
+				'tbl_color_grade.grade_name as color_grade_name',
+				'tbl_shapes.name as shape_name',
+				'tbl_cuts.name as cut_name',
+				'tbl_treatments.treatment_name',
+				'tbl_origins.origin_name',
+				'tbl_storage_locations.location_name',
+				'tbl_tray_box.tray_box_number as tray_box_name'
+			)
+			->first();
+
+		if (!$product) {
+			return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+		}
+
+		$pricing = \DB::table('tbl_product_pricing')->where('idtbl_products', $id)->first();
+		
+		$purchasing = \DB::table('tbl_product_purchasing')
+			->leftJoin('tbl_suppliers', 'tbl_product_purchasing.idtbl_suppliers', '=', 'tbl_suppliers.idtbl_suppliers')
+			->leftJoin('tbl_ownership_type', 'tbl_product_purchasing.idtbl_ownership_type', '=', 'tbl_ownership_type.idtbl_ownership_type')
+			->where('tbl_product_purchasing.idtbl_products', $id)
+			->select('tbl_product_purchasing.*', 'tbl_suppliers.supplier_name', 'tbl_suppliers.contact_name', 'tbl_ownership_type.ownership_type_name')
+			->first();
+
+		$partners = [];
+		if ($purchasing) {
+			$master = \DB::table('tbl_partners_master')
+				->leftJoin('tbl_partners', 'tbl_partners_master.idtbl_partners', '=', 'tbl_partners.idtbl_partners')
+				->where('idtbl_product_purchasing', $purchasing->idtbl_product_purchasing ?? clone($purchasing)->id ?? null)
+				->select('tbl_partners_master.*', 'tbl_partners.partner_name')
+				->first();
+			
+			if ($master) {
+				$partners[] = [
+					'name' => 'My Company',
+					'ownership' => $master->ownership_percentage,
+					'profit' => $master->profit_share_percentage
+				];
+
+				$details = \DB::table('tbl_partners_details')
+					->leftJoin('tbl_partners', 'tbl_partners_details.idtbl_partners', '=', 'tbl_partners.idtbl_partners')
+					->where('idtbl_partners_master', $master->idtbl_partners_master)
+					->select('tbl_partners_details.*', 'tbl_partners.partner_name')
+					->get();
+				
+				foreach ($details as $d) {
+					$partners[] = [
+						'name' => $d->partner_name,
+						'ownership' => $d->ownership_percentage,
+						'profit' => $d->profit_share_percentage
+					];
+				}
+			}
+		}
+
+		return response()->json([
+			'success' => true,
+			'data' => [
+				'product' => $product,
+				'pricing' => $pricing,
+				'purchasing' => $purchasing,
+				'partners' => $partners
+			]
+		]);
+	}
+	public function createDropdownValue(Request $request)
+	{
+		if (!Session::get('loggedin')) {
+			return response()->json(['success' => false, 'message' => 'Not authenticated'], 401);
+		}
+
+		$request->validate([
+			'table_name' => 'required|string',
+			'value' => 'required|string'
+		]);
+
+		$table = $request->table_name;
+		$value = $request->value;
+		$productTypeId = Session::get('selected_product_type_id') ?: 1;
+
+		$map = [
+			'tbl_sub_categories' => ['pk' => 'idtbl_sub_categories', 'name' => 'sub_category_name', 'has_pt' => true],
+			'tbl_varieties' => ['pk' => 'idtbl_varieties', 'name' => 'name', 'has_pt' => true],
+			'tbl_colors' => ['pk' => 'idtbl_colors', 'name' => 'color_name', 'has_pt' => true],
+			'tbl_shapes' => ['pk' => 'idtbl_shapes', 'name' => 'name', 'has_pt' => true],
+			'tbl_cuts' => ['pk' => 'idtbl_cuts', 'name' => 'name', 'has_pt' => true],
+			'tbl_treatments' => ['pk' => 'idtbl_treatments', 'name' => 'treatment_name', 'has_pt' => true],
+			'tbl_origins' => ['pk' => 'idtbl_origins', 'name' => 'origin_name', 'has_pt' => true],
+			'tbl_color_grade' => ['pk' => 'idtbl_color_grade', 'name' => 'grade_name', 'has_pt' => true],
+			'tbl_cuttinggrade' => ['pk' => 'idtbl_cuttinggrade', 'name' => 'cuttinggradename', 'has_pt' => true],
+			'tbl_clarity_grade' => ['pk' => 'idtbl_clarity_grade', 'name' => 'clarity_grade_name', 'has_pt' => true],
+			'tbl_storage_locations' => ['pk' => 'idtbl_storage_locations', 'name' => 'location_name', 'has_pt' => false],
+			'tbl_tray_box' => ['pk' => 'idtbl_tray_box', 'name' => 'tray_box_number', 'has_pt' => false],
+			'tbl_suppliers' => ['pk' => 'idtbl_suppliers', 'name' => 'supplier_name', 'has_pt' => false],
+			'tbl_ownership_type' => ['pk' => 'idtbl_ownership_type', 'name' => 'ownership_type_name', 'has_pt' => false]
+		];
+
+		if (!array_key_exists($table, $map)) {
+			return response()->json(['success' => false, 'message' => 'Invalid table'], 400);
+		}
+
+		$config = $map[$table];
+
+		$data = [
+			$config['name'] => $value,
+			'status' => 1,
+			'insertuser' => Session::get('userid') ?: 1,
+			'insertdatetime' => now()
+		];
+
+		if ($config['has_pt']) {
+			$data['idtbl_product_types'] = $productTypeId;
+		}
+
+		try {
+			$id = \DB::table($table)->insertGetId($data);
+
+			return response()->json([
+				'success' => true,
+				'id' => $id,
+				'value' => $value
+			]);
+		} catch (\Exception $e) {
+			return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+		}
 	}
 }
