@@ -46,6 +46,7 @@ use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\StateController;
 use App\Http\Controllers\Master\CountryController;
 use App\Http\Controllers\Master\ColorGradeController;
+use App\Http\Controllers\ProductionController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('Welcome', [WelcomeController::class, 'index']);
@@ -124,6 +125,8 @@ Route::post('Master/Storagelocationedit', [StorageLocationController::class, 'ed
 Route::post('Master/Storagelocationdelete', [StorageLocationController::class, 'delete']);
 Route::get('Master/Suppliers', [SupplierController::class, 'index']);
 Route::post('Master/Suppliersinsertupdate', [SupplierController::class, 'insertupdate']);
+Route::get('Master/Partners', [\App\Http\Controllers\Master\PartnerController::class, 'index']);
+Route::post('Master/Partnersinsertupdate', [\App\Http\Controllers\Master\PartnerController::class, 'insertupdate']);
 Route::post('Master/Colorinsertupdate', [ColorController::class, 'insertupdate']);
 Route::post('Master/Colorcategoryinsertupdate', [ColorCategoryController::class, 'insertupdate']);
 
@@ -216,6 +219,8 @@ Route::prefix('Inventory/inventoryadjustment')->name('inventoryadjustment.')->gr
     Route::patch('/{id}/restore', [\App\Http\Controllers\inventory\inventoryadjustment::class, 'restore'])->name('restore');
 });
 
+Route::post('Inventory/create-dropdown-value', [InventoryController::class, 'createDropdownValue'])->name('inventory.createDropdownValue');
+
 Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(function () {
     Route::get('/', [InventoryController::class, 'myinventory'])->name('index');
     Route::get('/select-type', [InventoryController::class, 'selectProductType'])->name('select_type');
@@ -224,6 +229,10 @@ Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(fu
     Route::get('/new', [InventoryController::class, 'show'])->name('new');
     Route::post('/store', [InventoryController::class, 'store'])->name('store');
     Route::get('/next-sku/{productTypeId}', [InventoryController::class, 'nextSku'])->name('next_sku');
+    Route::get('/dependent-data/{productTypeId}', [InventoryController::class, 'getDependentData'])->name('dependent_data');
+    Route::post('/audit-log/update', [InventoryController::class, 'updateAuditLog'])->name('auditlog.update');
+    Route::post('/audit-log/delete', [InventoryController::class, 'deleteAuditLog'])->name('auditlog.delete');
+    Route::get('/product-details/{id}', [InventoryController::class, 'getProductDetails'])->name('product_details');
     Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
 });
 
@@ -279,17 +288,24 @@ Route::prefix('crm')->name('crm.')->group(function () {
 //Production Routes
 Route::prefix('production')->name('production.')->group(function () {
     Route::get('/overview', [\App\Http\Controllers\production\overview::class, 'index'])->name('overview.index');
-    Route::get('/excelsheet', [\App\Http\Controllers\production\excelsheet::class, 'index'])->name('excelsheet.index');
-    Route::get('/excelsheetupload', [\App\Http\Controllers\production\excelsheetupload::class, 'index'])->name('excelsheetupload.index');
+
 
     // New placeholder routes for menubar items
-    Route::get('/recutting', function() { return view('dashboard'); })->name('recutting');
-    Route::get('/cutting', function() { return view('dashboard'); })->name('cutting');
-    Route::get('/reassortment', function() { return view('dashboard'); })->name('reassortment');
-    Route::get('/treatment', function() { return view('dashboard'); })->name('treatment');
-    Route::get('/producttransfer', function() { return view('dashboard'); })->name('producttransfer');
+    Route::get('/recutting', function () {
+        return view('dashboard'); })->name('recutting');
+    Route::get('/cutting', function () {
+        return view('dashboard'); })->name('cutting');
+    Route::get('/reassortment', function () {
+        return view('dashboard'); })->name('reassortment');
+    Route::get('/treatment', function () {
+        return view('dashboard'); })->name('treatment');
+    Route::get('/producttransfer', function () {
+        return view('dashboard'); })->name('producttransfer');
+
+    Route::post('/store', [ProductionController::class, 'store'])->name('store');
 });
 
 // Missing Inventory Route
-Route::get('Inventory/stocktake', function() { return view('dashboard'); })->name('inventory.stocktake');
-
+Route::get('Inventory/stocktake', function () {
+    return view('dashboard'); })->name('inventory.stocktake');
+/* Obsolete AJAX routes removed */

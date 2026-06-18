@@ -153,11 +153,11 @@
                 </div>
             </div>
             <button type="submit"
-                class="bg-[#2563eb] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors">
-                Save and add new
+                class="bg-[#2563eb] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors shadow-sm">
+                Save
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                        d="M5 13l4 4L19 7" />
                 </svg>
             </button>
         </div>
@@ -201,7 +201,31 @@
             @include('inventory.myinventory.fullpage.fullpage.partials._sidebar')
 
         </div>
+        </div>
         </form>
+
+        {{-- Create New Value Modal --}}
+        <div id="createNewModal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+                <div class="flex justify-between items-center p-4 border-b border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800">Create new value</h3>
+                    <button type="button" id="closeCreateModal" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <input type="hidden" id="createNewTable" value="">
+                    <input type="text" id="newValueInput" placeholder="Enter Value" class="form-control w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="p-4 flex justify-end">
+                    <button type="button" id="submitNewValue" class="bg-[#2563eb] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Create new
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -209,6 +233,30 @@
     <script>// My Inventory - Show Page Scripts
 
         document.addEventListener('DOMContentLoaded', function () {
+            const productForm = document.getElementById('productForm');
+            if (productForm) {
+                productForm.addEventListener('submit', function (e) {
+                    // Check for essential data (Weight or Quantity)
+                    const weight = document.getElementById('input-weight');
+                    const quantity = document.getElementById('input-quantity');
+                    
+                    let hasData = false;
+                    if ((weight && weight.value.trim() !== '') || (quantity && quantity.value.trim() !== '')) {
+                        hasData = true;
+                    }
+                    
+                    if (!hasData) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Action Required',
+                            text: 'Please enter the required data first.',
+                            confirmButtonColor: '#2563eb'
+                        });
+                    }
+                });
+            }
+
             // === TABS FUNCTIONALITY ===
             const tabLinks = document.querySelectorAll('.tab-link');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -242,6 +290,16 @@
                     const targetContent = document.getElementById(targetId);
                     if (targetContent) {
                         targetContent.classList.add('active');
+                    }
+                    
+                    // Show/hide Pricing module based on tab
+                    const pricingModule = document.getElementById('pricing-module');
+                    if (pricingModule) {
+                        if (targetId === 'tab-history') {
+                            pricingModule.style.display = 'none';
+                        } else {
+                            pricingModule.style.display = 'block';
+                        }
                     }
                 });
             });
@@ -303,6 +361,169 @@
             document.addEventListener('click', function () {
                 dropdownWrappers.forEach(wrapper => {
                     wrapper.classList.remove('open');
+                });
+            });
+
+            // Fetch SKU for fullpage
+            const productTypeInput = document.querySelector('input[name="idtbl_product_types"]');
+            if (productTypeInput && productTypeInput.value) {
+                const productTypeId = productTypeInput.value;
+                fetch(`/Inventory/MyInventory/next-sku/${productTypeId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.prefix_name && data.sku_code) {
+                            const prefixSpan = document.querySelector('#skuPrefixTextFullpage');
+                            const skuInput = document.querySelector('#skuNumberInputFullpage');
+                            const hiddenPrefix = document.querySelector('#hiddenPrefixIdFullpage');
+                            const prefixBtn = document.querySelector('#prefixDropdownBtnFullpage');
+                            
+                            if (prefixSpan) prefixSpan.innerText = data.prefix_name;
+                            if (hiddenPrefix) hiddenPrefix.value = data.idtbl_skus;
+                            if (skuInput) {
+                                skuInput.value = data.sku_code;
+                                skuInput.setAttribute('readonly', 'true');
+                                skuInput.classList.add('bg-slate-50/50', 'text-slate-500');
+                            }
+                            if (prefixBtn) {
+                                prefixBtn.disabled = true;
+                                prefixBtn.classList.add('bg-slate-50/50');
+                            }
+                        }
+                    })
+                    .catch(err => console.error("Error fetching SKU:", err));
+            }
+            // === CREATE NEW VALUE MODAL ===
+            const createNewModal = document.getElementById('createNewModal');
+            const closeCreateModalBtn = document.getElementById('closeCreateModal');
+            const submitNewValueBtn = document.getElementById('submitNewValue');
+            const createNewTableInput = document.getElementById('createNewTable');
+            const newValueInput = document.getElementById('newValueInput');
+            let currentDropdownPanel = null;
+            let currentWrapper = null;
+            
+            // Open modal when + Create New is clicked
+            document.querySelectorAll('.create-new-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const tableName = this.getAttribute('data-table');
+                    if(tableName) {
+                        createNewTableInput.value = tableName;
+                        newValueInput.value = '';
+                        createNewModal.classList.remove('hidden');
+                        createNewModal.classList.add('flex');
+                        currentDropdownPanel = this.closest('.custom-dropdown-panel');
+                        currentWrapper = this.closest('.custom-select-wrapper');
+                        
+                        // Close the dropdown so it doesn't stay open
+                        if (currentWrapper) currentWrapper.classList.remove('open');
+                        
+                        setTimeout(() => newValueInput.focus(), 100);
+                    }
+                });
+            });
+
+            // Close modal
+            function closeCreateModal() {
+                createNewModal.classList.add('hidden');
+                createNewModal.classList.remove('flex');
+                currentDropdownPanel = null;
+                currentWrapper = null;
+            }
+
+            closeCreateModalBtn.addEventListener('click', closeCreateModal);
+            
+            // Close on click outside
+            createNewModal.addEventListener('click', function(e) {
+                if (e.target === createNewModal) {
+                    closeCreateModal();
+                }
+            });
+
+            // Handle Submit
+            submitNewValueBtn.addEventListener('click', function() {
+                const table = createNewTableInput.value;
+                const value = newValueInput.value.trim();
+                
+                if (!value) {
+                    Swal.fire({icon: 'warning', title: 'Action Required', text: 'Please enter a value.'});
+                    return;
+                }
+                
+                // Show loading state
+                const originalBtnHtml = submitNewValueBtn.innerHTML;
+                submitNewValueBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Saving...';
+                submitNewValueBtn.disabled = true;
+
+                fetch('{{ route("inventory.createDropdownValue") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ table_name: table, value: value })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    submitNewValueBtn.innerHTML = originalBtnHtml;
+                    submitNewValueBtn.disabled = false;
+                    
+                    if (data.success) {
+                        // Successfully created
+                        closeCreateModal();
+                        
+                        // Append new item to the dropdown panel
+                        if (currentDropdownPanel && currentWrapper) {
+                            const newItem = document.createElement('div');
+                            newItem.className = 'p-2 hover:bg-slate-50 cursor-pointer text-[13px] px-3 dd-item selected';
+                            newItem.setAttribute('data-value', data.id);
+                            newItem.innerText = data.value;
+                            
+                            // Insert before the create button container (which is the last element)
+                            const createBtnContainer = currentDropdownPanel.querySelector('.border-t');
+                            currentDropdownPanel.insertBefore(newItem, createBtnContainer);
+                            
+                            // Update selection
+                            const selectedTextSpan = currentWrapper.querySelector('.selected-text');
+                            if (selectedTextSpan) {
+                                selectedTextSpan.innerText = data.value;
+                                selectedTextSpan.classList.remove('text-slate-400');
+                                selectedTextSpan.classList.add('text-slate-800');
+                            }
+                            
+                            const hiddenInput = currentWrapper.querySelector('input[type="hidden"]');
+                            if (hiddenInput) {
+                                hiddenInput.value = data.id;
+                            }
+                            
+                            // Update existing items to remove selected class
+                            currentDropdownPanel.querySelectorAll('.dd-item').forEach(i => i.classList.remove('selected'));
+                            newItem.classList.add('selected');
+                            
+                            // Re-bind click event for the new item
+                            newItem.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                if (selectedTextSpan) {
+                                    selectedTextSpan.innerText = this.innerText || this.textContent;
+                                    selectedTextSpan.classList.remove('text-slate-400');
+                                    selectedTextSpan.classList.add('text-slate-800');
+                                }
+                                if (hiddenInput) {
+                                    hiddenInput.value = this.getAttribute('data-value') || '';
+                                }
+                                currentDropdownPanel.querySelectorAll('.dd-item').forEach(i => i.classList.remove('selected'));
+                                this.classList.add('selected');
+                                currentWrapper.classList.remove('open');
+                            });
+                        }
+                    } else {
+                        Swal.fire({icon: 'error', title: 'Error', text: data.message || 'Failed to create value.'});
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    submitNewValueBtn.innerHTML = originalBtnHtml;
+                    submitNewValueBtn.disabled = false;
+                    Swal.fire({icon: 'error', title: 'Error', text: 'Something went wrong.'});
                 });
             });
         });

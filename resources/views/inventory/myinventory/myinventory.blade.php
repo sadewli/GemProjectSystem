@@ -45,8 +45,6 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">My Inventory</h1>
-
-
         <div class="relative inline-block" id="createBtnWrapper">
             <button type="button" id="openGemstoneModalBtn" class="btn btn-primary flex items-center gap-2">
                 <i class="fas fa-plus"></i> Create New Product
@@ -72,7 +70,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 
     {{-- You can add a table here later --}}
@@ -119,6 +116,8 @@
         <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
             <form id="createGemstoneForm" action="{{ route('inventory.myinventory.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="my_company_id" value="1">
+                <input type="hidden" name="idtbl_product_types" id="ddProductTypeHidden" value="">
 
                 {{-- ================= TAB 1: QUICK VIEW ================= --}}
                 <div id="tab-quick-view" class="tab-content active block px-6 py-6 pb-20">
@@ -140,21 +139,28 @@
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">SKU</label>
                             <div class="flex gap-2">
-                                <div class="relative w-1/2 searchable-dropdown" id="ddSkuPrefixWrapper">
-                                    <input type="hidden" name="sku_prefix" id="ddSkuPrefixHidden" value="Prefix">
-                                    <button type="button" id="ddSkuPrefixBtn" class="form-control flex items-center pl-3 pr-8 text-left">
-                                        <span id="ddSkuPrefixLabel" class="truncate text-slate-800">Prefix</span>
-                                    </button>
-                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </div>
-                                    <div id="ddSkuPrefixPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
-                                        <ul id="ddSkuPrefixList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
-                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Prefix" data-label="Prefix">Prefix</li>
-                                        </ul>
+                                <div class="w-1/2">
+                                    <label class="block text-[13px] text-slate-500 mb-1">Prefix</label>
+                                    <div class="relative searchable-dropdown" id="ddSkuPrefixWrapper">
+                                        <input type="hidden" name="idtbl_skus" id="ddSkuPrefixHidden" value="">
+                                        <button type="button" id="ddSkuPrefixBtn" class="form-control flex items-center pl-3 pr-8 text-left">
+                                            <span id="ddSkuPrefixLabel" class="truncate text-slate-800">Prefix</span>
+                                        </button>
+                                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <div id="ddSkuPrefixPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                                            <ul id="ddSkuPrefixList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                                <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer bg-slate-100 text-slate-800 font-semibold" data-value="Prefix" data-label="Prefix">Prefix</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                                <input type="text" name="sku_number" value="CPG8" class="form-control w-1/2 px-3">
+
+                                <div class="w-1/2">
+                                    <label class="block text-[13px] text-slate-500 mb-1">SKU</label>
+                                    <input type="text" name="sku_number" id="skuNumberInput" value="{{ old('sku_number','') }}" class="form-control w-full px-3">
+                                </div>
                             </div>
                         </div>
 
@@ -408,6 +414,9 @@
                                     </div>
                                     <ul id="ddTreatmentList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select treatment">Select treatment</li>
+                                        @foreach($treatments as $treatment)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $treatment->idtbl_treatments }}" data-label="{{ $treatment->treatment_name }}">{{ $treatment->treatment_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -427,6 +436,9 @@
                                 <div id="ddStoragePanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddStorageList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select storage location">Select storage location</li>
+                                        @foreach($storageLocations as $location)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $location->idtbl_storage_locations }}" data-label="{{ $location->location_name }}">{{ $location->location_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -482,6 +494,9 @@
                                 <div id="ddSupplierPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddSupplierList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select Supplier ref/name">Select Supplier ref/name</li>
+                                        @foreach($suppliers as $supplier)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $supplier->idtbl_suppliers }}" data-label="{{ $supplier->supplier_name }}">{{ $supplier->supplier_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -507,49 +522,53 @@
                                 <div id="ddOwnershipPanel" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <ul id="ddOwnershipList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
                                         <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="Select Ownership Type">Select Ownership Type</li>
+                                        @foreach($ownershipTypes as $ownership)
+                                            <li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="{{ $ownership->idtbl_ownership_type }}" data-label="{{ $ownership->ownership_type_name }}">{{ $ownership->ownership_type_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Partners --}}
-                        <div>
-                            <label class="block text-[13px] text-slate-700 mb-1.5">Partners</label>
-                            <div class="relative">
-                                <input type="text" value="My company" class="form-control pl-3 pr-8">
-                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                </div>
+                        {{-- Partners Section --}}
+                        <div class="col-span-1 md:col-span-3">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 mb-1.5">
+                                <label class="block text-[13px] text-slate-700">Partners</label>
+                                <label class="block text-[13px] text-slate-700">% of ownership</label>
+                                <label class="block text-[13px] text-slate-700">% of profit share</label>
                             </div>
-                        </div>
-
-                        {{-- % of ownership --}}
-                        <div>
-                            <label class="block text-[13px] text-slate-700 mb-1.5">% of ownership</label>
-                            <div class="relative">
-                                <input type="text" value="100" class="form-control pl-3 pr-8">
-                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- % of profit share --}}
-                        <div>
-                            <label class="block text-[13px] text-slate-700 mb-1.5">% of profit share</label>
-                            <div class="flex items-center gap-2">
-                                <div class="relative flex-1">
-                                    <input type="text" value="100" class="form-control pl-3 pr-8">
-                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            <div id="partnerRowsContainer" class="flex flex-col gap-y-3">
+                                {{-- My company row --}}
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 items-center">
+                                    <div class="relative">
+                                        <input type="hidden" name="my_company_id" value="1">
+                                        <input type="text" value="My company" readonly class="form-control pl-3 pr-8 bg-slate-50 text-slate-600">
+                                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        </div>
+                                    </div>
+                                    <div class="relative">
+                                        <input type="text" name="my_ownership_percentage" value="100" class="form-control pl-3 pr-8 bg-slate-50 text-slate-600" readonly>
+                                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="relative flex-1">
+                                            <input type="text" name="my_profit_share_percentage" value="100" class="form-control pl-3 pr-8 bg-slate-50 text-slate-600" readonly>
+                                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="p-1.5 text-blue-800 hover:bg-slate-100 rounded-md">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        </button>
+                                        <div class="w-8"></div>
                                     </div>
                                 </div>
-                                <button type="button" class="p-1.5 text-blue-800 hover:bg-slate-100 rounded-md">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                </button>
                             </div>
-                            <div class="flex justify-end mt-2">
-                                <button type="button" class="px-3 py-1.5 bg-[#f1f5f9] text-[13px] text-slate-700 font-medium rounded-md hover:bg-slate-200">Add partner</button>
+                            <div class="flex justify-end mt-3">
+                                <button type="button" onclick="toggleAddPartnerModal(true)" class="px-3 py-1.5 bg-[#f1f5f9] text-[13px] text-slate-700 font-medium rounded-md hover:bg-slate-200">Add partner</button>
                             </div>
                         </div>
                     </div>
@@ -620,19 +639,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mb-3">
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Cost/unit</label>
-                            <input type="text" placeholder="Cost Per/unit" class="form-control px-3">
+                            <input type="text" name="cost_per_unit" placeholder="Cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5 flex items-center gap-1">Total cost <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></label>
-                            <input type="text" placeholder="Total Cost" class="form-control px-3">
+                            <input type="text" name="total_cost" placeholder="Total Cost" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">My cost/unit</label>
-                            <input type="text" placeholder="My cost Per/unit" class="form-control px-3">
+                            <input type="text" name="my_cost_per_unit" placeholder="My cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5 flex items-center gap-1">My total cost <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></label>
-                            <input type="text" placeholder="My total cost" class="form-control px-3">
+                            <input type="text" name="my_total_cost" placeholder="My total cost" class="form-control px-3">
                         </div>
                     </div>
                     <div class="flex justify-end mb-6">
@@ -644,27 +663,27 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mb-6">
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Wholesale / unit</label>
-                            <input type="text" placeholder="Wholesale Cost Per/unit" class="form-control px-3">
+                            <input type="text" name="wholesale_per_unit" placeholder="Wholesale Cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Wholesale total</label>
-                            <input type="text" placeholder="Total Wholesale Cost" class="form-control px-3">
+                            <input type="text" name="wholesale_total" placeholder="Total Wholesale Cost" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Retail / unit</label>
-                            <input type="text" placeholder="Retail Cost Per/unit" class="form-control px-3">
+                            <input type="text" name="retail_per_unit" placeholder="Retail Cost Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Retail total</label>
-                            <input type="text" placeholder="Total Retail Cost" class="form-control px-3">
+                            <input type="text" name="retail_total" placeholder="Total Retail Cost" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Matrix / unit</label>
-                            <input type="text" placeholder="Matrix Price Per/unit" class="form-control px-3">
+                            <input type="text" name="matrix_per_unit" placeholder="Matrix Price Per/unit" class="form-control px-3">
                         </div>
                         <div>
                             <label class="block text-[13px] text-slate-700 mb-1.5">Matrix total</label>
-                            <input type="text" placeholder="Total Matrix Price" class="form-control px-3">
+                            <input type="text" name="matrix_total" placeholder="Total Matrix Price" class="form-control px-3">
                         </div>
                     </div>
 
@@ -722,18 +741,42 @@
                                     <th class="px-4 py-3.5">Old Value</th>
                                     <th class="px-4 py-3.5">New Value</th>
                                     <th class="px-4 py-3.5">Note</th>
+                                    <th class="px-4 py-3.5 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="text-slate-700 bg-white">
-                                <tr class="border-b border-slate-50 hover:bg-slate-50">
-                                    <td class="px-4 py-3">2026-04-23</td>
-                                    <td class="px-4 py-3">13:37:24</td>
-                                    <td class="px-4 py-3">Sachintha Kaveen</td>
-                                    <td class="px-4 py-3">Created</td>
-                                    <td class="px-4 py-3">-</td>
-                                    <td class="px-4 py-3">-</td>
-                                    <td class="px-4 py-3 truncate max-w-[200px]">Manually created From a...</td>
-                                </tr>
+                                @forelse($auditLogs ?? [] as $log)
+                                    <tr class="border-b border-slate-50 hover:bg-slate-50">
+                                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($log->insertdatetime)->format('Y-m-d') }}</td>
+                                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($log->insertdatetime)->format('H:i:s') }}</td>
+                                        <td class="px-4 py-3">{{ $log->user_name ?? 'System' }}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2.5 py-1 rounded-md text-[12px] font-semibold {{ $log->action === 'Created' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700' }}">
+                                                {{ $log->action }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-slate-400">-</td>
+                                        <td class="px-4 py-3 text-slate-400">-</td>
+                                        <td class="px-4 py-3 truncate max-w-[200px]">Product ID: {{ $log->entity_id }}</td>
+                                        <td class="px-4 py-3 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button type="button" onclick='viewAuditLog({{ $log->entity_id }}, @json($log->action ?? ""), @json($log->user_name ?? "System"), @json($log->insertdatetime ?? ""))' class="text-slate-400 hover:text-blue-600 transition-colors" title="View">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                </button>
+                                                <button type="button" onclick='editAuditLog({{ $log->idtbl_audit_logs }}, @json($log->note ?? ""))' class="text-slate-400 hover:text-emerald-600 transition-colors" title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                </button>
+                                                <button type="button" onclick='deleteAuditLog({{ $log->idtbl_audit_logs }})' class="text-slate-400 hover:text-rose-600 transition-colors" title="Delete">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="px-4 py-8 text-center text-slate-400">No activity history found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -785,6 +828,221 @@
     </div>
 </div>
 
+{{-- Add Partner Modal --}}
+<div id="addPartnerModal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-[500px] transform transition-all p-7">
+        <div class="flex justify-between items-center mb-5">
+            <h3 class="text-[18px] font-bold text-slate-800">Add Partner</h3>
+            <button type="button" onclick="toggleAddPartnerModal(false)" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <div class="bg-[#FFF6ec] border-l-4 border-[#ca8a04] text-[#854d0e] text-[13.5px] px-4 py-3.5 rounded-r-md mb-6">
+            <strong class="font-bold text-[#854d0e]">Note:</strong> If the percentage of profit sharing is not specified, it will be auto-calculated based on the percentage of ownership.
+        </div>
+
+        <div class="mb-5">
+            <label class="block text-[13px] font-medium text-slate-600 mb-1.5">Select Partner <span class="text-rose-500">*</span></label>
+            <div class="relative w-full" id="ddAddPartnerWrapper">
+                <input type="hidden" id="ddAddPartnerHidden">
+                <button type="button" id="ddAddPartnerBtn" class="w-full h-[42px] border border-slate-300 rounded-md flex items-center justify-between px-3 bg-white text-left focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    <span id="ddAddPartnerLabel" class="truncate text-slate-400 text-[14px]">Select Partner</span>
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="ddAddPartnerPanel" class="hidden absolute z-[10001] left-0 right-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                    <div class="p-2 border-b border-slate-100">
+                        <input type="text" id="ddAddPartnerSearch" placeholder="Search partner..." class="w-full h-[36px] border border-slate-200 rounded-md px-3 text-[14px] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    </div>
+                    <ul id="ddAddPartnerList" class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                        <li class="dd-option flex items-center px-4 py-2 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-500" data-value="" data-label="Select Partner">Select Partner</li>
+                        @foreach($partners as $partner)
+                            <li class="dd-option flex items-center px-4 py-2 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-700" data-value="{{ $partner->idtbl_partners }}" data-label="{{ $partner->partner_name }}">{{ $partner->partner_name }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5 mb-8">
+            <div>
+                <label class="block text-[13px] font-medium text-slate-600 mb-1.5">% of ownership <span class="text-rose-500">*</span></label>
+                <input type="number" id="addPartnerOwnership" placeholder="E.g 20" class="w-full h-[42px] border border-slate-300 rounded-md px-3 text-[14px] text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" min="0" max="100">
+            </div>
+            <div>
+                <label class="block text-[13px] font-medium text-slate-600 mb-1.5">% of profit sharing</label>
+                <input type="number" id="addPartnerProfit" placeholder="E.g 20" class="w-full h-[42px] border border-slate-300 rounded-md px-3 text-[14px] text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" min="0" max="100">
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-2">
+            <button type="button" onclick="toggleAddPartnerModal(false)" class="px-6 py-2.5 text-[14px] font-medium text-[#ef4444] bg-white border border-[#ef4444] rounded-lg hover:bg-red-50 transition-colors">
+                Cancel
+            </button>
+            <button type="button" id="confirmAddPartnerBtn" class="px-7 py-2.5 text-[14px] font-medium text-white bg-[#2563eb] rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                Update
+            </button>
+        </div>
+    </div>
+</div>
+
+{{-- Product Detailed View Modal (Audit Log) --}}
+<div id="auditLogViewModal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm transition-opacity p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform transition-all overflow-hidden border border-slate-200">
+        {{-- Header --}}
+        <div class="bg-slate-800 px-6 py-4 flex justify-between items-center text-white shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </div>
+                <div>
+                    <h2 class="text-[18px] font-bold tracking-wide uppercase flex items-center gap-2">GemExhibit Enterprise <span class="text-blue-400 text-[14px] font-normal tracking-normal">- Product Detailed View</span></h2>
+                    <div class="text-[12px] text-slate-300 mt-0.5 flex items-center gap-3">
+                        <span class="flex items-center"><svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg> SKU: <strong id="vLogSku" class="text-white ml-1">N/A</strong></span>
+                        <span class="flex items-center"><svg class="w-3.5 h-3.5 text-emerald-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Status: ACTIVE</span>
+                        <span class="flex items-center"><svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg> Type: Diamond/Gemstone</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" onclick="closeAuditLogViewModal()" class="text-slate-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        {{-- Body --}}
+        <div class="p-6 overflow-y-auto custom-scrollbar bg-slate-50 flex-1 text-[13px] text-slate-700">
+            
+            {{-- 1. Basic Details --}}
+            <div class="bg-white rounded-lg border border-slate-200 p-5 mb-5 shadow-sm">
+                <h3 class="text-[14px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">📦 1. Basic & Physical Details</h3>
+                <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+                    <div class="col-span-2 text-[14px]"><span class="font-semibold text-slate-500 inline-block w-28">Product Title</span> : <span id="vLogTitle" class="font-bold text-slate-900"></span></div>
+                    <div class="col-span-2 text-[14px] mb-2"><span class="font-semibold text-slate-500 inline-block w-28">Description</span> : <span id="vLogDesc" class="text-slate-600"></span></div>
+                    
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Category</span> : <span id="vLogCategory"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Variety</span> : <span id="vLogVariety"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Color / Grade</span> : <span id="vLogColor"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Shape / Cut</span> : <span id="vLogShape"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Treatment</span> : <span id="vLogTreatment"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Origin</span> : <span id="vLogOrigin"></span></div>
+                    <div class="col-span-2"><span class="font-semibold text-slate-500 inline-block w-28">Dimensions</span> : <span id="vLogDims" class="font-medium text-slate-800"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Storage Loc.</span> : <span id="vLogStorage"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Tray / Box</span> : <span id="vLogTray"></span></div>
+                </div>
+            </div>
+
+            {{-- 2. Pricing & Inventory --}}
+            <div class="bg-white rounded-lg border border-slate-200 p-5 mb-5 shadow-sm">
+                <h3 class="text-[14px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">💰 2. Pricing & Inventory Summary</h3>
+                <div class="grid grid-cols-2 gap-x-6 gap-y-3 mb-5">
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Selling Unit</span> : <span id="vLogSellingUnit"></span></div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Quantity</span> : <span id="vLogQuantity"></span> pcs</div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Total Weight</span> : <span id="vLogWeight" class="font-medium text-slate-800"></span> ct</div>
+                    <div><span class="font-semibold text-slate-500 inline-block w-28">Avg Wt/Pc</span> : <span id="vLogAvgWt"></span> ct</div>
+                </div>
+                
+                <table class="w-full text-left border-collapse rounded-md overflow-hidden ring-1 ring-slate-200">
+                    <thead class="bg-slate-100 text-slate-600 font-semibold">
+                        <tr>
+                            <th class="py-2.5 px-4 border-b border-slate-200">Price Type</th>
+                            <th class="py-2.5 px-4 border-b border-slate-200 text-right">Per Unit Price</th>
+                            <th class="py-2.5 px-4 border-b border-slate-200 text-right">Total Value</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr><td class="py-2.5 px-4 font-medium">Cost Price</td><td class="py-2.5 px-4 text-right" id="vLogCostPerUnit"></td><td class="py-2.5 px-4 text-right font-medium text-slate-800" id="vLogTotalCost"></td></tr>
+                        <tr><td class="py-2.5 px-4 font-medium">My Cost (Partner)</td><td class="py-2.5 px-4 text-right" id="vLogMyCostPerUnit"></td><td class="py-2.5 px-4 text-right font-medium text-slate-800" id="vLogMyTotalCost"></td></tr>
+                        <tr><td class="py-2.5 px-4 font-medium">Wholesale Price</td><td class="py-2.5 px-4 text-right" id="vLogWholesalePerUnit"></td><td class="py-2.5 px-4 text-right font-medium text-slate-800" id="vLogWholesaleTotal"></td></tr>
+                        <tr><td class="py-2.5 px-4 font-semibold text-blue-600">Retail Price</td><td class="py-2.5 px-4 text-right text-blue-600 font-medium" id="vLogRetailPerUnit"></td><td class="py-2.5 px-4 text-right font-bold text-blue-700" id="vLogRetailTotal"></td></tr>
+                        <tr><td class="py-2.5 px-4 font-medium">Matrix Price</td><td class="py-2.5 px-4 text-right" id="vLogMatrixPerUnit"></td><td class="py-2.5 px-4 text-right font-medium text-slate-800" id="vLogMatrixTotal"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- 3 & 4 Grid --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                {{-- 3. Custom Pricing --}}
+                <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm opacity-50">
+                    <h3 class="text-[14px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">🏷️ 3. Custom Pricing Tiers</h3>
+                    <ul class="space-y-4">
+                        <li class="flex flex-col text-slate-400">Custom pricing not implemented</li>
+                    </ul>
+                </div>
+
+                {{-- 4. Purchasing --}}
+                <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
+                    <h3 class="text-[14px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">🤝 4. Purchasing Info</h3>
+                    <div class="space-y-3">
+                        <div><span class="font-semibold text-slate-500 inline-block w-28">Supplier</span> : <span id="vLogSupplier"></span></div>
+                        <div><span class="font-semibold text-slate-500 inline-block w-28">Contact</span> : <span id="vLogContact"></span></div>
+                        <div><span class="font-semibold text-slate-500 inline-block w-28">Reference</span> : <span id="vLogSupplierRef"></span></div>
+                        <div><span class="font-semibold text-slate-500 inline-block w-28">Date</span> : <span id="vLogPurchaseDate"></span></div>
+                        <div><span class="font-semibold text-slate-500 inline-block w-28">Ownership</span> : <span id="vLogOwnership"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 5. Partnership --}}
+            <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm mb-2">
+                <h3 class="text-[14px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">👥 5. Partnership & Profit Share</h3>
+                <table class="w-full text-left border-collapse rounded-md overflow-hidden ring-1 ring-slate-200">
+                    <thead class="bg-slate-100 text-slate-600 font-semibold">
+                        <tr>
+                            <th class="py-2.5 px-4 border-b border-slate-200">Company / Partner</th>
+                            <th class="py-2.5 px-4 border-b border-slate-200 text-right">Ownership %</th>
+                            <th class="py-2.5 px-4 border-b border-slate-200 text-right">Profit Share %</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="vLogPartnersBody">
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Audit Context --}}
+            <div class="mt-6 text-center text-[12px] text-slate-400 border-t border-slate-200 pt-4 flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                <span>Log Type: <span id="vLogActionBadge" class="font-bold text-slate-500 uppercase tracking-wide"></span> | Performed by <span id="vLogUser" class="font-bold text-slate-500"></span> on <span id="vLogDate" class="font-bold text-slate-500"></span></span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{{-- Audit Log Edit Modal --}}
+<div id="auditLogEditModal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-[400px] transform transition-all p-6 text-left">
+        <h3 class="text-[18px] font-bold text-slate-800 mb-4 border-b pb-2">Edit Audit Log</h3>
+        <input type="hidden" id="editLogId">
+        <div class="mb-4">
+            <label class="block text-[13px] font-medium text-slate-600 mb-1.5">Note</label>
+            <textarea id="editLogNote" class="w-full h-[100px] border border-slate-300 rounded-md px-3 py-2 text-[14px] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"></textarea>
+        </div>
+        <div class="flex justify-end gap-3">
+            <button type="button" onclick="closeAuditLogEditModal()" class="px-5 py-2 text-[14px] font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">Cancel</button>
+            <button type="button" onclick="saveAuditLogEdit()" class="px-5 py-2 text-[14px] font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+{{-- Validation Error Modal --}}
+<div id="validationErrorModal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-[400px] transform transition-all p-6 text-center">
+        <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </div>
+        <h3 class="text-[18px] font-bold text-slate-800 mb-2">Missing Required Fields</h3>
+        <p class="text-[14px] text-slate-600 mb-4">Please fill in the following required fields before creating the product:</p>
+        <div class="bg-rose-50 rounded-lg p-4 mb-6 text-left border border-rose-100">
+            <ul id="validationErrorList" class="list-disc list-inside text-[13px] text-rose-700 space-y-1 font-medium">
+                <!-- Errors will be injected here -->
+            </ul>
+        </div>
+        <button type="button" onclick="closeValidationModal()" class="w-full px-6 py-2.5 text-[14px] font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+            Got it, let me fix them
+        </button>
+    </div>
+</div>
+
 {{-- ===== JAVASCRIPT FOR MODAL & DROPDOWNS ===== --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -800,15 +1058,28 @@
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
+                const existingType = document.getElementById('ddProductTypeHidden');
+                if (existingType && existingType.value) {
+                    const typeId = existingType.value;
+                    fetch(`{{ url('Inventory/MyInventory/next-sku') }}/${typeId}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const prefixLabel = document.getElementById('ddSkuPrefixLabel');
+                            const prefixHidden = document.getElementById('ddSkuPrefixHidden');
+                            if (prefixLabel) prefixLabel.textContent = data.prefix_name || 'Prefix';
+                            if (prefixHidden) prefixHidden.value = data.idtbl_skus || '';
+
+                            const skuNumInput = document.querySelector('input[name="sku_number"]');
+                            if (skuNumInput) skuNumInput.value = data.sku_code || '';
+                        })
+                        .catch(() => {});
+                }
             } else {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
             }
         }
-
-
-        openBtn.addEventListener('click', () => toggleModal(true));
 
         // --- Product Type Picker → then open Modal ---
         const productTypePickerMenu = document.getElementById('productTypePickerMenu');
@@ -843,27 +1114,53 @@
                 productTypePickerMenu.classList.add('hidden');
                 toggleModal(true);
 
-                // AJAX: Fetch the next SKU number for this product type
+                // AJAX: Fetch the next SKU info and available prefixes for this product type
                 fetch(`{{ url('Inventory/MyInventory/next-sku') }}/${typeId}`)
                     .then(r => r.json())
                     .then(data => {
-                        // Set SKU prefix dropdown label = sku_name from tbl_skus (e.g. "Prefix")
-                        const prefixLabel  = document.getElementById('ddSkuPrefixLabel');
+                        const prefixLabel = document.getElementById('ddSkuPrefixLabel');
                         const prefixHidden = document.getElementById('ddSkuPrefixHidden');
-                        if (prefixLabel)  prefixLabel.textContent = data.sku_label;
-                        if (prefixHidden) prefixHidden.value      = data.sku_prefix;
+                        if (prefixLabel) prefixLabel.textContent = data.prefix_name || 'Prefix';
+                        if (prefixHidden) prefixHidden.value = data.idtbl_skus || '';
 
-                        // Set SKU number input = skuname + 01,02,03... (e.g. "GM01", "CPG02")
                         const skuNumInput = document.querySelector('input[name="sku_number"]');
-                        if (skuNumInput) skuNumInput.value = data.sku_number;
+                        if (skuNumInput) skuNumInput.value = data.sku_code || '';
                     })
                     .catch(() => {/* silently fail */});
+
+                // AJAX: Fetch dependent data
+                fetch(`{{ url('Inventory/MyInventory/dependent-data') }}/${typeId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        populateDropdown('ddVarietyList', data.varieties, 'idtbl_varieties', 'name', 'Select variety');
+                        populateDropdown('ddSubCategoryList', data.subCategories, 'idtbl_sub_categories', 'sub_category_name', 'Unspecified');
+                        populateDropdown('ddColorList', data.colors, 'idtbl_colors', 'color_name', 'Select color');
+                        populateDropdown('ddShapeList', data.shapes, 'idtbl_shapes', 'name', 'Select shape');
+                        populateDropdown('ddCuttingList', data.cuts, 'idtbl_cuts', 'name', 'Select cutting type');
+                        populateDropdown('ddOriginList', data.origins, 'idtbl_origins', 'origin_name', 'Select origin');
+                        populateDropdown('ddColorGradeList', data.colorGrades, 'idtbl_color_grade', 'grade_name', 'Select color grade');
+                        populateDropdown('ddCutGradeList', data.cuttingGrades, 'idtbl_cuttinggrade', 'cuttinggradename', 'Select cut grade');
+                        populateDropdown('ddClarityList', data.clarityGrades, 'idtbl_clarity_grade', 'clarity_grade_name', 'Select clarity grade');
+                    })
+                    .catch(err => console.error(err));
             });
         });
 
+        function populateDropdown(listId, items, valKey, labelKey, defaultText) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            let html = `<li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="" data-label="${defaultText}">${defaultText}</li>`;
+            items.forEach(item => {
+                html += `<li class="dd-option flex items-center px-4 py-2.5 text-[14px] cursor-pointer hover:bg-slate-50 text-slate-600" data-value="${item[valKey]}" data-label="${item[labelKey]}">${item[labelKey]}</li>`;
+            });
+            list.innerHTML = html;
+        }
 
+    // (openBtn click is handled by the product type picker)
         closeBtn.addEventListener('click', () => toggleModal(false));
         cancelBtn.addEventListener('click', () => toggleModal(false));
+
+
 
         // --- Tabs Logic ---
         const tabBtns = document.querySelectorAll('.tab-btn');
@@ -902,6 +1199,25 @@
         function setupSearchableDropdown(wrapperId) {
             const wrapper = document.getElementById(wrapperId);
             if (!wrapper) return;
+
+            // Special: SKU prefix dropdown click handling (delegated from list)
+            if (wrapperId === 'ddSkuPrefixWrapper') {
+                const list = wrapper.querySelector('#ddSkuPrefixList');
+                if (list) {
+                    list.addEventListener('click', (e) => {
+                        const li = e.target.closest('li');
+                        if (!li) return;
+                        const value = li.dataset.value ?? '';
+                        const label = li.dataset.label ?? li.textContent ?? '';
+                        const btnLabel = wrapper.querySelector('#ddSkuPrefixLabel');
+                        const hidden = wrapper.querySelector('#ddSkuPrefixHidden');
+                        if (btnLabel) btnLabel.textContent = label;
+                        if (hidden) hidden.value = value;
+                        // close panel
+                        wrapper.querySelector('#ddSkuPrefixPanel').classList.add('hidden');
+                    });
+                }
+            }
 
             const btn = wrapper.querySelector('button');
             const panel = wrapper.querySelector('.hidden.absolute');
@@ -1003,30 +1319,6 @@
             });
         });
 
-        // --- Add Partner Simulation ---
-        const addPartnerBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent && b.textContent.includes('Add partner'));
-        if (addPartnerBtn) {
-            addPartnerBtn.addEventListener('click', () => {
-                const grid = addPartnerBtn.closest('.grid');
-                if(grid) {
-                    const children = Array.from(grid.children);
-                    const partnersDiv = children[children.length - 3].cloneNode(true);
-                    const ownershipDiv = children[children.length - 2].cloneNode(true);
-                    const profitDiv = children[children.length - 1].cloneNode(true);
-
-                    const btnContainer = profitDiv.querySelector('.flex.mt-2');
-                    if(btnContainer) btnContainer.remove();
-
-                    partnersDiv.querySelector('input').value = '';
-                    ownershipDiv.querySelector('input').value = '';
-                    profitDiv.querySelector('input').value = '';
-
-                    grid.appendChild(partnersDiv);
-                    grid.appendChild(ownershipDiv);
-                    grid.appendChild(profitDiv);
-                }
-            });
-        }
 
         // --- Add Cost Simulation ---
         const addCostBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent && b.textContent.includes('Add cost'));
@@ -1076,6 +1368,413 @@
         bindCalc("Wholesale Cost Per/unit", "Total Wholesale Cost");
         bindCalc("Retail Cost Per/unit", "Total Retail Cost");
         bindCalc("Matrix Price Per/unit", "Total Matrix Price");
+
+        // --- Add Partner Modal Logic ---
+        const confirmAddPartnerBtn = document.getElementById('confirmAddPartnerBtn');
+        const partnerRowsContainer = document.getElementById('partnerRowsContainer');
+        const myOwnershipInput = document.querySelector('input[name="my_ownership_percentage"]');
+        const myProfitInput = document.querySelector('input[name="my_profit_share_percentage"]');
+
+        window.toggleAddPartnerModal = function(show) {
+            const addPartnerModal = document.getElementById('addPartnerModal');
+            if (!addPartnerModal) return;
+            if (show) {
+                addPartnerModal.classList.remove('hidden');
+                addPartnerModal.classList.add('flex');
+            } else {
+                addPartnerModal.classList.add('hidden');
+                addPartnerModal.classList.remove('flex');
+                // Reset inputs
+                const hiddenInput = document.getElementById('ddAddPartnerHidden');
+                if(hiddenInput) hiddenInput.value = '';
+                const label = document.getElementById('ddAddPartnerLabel');
+                if(label) label.textContent = 'Select Partner';
+                const ownership = document.getElementById('addPartnerOwnership');
+                if(ownership) ownership.value = '';
+                const profit = document.getElementById('addPartnerProfit');
+                if(profit) profit.value = '';
+            }
+        };
+
+        // Auto-calculate profit sharing based on ownership if left blank
+        document.getElementById('addPartnerOwnership').addEventListener('input', function() {
+            const ownershipVal = this.value;
+            const profitInput = document.getElementById('addPartnerProfit');
+            if(profitInput.value === '' && ownershipVal !== '') {
+                profitInput.placeholder = 'E.g ' + ownershipVal;
+            }
+        });
+
+        if(confirmAddPartnerBtn) {
+            confirmAddPartnerBtn.addEventListener('click', function() {
+                const partnerId = document.getElementById('ddAddPartnerHidden').value;
+                const partnerName = document.getElementById('ddAddPartnerLabel').textContent;
+                const ownership = parseFloat(document.getElementById('addPartnerOwnership').value) || 0;
+                let profit = parseFloat(document.getElementById('addPartnerProfit').value);
+                
+                if (isNaN(profit)) {
+                    profit = ownership;
+                }
+
+                if (!partnerId) {
+                    alert('Please select a partner.');
+                    return;
+                }
+                if (ownership <= 0) {
+                    alert('Percentage of ownership must be greater than 0.');
+                    return;
+                }
+
+                // Append new row
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-1 md:grid-cols-3 gap-x-6 items-center partner-row';
+                row.innerHTML = `
+                    <div class="relative">
+                        <input type="hidden" name="partner_ids[]" value="${partnerId}">
+                        <input type="text" value="${partnerName}" readonly class="form-control pl-3 pr-8 bg-slate-50 text-slate-600">
+                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <input type="text" name="ownership_percentages[]" value="${ownership}" class="form-control pl-3 pr-8 bg-slate-50 text-slate-600" readonly>
+                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="relative flex-1">
+                            <input type="text" name="profit_percentages[]" value="${profit}" class="form-control pl-3 pr-8 bg-slate-50 text-slate-600" readonly>
+                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </div>
+                        </div>
+                        <button type="button" class="p-1.5 text-blue-800 hover:bg-slate-100 rounded-md">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </button>
+                        <button type="button" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md remove-partner-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                `;
+                partnerRowsContainer.appendChild(row);
+
+                // Add remove listener
+                row.querySelector('.remove-partner-btn').addEventListener('click', function() {
+                    row.remove();
+                    updateMyCompanyPercentages();
+                });
+
+                updateMyCompanyPercentages();
+                toggleAddPartnerModal(false);
+            });
+        }
+
+        function updateMyCompanyPercentages() {
+            let totalOwnership = 0;
+            let totalProfit = 0;
+            document.querySelectorAll('.partner-row').forEach(row => {
+                totalOwnership += parseFloat(row.querySelector('input[name="ownership_percentages[]"]').value) || 0;
+                totalProfit += parseFloat(row.querySelector('input[name="profit_percentages[]"]').value) || 0;
+            });
+
+            myOwnershipInput.value = Math.max(0, 100 - totalOwnership);
+            myProfitInput.value = Math.max(0, 100 - totalProfit);
+        }
+
+        // --- Dedicated Add Partner Dropdown Logic ---
+        (function() {
+            const wrapper = document.getElementById('ddAddPartnerWrapper');
+            if (!wrapper) return;
+
+            const btn = document.getElementById('ddAddPartnerBtn');
+            const panel = document.getElementById('ddAddPartnerPanel');
+            const hidden = document.getElementById('ddAddPartnerHidden');
+            const label = document.getElementById('ddAddPartnerLabel');
+            const search = document.getElementById('ddAddPartnerSearch');
+            const list = document.getElementById('ddAddPartnerList');
+
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isOpen = !panel.classList.contains('hidden');
+                panel.classList.toggle('hidden', isOpen);
+                if (!isOpen && search) {
+                    search.value = '';
+                    filterPartnerOptions('');
+                    setTimeout(() => search.focus(), 50);
+                }
+            });
+
+            if (search) {
+                search.addEventListener('input', function() {
+                    filterPartnerOptions(this.value.trim().toLowerCase());
+                });
+                search.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
+            function filterPartnerOptions(query) {
+                list.querySelectorAll('.dd-option').forEach(opt => {
+                    const text = (opt.getAttribute('data-label') || '').toLowerCase();
+                    opt.style.display = text.includes(query) ? '' : 'none';
+                });
+            }
+
+            list.addEventListener('click', function(e) {
+                const opt = e.target.closest('.dd-option');
+                if (!opt) return;
+
+                hidden.value = opt.getAttribute('data-value');
+                label.textContent = opt.getAttribute('data-label');
+                label.classList.remove('text-slate-400');
+                label.classList.add('text-slate-800');
+
+                // Active highlight
+                list.querySelectorAll('.dd-option').forEach(o => o.classList.remove('bg-slate-100', 'text-slate-800', 'font-semibold'));
+                opt.classList.add('bg-slate-100', 'text-slate-800', 'font-semibold');
+                opt.classList.remove('text-slate-600', 'text-slate-500');
+
+                if (search) search.value = '';
+                filterPartnerOptions('');
+                panel.classList.add('hidden');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!wrapper.contains(e.target)) {
+                    panel.classList.add('hidden');
+                }
+            });
+        })();
+
+        // --- Form Validation Logic ---
+        const form = document.getElementById('createGemstoneForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Quick View validation
+                const variety = document.getElementById('ddVarietyHidden') ? document.getElementById('ddVarietyHidden').value : '';
+                const weight = document.querySelector('input[name="weight"]') ? document.querySelector('input[name="weight"]').value : '';
+                
+                // Pricing validation
+                const costPerUnit = document.querySelector('input[name="cost_per_unit"]') ? document.querySelector('input[name="cost_per_unit"]').value : '';
+                
+                let errors = [];
+                
+                if (!variety) {
+                    errors.push('- Variety (Quick View)');
+                }
+                if (!weight) {
+                    errors.push('- Weight (Quick View)');
+                }
+                if (!costPerUnit) {
+                    errors.push('- Cost/unit (Pricing)');
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault(); // Prevent form submission
+                    
+                    // Show custom modal instead of alert
+                    const errorList = document.getElementById('validationErrorList');
+                    errorList.innerHTML = '';
+                    errors.forEach(err => {
+                        const li = document.createElement('li');
+                        li.textContent = err;
+                        errorList.appendChild(li);
+                    });
+                    
+                    const errorModal = document.getElementById('validationErrorModal');
+                    if(errorModal) {
+                        errorModal.classList.remove('hidden');
+                        errorModal.classList.add('flex');
+                    }
+                    
+                    // Optionally, switch to the tab with the first error
+                    if (!variety || !weight) {
+                        document.querySelector('button[data-target="#tab-quick-view"]').click();
+                    } else if (!costPerUnit) {
+                        document.querySelector('button[data-target="#tab-pricing"]').click();
+                    }
+                }
+            });
+        }
+
+        window.closeValidationModal = function() {
+            const modal = document.getElementById('validationErrorModal');
+            if(modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+
+        // --- Audit Log Actions ---
+        window.viewAuditLog = function(id, action, user, date) {
+            document.getElementById('vLogActionBadge').textContent = action;
+            document.getElementById('vLogUser').textContent = user;
+            document.getElementById('vLogDate').textContent = date;
+            
+            // Show modal immediately with loading state
+            const modal = document.getElementById('auditLogViewModal');
+            document.getElementById('vLogTitle').textContent = 'Loading...';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            if (!id) return;
+
+            fetch(`/Inventory/MyInventory/product-details/${id}`)
+                .then(res => res.json())
+                .then(json => {
+                    if (json.success && json.data.product) {
+                        const p = json.data.product;
+                        const pr = json.data.pricing || {};
+                        const pu = json.data.purchasing || {};
+                        const pt = json.data.partners || [];
+                        
+                        document.getElementById('vLogSku').textContent = p.sku_number || 'N/A';
+                        document.getElementById('vLogTitle').textContent = p.product_title || p.category_name || 'Unspecified Product';
+                        document.getElementById('vLogDesc').textContent = p.product_description || '-';
+                        document.getElementById('vLogCategory').textContent = p.category_name || '-';
+                        document.getElementById('vLogVariety').textContent = p.variety_name || '-';
+                        
+                        let colorGradeStr = p.color_grade_name ? ` / ${p.color_grade_name}` : '';
+                        document.getElementById('vLogColor').textContent = (p.color_name || '-') + colorGradeStr;
+                        
+                        let shapeCutStr = p.cut_name ? ` / ${p.cut_name}` : '';
+                        document.getElementById('vLogShape').textContent = (p.shape_name || '-') + shapeCutStr;
+                        
+                        document.getElementById('vLogTreatment').textContent = p.treatment_name || '-';
+                        document.getElementById('vLogOrigin').textContent = p.origin_name || '-';
+                        
+                        const l = p.length_mm ? parseFloat(p.length_mm).toFixed(2) : '0.00';
+                        const w = p.width_mm ? parseFloat(p.width_mm).toFixed(2) : '0.00';
+                        const h = p.height_mm ? parseFloat(p.height_mm).toFixed(2) : '0.00';
+                        document.getElementById('vLogDims').textContent = `${l} mm (L) x ${w} mm (W) x ${h} mm (H)`;
+                        
+                        document.getElementById('vLogStorage').textContent = p.location_name || '-';
+                        document.getElementById('vLogTray').textContent = p.tray_box_name || '-';
+                        
+                        // Pricing
+                        document.getElementById('vLogSellingUnit').textContent = pr.selling_unit == 2 ? 'Quantity' : 'Weight (ct)';
+                        document.getElementById('vLogQuantity').textContent = pr.quantity || '0';
+                        document.getElementById('vLogWeight').textContent = pr.weight ? parseFloat(pr.weight).toFixed(4) : '0.0000';
+                        
+                        let avgWt = (pr.weight && pr.quantity) ? (parseFloat(pr.weight) / parseFloat(pr.quantity)) : 0;
+                        document.getElementById('vLogAvgWt').textContent = avgWt.toFixed(4);
+
+                        const formatCurrency = (val) => val ? `Rs. ${parseFloat(val).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '-';
+
+                        document.getElementById('vLogCostPerUnit').textContent = formatCurrency(pr.cost_per_unit);
+                        document.getElementById('vLogTotalCost').textContent = formatCurrency(pr.total_cost);
+                        document.getElementById('vLogMyCostPerUnit').textContent = formatCurrency(pr.my_cost_per_unit);
+                        document.getElementById('vLogMyTotalCost').textContent = formatCurrency(pr.my_total_cost);
+                        document.getElementById('vLogWholesalePerUnit').textContent = formatCurrency(pr.wholesale_price_per_unit);
+                        document.getElementById('vLogWholesaleTotal').textContent = formatCurrency(pr.wholesale_total_price);
+                        document.getElementById('vLogRetailPerUnit').textContent = formatCurrency(pr.retail_price_per_unit);
+                        document.getElementById('vLogRetailTotal').textContent = formatCurrency(pr.retail_total_price);
+                        document.getElementById('vLogMatrixPerUnit').textContent = formatCurrency(pr.matrix_price_per_unit);
+                        document.getElementById('vLogMatrixTotal').textContent = formatCurrency(pr.matrix_total_price);
+                        
+                        // Purchasing
+                        document.getElementById('vLogSupplier').textContent = pu.supplier_name || '-';
+                        document.getElementById('vLogContact').textContent = pu.contact_name || '-';
+                        document.getElementById('vLogSupplierRef').textContent = pu.supplier_stone_ref || '-';
+                        document.getElementById('vLogPurchaseDate').textContent = pu.date_of_purchase || '-';
+                        document.getElementById('vLogOwnership').textContent = pu.ownership_type_name || '-';
+
+                        // Partners
+                        const pBody = document.getElementById('vLogPartnersBody');
+                        pBody.innerHTML = '';
+                        if (pt.length > 0) {
+                            pt.forEach(partner => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `<td class="py-2.5 px-4 font-medium text-slate-800">${partner.name}</td>
+                                                <td class="py-2.5 px-4 text-right font-medium text-slate-800">${parseFloat(partner.ownership || 0).toFixed(2)} %</td>
+                                                <td class="py-2.5 px-4 text-right font-medium text-slate-800">${parseFloat(partner.profit || 0).toFixed(2)} %</td>`;
+                                pBody.appendChild(tr);
+                            });
+                        } else {
+                            pBody.innerHTML = `<tr><td colspan="3" class="py-3 px-4 text-center text-slate-400">No partnership details found</td></tr>`;
+                        }
+                    } else {
+                        document.getElementById('vLogTitle').textContent = 'Error loading product data';
+                    }
+                })
+                .catch(err => {
+                    console.error("Fetch error", err);
+                    document.getElementById('vLogTitle').textContent = 'Error loading product data';
+                });
+        };
+
+        window.closeAuditLogViewModal = function() {
+            document.getElementById('auditLogViewModal').classList.add('hidden');
+            document.getElementById('auditLogViewModal').classList.remove('flex');
+        };
+
+        window.editAuditLog = function(id, note) {
+            document.getElementById('editLogId').value = id;
+            document.getElementById('editLogNote').value = note;
+            
+            const modal = document.getElementById('auditLogEditModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closeAuditLogEditModal = function() {
+            document.getElementById('auditLogEditModal').classList.add('hidden');
+            document.getElementById('auditLogEditModal').classList.remove('flex');
+        };
+
+        window.saveAuditLogEdit = function() {
+            const id = document.getElementById('editLogId').value;
+            const note = document.getElementById('editLogNote').value;
+            
+            fetch("{{ route('inventory.myinventory.auditlog.update') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ log_id: id, note: note })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Audit log updated successfully.');
+                    window.location.reload(); // Reload to see changes
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('An error occurred while updating.');
+            });
+        };
+
+        window.deleteAuditLog = function(id) {
+            if (confirm('Are you sure you want to delete this log?')) {
+                fetch("{{ route('inventory.myinventory.auditlog.delete') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ log_id: id })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Log deleted successfully.');
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('An error occurred while deleting.');
+                });
+            }
+        };
 
     });
 </script>
