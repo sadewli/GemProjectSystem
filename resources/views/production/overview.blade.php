@@ -405,6 +405,7 @@
 
             {{-- Scrollable Body --}}
             <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
+                {{-- Form submits via AJAX from JS --}}
                 <form id="createProductionForm" action="{{ route('production.store') }}" method="POST">
                     @csrf
 
@@ -418,15 +419,33 @@
                             </p>
                         </div>
 
-                        <div
-                            class="w-[120px] h-[90px] bg-[#f1f5f9] rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors mb-6 border border-transparent hover:border-blue-200">
-                            <svg class="w-8 h-8 text-blue-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812-1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span class="text-blue-600 text-[12px] font-medium">Upload</span>
+                        {{-- ── Photos Upload Area ──────────────────────────── --}}
+                        <div class="mb-6">
+                            <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-3">Photos</div>
+                            <div id="photo-drop-area"
+                                class="flex flex-col items-center justify-center gap-2 w-full h-[100px] bg-[#f1f5f9] rounded-md border-2 border-dashed border-slate-300 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors mb-3">
+                                <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span class="text-[13px] text-slate-500">Click or drag photos here</span>
+                                <span class="text-[11px] text-slate-400">JPG, PNG, WEBP, GIF — max 20 MB each</span>
+                            </div>
+                            <input type="file" id="photo-file-input" class="hidden" accept="image/*" multiple>
+                            <div id="photo-preview-list" class="hidden border border-slate-200 rounded-md overflow-hidden">
+                                <table class="w-full text-[12px] text-left">
+                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-3 py-2">File name</th>
+                                            <th class="px-3 py-2">Size</th>
+                                            <th class="px-3 py-2">Status</th>
+                                            <th class="px-3 py-2 w-8"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="photo-preview-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <div
@@ -705,16 +724,32 @@
                             </div>
                         </div>
 
-                        <div
-                            class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4 mt-6">
-                            Documents</div>
-                        <div
-                            class="w-[180px] h-[90px] bg-white border border-slate-200 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors shadow-sm">
-                            <svg class="w-6 h-6 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span class="text-slate-800 text-[13px] font-medium">Add document(s)</span>
+                        <div class="mt-6">
+                            <div class="text-[13px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-3">
+                                Documents</div>
+                            <div id="doc-drop-area"
+                                class="flex flex-col items-center justify-center gap-2 w-full h-[100px] bg-white border-2 border-dashed border-slate-300 rounded-md cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors mb-3 shadow-sm">
+                                <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span class="text-[13px] text-slate-500">Click or drag documents here</span>
+                                <span class="text-[11px] text-slate-400">PDF, DOCX, XLSX, CSV, TXT — max 20 MB each</span>
+                            </div>
+                            <input type="file" id="doc-file-input" class="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,application/pdf,application/msword" multiple>
+                            <div id="doc-preview-list" class="hidden border border-slate-200 rounded-md overflow-hidden">
+                                <table class="w-full text-[12px] text-left">
+                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-3 py-2">File name</th>
+                                            <th class="px-3 py-2">Size</th>
+                                            <th class="px-3 py-2">Status</th>
+                                            <th class="px-3 py-2 w-8"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="doc-preview-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
+                                </table>
+                            </div>
                         </div>
 
                     </div>
@@ -966,9 +1001,156 @@
                     class="px-5 py-2.5 text-[14px] font-medium text-slate-700 bg-[#f1f5f9] border border-slate-200 rounded-md hover:bg-slate-200 transition-colors">
                     Save as draft
                 </button>
-                <button type="submit" form="createProductionForm"
+                <button type="button" id="btn-create-submit"
                     class="px-8 py-2.5 text-[14px] font-medium text-white bg-blue-700 rounded-md hover:bg-blue-800 transition-colors shadow-sm active:scale-95">
                     Create
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    {{-- ===== VIEW PRODUCTION SHEET DETAILS MODAL ===== --}}
+    <div id="view-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6"
+        style="background:rgba(0,0,0,0.5); z-index: 9999;">
+        <div class="bg-white rounded-md shadow-2xl w-full max-w-5xl flex flex-col relative overflow-hidden"
+            style="height:95vh;">
+
+            {{-- Header --}}
+            <div class="px-6 py-4 flex-shrink-0 bg-[#f8fafc] rounded-t-md border-b border-slate-200">
+                <div class="flex justify-between items-start">
+                    <button type="button" id="view-close"
+                        class="text-slate-500 hover:text-slate-700 transition-colors p-1 -ml-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <span id="view-badge-status" class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full"></span>
+                        <span id="view-badge-type" class="bg-blue-100 text-blue-800 text-[12px] font-semibold px-2.5 py-0.5 rounded-full"></span>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <h2 class="text-[20px] font-bold text-slate-800 leading-tight" id="view-title-sheet-number">PS-XXXX</h2>
+                    <p class="text-[13px] text-slate-500 mt-1">
+                        Created by <span id="view-creator-name" class="font-semibold"></span> &nbsp;&middot;&nbsp; <span id="view-creation-date"></span>
+                    </p>
+                </div>
+            </div>
+
+            {{-- Tab Navigation --}}
+            <div class="px-6 border-b border-slate-200 flex-shrink-0 bg-white flex w-full">
+                <button type="button" class="view-tab-btn active py-3.5 font-semibold text-[14px] flex-1 text-center border-b-2 border-blue-600 text-blue-600"
+                    data-target="view-tab-details">Details</button>
+                <button type="button" class="view-tab-btn py-3.5 font-semibold text-[14px] flex-1 text-center text-slate-500 border-b-2 border-transparent hover:text-slate-700"
+                    data-target="view-tab-items">Items</button>
+                <button type="button" class="view-tab-btn py-3.5 font-semibold text-[14px] flex-1 text-center text-slate-500 border-b-2 border-transparent hover:text-slate-700"
+                    data-target="view-tab-media">Photos &amp; Documents</button>
+            </div>
+
+            {{-- Scrollable Body --}}
+            <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative p-6">
+                
+                {{-- Loader spinner inside modal --}}
+                <div id="view-modal-loader" class="absolute inset-0 bg-white flex items-center justify-center z-10">
+                    <svg class="animate-spin w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                    </svg>
+                </div>
+
+                {{-- ===== TAB 1: DETAILS ===== --}}
+                <div id="view-tab-details" class="view-tab-content block">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Reference</span>
+                            <span id="view-reference" class="text-sm font-semibold text-slate-800">—</span>
+                        </div>
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Due Date</span>
+                            <span id="view-due-date" class="text-sm font-semibold text-slate-800">—</span>
+                        </div>
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Closed Date</span>
+                            <span id="view-closed-date" class="text-sm font-semibold text-slate-800">—</span>
+                        </div>
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Original Quantity</span>
+                            <span id="view-orig-qty" class="text-sm font-semibold text-slate-800">—</span>
+                        </div>
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Original Weight</span>
+                            <span id="view-orig-weight" class="text-sm font-semibold text-slate-800">—</span>
+                        </div>
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Original Total Cost</span>
+                            <span id="view-orig-cost" class="text-sm font-semibold text-slate-800">—</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-5 mb-5">
+                        <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Discrepancy Reason</span>
+                        <span id="view-discrepancy-reason" class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded bg-slate-100 text-slate-700">—</span>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-5">
+                        <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Notes</span>
+                        <div id="view-notes" class="text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-md p-4 min-h-[80px]">—</div>
+                    </div>
+                </div>
+
+                {{-- ===== TAB 2: ITEMS ===== --}}
+                <div id="view-tab-items" class="view-tab-content hidden">
+                    <div class="border border-slate-200 rounded-md overflow-hidden bg-white shadow-sm">
+                        <table class="w-full text-[13px] text-left">
+                            <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3 w-12">#</th>
+                                    <th class="px-4 py-3">SKU / Item</th>
+                                    <th class="px-4 py-3">Description</th>
+                                    <th class="px-4 py-3 text-right">Quantity</th>
+                                    <th class="px-4 py-3 text-right">Weight</th>
+                                    <th class="px-4 py-3 text-right">Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody id="view-items-tbody" class="divide-y divide-slate-100 bg-white">
+                                <tr>
+                                    <td colspan="6" class="px-4 py-10 text-center text-slate-400">No items added to this sheet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- ===== TAB 3: MEDIA ===== --}}
+                <div id="view-tab-media" class="view-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {{-- Photos Grid --}}
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4">Photos</h3>
+                            <div id="view-photos-container" class="grid grid-cols-3 gap-3">
+                                <p class="text-slate-400 text-sm col-span-3">No photos uploaded.</p>
+                            </div>
+                        </div>
+
+                        {{-- Documents List --}}
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4">Documents</h3>
+                            <div id="view-docs-container" class="flex flex-col gap-2">
+                                <p class="text-slate-400 text-sm">No documents uploaded.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            {{-- Footer --}}
+            <div class="px-6 py-4 border-t border-slate-200 bg-[#f8fafc] flex justify-end gap-3 flex-shrink-0">
+                <button type="button" id="view-close-btn"
+                    class="px-6 py-2.5 text-[14px] font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors shadow-sm">
+                    Close
                 </button>
             </div>
 
@@ -1251,24 +1433,113 @@
                 'ddMcItemUnitWrapper', 'ddMcOutUnitWrapper'
             ].forEach(setupDropdown);
 
-            // —— Modal Form Submission ————————————————————————————————————————
-            document.getElementById('createProductionForm').addEventListener('submit', function (e) {
+            // —— AJAX Form Submission (handles media upload after sheet creation) ——
+            function submitProductionForm(statusOverride) {
                 var type = document.getElementById('ddMcTypeHidden') ? document.getElementById('ddMcTypeHidden').value : '';
-                var cat = document.getElementById('ddMcCatHidden') ? document.getElementById('ddMcCatHidden').value : '';
+                var cat  = document.getElementById('ddMcCatHidden')  ? document.getElementById('ddMcCatHidden').value  : '';
                 if (!type || !cat) {
-                    e.preventDefault();
                     alert('Please select a production type and category before creating.');
+                    return;
                 }
+
+                var form = document.getElementById('createProductionForm');
+                var formData = new FormData(form);
+
+                if (statusOverride) {
+                    formData.set('status', statusOverride);
+                }
+
+                // Disable buttons & show spinner
+                var btnSubmit = document.getElementById('btn-create-submit');
+                var btnDraft  = document.getElementById('create-save-draft');
+                if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.textContent = 'Creating…'; }
+                if (btnDraft)  { btnDraft.disabled  = true; }
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    },
+                    body: formData,
+                })
+                .then(function (r) { return r.json(); })
+                .then(function (json) {
+                    if (!json.success) {
+                        alert('Failed to create sheet: ' + (json.message || 'Unknown error'));
+                        if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Create'; }
+                        if (btnDraft)  { btnDraft.disabled  = false; }
+                        return;
+                    }
+
+                    var sheetId = json.sheet_id;
+                    var allQueued = mediaQueued.photos.concat(mediaQueued.documents);
+
+                    if (allQueued.length === 0) {
+                        window.location.href = '{{ route("production.overview.index") }}';
+                        return;
+                    }
+
+                    // Upload files sequentially
+                    var uploadCount = 0;
+                    var uploadTotal = allQueued.length;
+
+                    function uploadNext(index) {
+                        if (index >= uploadTotal) {
+                            window.location.href = '{{ route("production.overview.index") }}';
+                            return;
+                        }
+                        var item = allQueued[index];
+                        var fd = new FormData();
+                        fd.append('sheet_id',  sheetId);
+                        fd.append('file_type', item.type);
+                        fd.append('file',      item.file);
+
+                        // Update status in table
+                        var statusCell = document.getElementById('media-status-' + item.uid);
+                        if (statusCell) statusCell.innerHTML = '<span class="text-blue-500 font-medium">Uploading…</span>';
+
+                        fetch('{{ route("production.media.upload") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            },
+                            body: fd,
+                        })
+                        .then(function (r) { return r.json(); })
+                        .then(function (res) {
+                            if (statusCell) {
+                                statusCell.innerHTML = res.success
+                                    ? '<span class="text-green-600 font-medium">✓ Uploaded</span>'
+                                    : '<span class="text-red-500 font-medium">✗ Failed</span>';
+                            }
+                        })
+                        .catch(function () {
+                            if (statusCell) statusCell.innerHTML = '<span class="text-red-500 font-medium">✗ Error</span>';
+                        })
+                        .finally(function () {
+                            uploadNext(index + 1);
+                        });
+                    }
+
+                    uploadNext(0);
+                })
+                .catch(function () {
+                    alert('Network error. Please try again.');
+                    if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Create'; }
+                    if (btnDraft)  { btnDraft.disabled  = false; }
+                });
+            }
+
+            document.getElementById('btn-create-submit').addEventListener('click', function () {
+                submitProductionForm(null);
             });
 
             document.getElementById('create-save-draft').addEventListener('click', function () {
-                var form = document.getElementById('createProductionForm');
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'status';
-                input.value = 'draft';
-                form.appendChild(input);
-                form.submit();
+                submitProductionForm('draft');
             });
 
             // ══════════════════════════════════════════════════════════════════
@@ -1373,7 +1644,9 @@
                         } else {
                             tbody.innerHTML = rows.map(function (r) {
                                 return '<tr class="hover:bg-slate-50 transition-colors">' +
-                                    '<td class="px-4 py-3 font-medium text-blue-600">' + r.sheet_number + '</td>' +
+                                    '<td class="px-4 py-3 font-medium">' +
+                                    '<button type="button" class="text-blue-600 hover:text-blue-800 hover:underline font-semibold focus:outline-none" onclick="openViewModal(' + r.id + ')">' + r.sheet_number + '</button>' +
+                                    '</td>' +
                                     '<td class="px-4 py-3">' + r.production_type + '</td>' +
                                     '<td class="px-4 py-3">' + r.reference + '</td>' +
                                     '<td class="px-4 py-3">' + statusBadge(r.status) + '</td>' +
@@ -1646,6 +1919,293 @@
 
             // Initial render (shows empty state)
             renderItems();
+
+            // ══════════════════════════════════════════════════════════════════
+            // MEDIA UPLOAD — photos & documents queue (pre-submit)
+            // ══════════════════════════════════════════════════════════════════
+            var mediaQueued = { photos: [], documents: [] };
+            var mediaUidCounter = 0;
+
+            function humanSize(bytes) {
+                if (bytes < 1024)        return bytes + ' B';
+                if (bytes < 1048576)     return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / 1048576).toFixed(2) + ' MB';
+            }
+
+            function renderMediaTable(type) {
+                var list    = type === 'photo' ? mediaQueued.photos : mediaQueued.documents;
+                var tbodyId = type === 'photo' ? 'photo-preview-tbody' : 'doc-preview-tbody';
+                var wrapId  = type === 'photo' ? 'photo-preview-list'  : 'doc-preview-list';
+                var tbody   = document.getElementById(tbodyId);
+                var wrap    = document.getElementById(wrapId);
+                if (!tbody || !wrap) return;
+
+                if (list.length === 0) {
+                    wrap.classList.add('hidden');
+                    return;
+                }
+                wrap.classList.remove('hidden');
+
+                tbody.innerHTML = list.map(function (item) {
+                    return '<tr>' +
+                        '<td class="px-3 py-2 text-slate-700 truncate max-w-[200px]" title="' + item.name + '">' + item.name + '</td>' +
+                        '<td class="px-3 py-2 text-slate-500">' + humanSize(item.file.size) + '</td>' +
+                        '<td class="px-3 py-2" id="media-status-' + item.uid + '"><span class="text-slate-400">Queued</span></td>' +
+                        '<td class="px-3 py-2 text-center">' +
+                        '<button type="button" data-uid="' + item.uid + '" data-mtype="' + type + '"' +
+                        ' class="media-remove-btn text-slate-300 hover:text-red-500 transition-colors">' +
+                        '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
+                        '</button></td>' +
+                        '</tr>';
+                }).join('');
+
+                // Bind remove buttons
+                tbody.querySelectorAll('.media-remove-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var uid   = parseInt(this.dataset.uid);
+                        var mtype = this.dataset.mtype;
+                        if (mtype === 'photo') {
+                            mediaQueued.photos = mediaQueued.photos.filter(function (i) { return i.uid !== uid; });
+                        } else {
+                            mediaQueued.documents = mediaQueued.documents.filter(function (i) { return i.uid !== uid; });
+                        }
+                        renderMediaTable(mtype);
+                    });
+                });
+            }
+
+            function enqueueFiles(files, type) {
+                Array.from(files).forEach(function (file) {
+                    var item = { uid: mediaUidCounter++, name: file.name, file: file, type: type };
+                    if (type === 'photo') {
+                        mediaQueued.photos.push(item);
+                    } else {
+                        mediaQueued.documents.push(item);
+                    }
+                });
+                renderMediaTable(type);
+            }
+
+            // ── Bind photo drop area ────────────────────────────────────────
+            (function () {
+                var dropArea  = document.getElementById('photo-drop-area');
+                var fileInput = document.getElementById('photo-file-input');
+                if (!dropArea || !fileInput) return;
+
+                dropArea.addEventListener('click', function () { fileInput.click(); });
+                fileInput.addEventListener('change', function () {
+                    if (this.files.length) enqueueFiles(this.files, 'photo');
+                    this.value = '';
+                });
+                dropArea.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    this.classList.add('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('dragleave', function () {
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                    if (e.dataTransfer.files.length) enqueueFiles(e.dataTransfer.files, 'photo');
+                });
+            })();
+
+            // ── Bind document drop area ─────────────────────────────────────
+            (function () {
+                var dropArea  = document.getElementById('doc-drop-area');
+                var fileInput = document.getElementById('doc-file-input');
+                if (!dropArea || !fileInput) return;
+
+                dropArea.addEventListener('click', function () { fileInput.click(); });
+                fileInput.addEventListener('change', function () {
+                    if (this.files.length) enqueueFiles(this.files, 'document');
+                    this.value = '';
+                });
+                dropArea.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    this.classList.add('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('dragleave', function () {
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                    if (e.dataTransfer.files.length) enqueueFiles(e.dataTransfer.files, 'document');
+                });
+            })();
+
+            // ── Reset media queues when modal closes ────────────────────────
+            var origCloseMedia  = document.getElementById('create-close');
+            var origCancelMedia = document.getElementById('create-cancel');
+            [origCloseMedia, origCancelMedia].forEach(function (btn) {
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        mediaQueued.photos    = [];
+                        mediaQueued.documents = [];
+                        renderMediaTable('photo');
+                        renderMediaTable('document');
+                    });
+                }
+            });
+
+            // ══════════════════════════════════════════════════════════════════
+            // VIEW MODAL (DETAILS, ITEMS, MEDIA)
+            // ══════════════════════════════════════════════════════════════════
+            var viewModal = document.getElementById('view-modal');
+            
+            window.openViewModal = function (id) {
+                if (!viewModal) return;
+                viewModal.classList.remove('hidden');
+                viewModal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                
+                // Show loader
+                document.getElementById('view-modal-loader').classList.remove('hidden');
+                
+                // Default tab is details
+                activateViewTab('view-tab-details');
+
+                // Fetch details via AJAX
+                var url = '{{ route("production.show", ["id" => ":id"]) }}'.replace(':id', id);
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    // Hide loader
+                    document.getElementById('view-modal-loader').classList.add('hidden');
+                    
+                    if (!res.success) {
+                        alert('Failed to load sheet details.');
+                        closeViewModal();
+                        return;
+                    }
+                    
+                    var s = res.sheet;
+                    
+                    // Header data
+                    document.getElementById('view-title-sheet-number').textContent = s.sheet_number;
+                    document.getElementById('view-creator-name').textContent = s.creator;
+                    document.getElementById('view-creation-date').textContent = s.creation_date;
+                    
+                    // Badges
+                    var typeBadge = document.getElementById('view-badge-type');
+                    typeBadge.textContent = s.production_type;
+                    
+                    var statusBadge = document.getElementById('view-badge-status');
+                    statusBadge.textContent = s.status === 'in_production' ? 'In production' : s.status.charAt(0).toUpperCase() + s.status.slice(1);
+                    statusBadge.className = 'text-[12px] font-semibold px-2.5 py-0.5 rounded-full ' + (
+                        s.status === 'draft' ? 'bg-amber-100 text-amber-800' :
+                        s.status === 'in_production' ? 'bg-blue-100 text-blue-800' :
+                        s.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    );
+                    
+                    // Tab 1: Details
+                    document.getElementById('view-reference').textContent = s.reference;
+                    document.getElementById('view-due-date').textContent = s.due_date;
+                    document.getElementById('view-closed-date').textContent = s.closed_date;
+                    document.getElementById('view-orig-qty').textContent = s.original_quantity;
+                    document.getElementById('view-orig-weight').textContent = s.original_weight;
+                    document.getElementById('view-orig-cost').textContent = s.original_total_cost;
+                    
+                    var discEl = document.getElementById('view-discrepancy-reason');
+                    discEl.textContent = s.discrepancy_reason !== '—' ? s.discrepancy_reason.replace('_', ' ').charAt(0).toUpperCase() + s.discrepancy_reason.replace('_', ' ').slice(1) : '—';
+                    
+                    document.getElementById('view-notes').textContent = s.notes || '—';
+                    
+                    // Tab 2: Items
+                    var itemsTbody = document.getElementById('view-items-tbody');
+                    if (s.items && s.items.length > 0) {
+                        itemsTbody.innerHTML = s.items.map(function(item, idx) {
+                            return '<tr>' +
+                                '<td class="px-4 py-3 text-slate-400 font-medium">' + (idx + 1) + '</td>' +
+                                '<td class="px-4 py-3 text-slate-800 font-semibold">' + item.sku + '</td>' +
+                                '<td class="px-4 py-3 text-slate-600">' + item.description + '</td>' +
+                                '<td class="px-4 py-3 text-right font-medium">' + item.quantity + '</td>' +
+                                '<td class="px-4 py-3 text-right font-medium">' + item.weight + '</td>' +
+                                '<td class="px-4 py-3 text-right font-medium">' + item.cost + '</td>' +
+                                '</tr>';
+                        }).join('');
+                    } else {
+                        itemsTbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">No items added to this sheet.</td></tr>';
+                    }
+                    
+                    // Tab 3: Media
+                    // Photos Grid
+                    var photosCont = document.getElementById('view-photos-container');
+                    if (s.photos && s.photos.length > 0) {
+                        photosCont.innerHTML = s.photos.map(function(photo) {
+                            return '<a href="' + photo.url + '" target="_blank" class="group block relative border border-slate-200 rounded-md overflow-hidden hover:shadow-md transition-shadow bg-slate-50">' +
+                                '<div class="aspect-square w-full overflow-hidden">' +
+                                '<img src="' + photo.url + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">' +
+                                '</div>' +
+                                '<div class="p-2 bg-white border-t border-slate-100 text-[11px] text-slate-600 truncate" title="' + photo.original_name + '">' +
+                                photo.original_name +
+                                '</div>' +
+                                '</a>';
+                        }).join('');
+                    } else {
+                        photosCont.innerHTML = '<p class="text-slate-400 text-sm col-span-3">No photos uploaded.</p>';
+                    }
+                    
+                    // Documents List
+                    var docsCont = document.getElementById('view-docs-container');
+                    if (s.documents && s.documents.length > 0) {
+                        docsCont.innerHTML = s.documents.map(function(doc) {
+                            return '<a href="' + doc.url + '" target="_blank" class="flex items-center justify-between p-3 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shadow-xs">' +
+                                '<div class="flex items-center gap-3 overflow-hidden">' +
+                                '<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' +
+                                '<span class="text-xs font-semibold text-slate-700 truncate" title="' + doc.original_name + '">' + doc.original_name + '</span>' +
+                                '</div>' +
+                                '<span class="text-[11px] font-medium text-slate-400 flex-shrink-0 bg-slate-100 rounded px-1.5 py-0.5">' + doc.file_size + '</span>' +
+                                '</a>';
+                        }).join('');
+                    } else {
+                        docsCont.innerHTML = '<p class="text-slate-400 text-sm">No documents uploaded.</p>';
+                    }
+                })
+                .catch(function() {
+                    document.getElementById('view-modal-loader').classList.add('hidden');
+                    alert('Network error. Failed to retrieve details.');
+                    closeViewModal();
+                });
+            };
+            
+            function closeViewModal() {
+                if (!viewModal) return;
+                viewModal.classList.add('hidden');
+                viewModal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+            
+            document.getElementById('view-close').addEventListener('click', closeViewModal);
+            document.getElementById('view-close-btn').addEventListener('click', closeViewModal);
+            viewModal.addEventListener('click', function (e) { if (e.target === viewModal) closeViewModal(); });
+            
+            // Tab switching
+            function activateViewTab(targetId) {
+                document.querySelectorAll('.view-tab-btn').forEach(function (b) {
+                    b.classList.remove('active', 'border-blue-600', 'text-blue-600');
+                    b.classList.add('text-slate-500', 'border-transparent');
+                });
+                document.querySelectorAll('.view-tab-content').forEach(function (c) {
+                    c.classList.add('hidden');
+                    c.classList.remove('block');
+                });
+                var target = document.getElementById(targetId);
+                if (target) { target.classList.remove('hidden'); target.classList.add('block'); }
+                var btn = document.querySelector('.view-tab-btn[data-target="' + targetId + '"]');
+                if (btn) {
+                    btn.classList.add('active', 'border-blue-600', 'text-blue-600');
+                    btn.classList.remove('text-slate-500', 'border-transparent');
+                }
+            }
+            
+            document.querySelectorAll('.view-tab-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () { activateViewTab(btn.dataset.target); });
+            });
 
         });
     </script>

@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductionSheet;
 use App\Models\ProductionSheetHistory;
 use App\Models\ProductionSheetItem;
+use App\Models\ProductionSheetMedia;
 use App\Models\ProductionType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class overview extends Controller
 {
@@ -190,12 +193,24 @@ class overview extends Controller
 
             DB::commit();
 
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success'      => true,
+                    'sheet_id'     => $sheet->idtbl_production_sheets,
+                    'sheet_number' => $sheetNumber,
+                ]);
+            }
+
             return redirect()
                 ->route('production.overview.index')
                 ->with('success', 'Production sheet ' . $sheetNumber . ' created successfully.');
 
         } catch (\Throwable $e) {
             DB::rollBack();
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+            }
 
             return redirect()
                 ->back()
@@ -209,7 +224,7 @@ class overview extends Controller
     // ────────────────────────────────────────────────────────────────────────────
     public function data(Request $request)
     {
-        $query = ProductionSheet::with(['productionType', 'insertUser'])
+        $query = ProductionSheet::with(['productionType', 'insertUser', 'media'])
             ->select('tbl_production_sheets.*');
 
         // Filter: status tab
@@ -255,6 +270,22 @@ class overview extends Controller
         $sheets  = $query->orderByDesc('insertdatetime')->paginate($perPage);
 
         $rows = $sheets->map(function ($s) {
+            $photos = $s->media->where('file_type', 'photo')->map(function ($m) {
+                return [
+                    'id'            => $m->idtbl_production_sheet_media,
+                    'original_name' => $m->original_name,
+                    'url'           => Storage::url($m->file_path),
+                ];
+            })->values();
+
+            $documents = $s->media->where('file_type', 'document')->map(function ($m) {
+                return [
+                    'id'            => $m->idtbl_production_sheet_media,
+                    'original_name' => $m->original_name,
+                    'url'           => Storage::url($m->file_path),
+                ];
+            })->values();
+
             return [
                 'id'                 => $s->idtbl_production_sheets,
                 'sheet_number'       => $s->sheet_number,
@@ -272,6 +303,8 @@ class overview extends Controller
                     ? number_format($s->original_total_cost, 2) . ' ' . $s->currency
                     : '—',
                 'discrepancy_reason' => $s->discrepancy_reason ?? '—',
+                'photos'             => $photos,
+                'documents'          => $documents,
             ];
         });
 
@@ -314,4 +347,138 @@ class overview extends Controller
             ],
         ]);
     }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // UPLOAD MEDIA – AJAX: upload photos / documents for a production sheet
+    // ────────────────────────────────────────────────────────────────────────────
+    public function uploadMedia(Request $request)
+    {
+        $request->validate([
+            'sheet_id'  => 'required|integer|exists:tbl_production_sheets,idtbl_production_sheets',
+            'file_type' => 'required|in:photo,document',
+            'file'      => 'required|file|max:20480', // max 20 MB
+        ]);
+
+        $file      = $request->file('file');
+        $fileType  = $request->input('file_type');
+        $sheetId   = (int) $request->input('sheet_id');
+        $remarks   = $request->input('remarks');
+
+        // Build a unique stored filename
+        $ext          = $file->getClientOriginalExtension();
+        $storedName   = Str::uuid() . '.' . $ext;
+        $folder       = 'production_media/' . $sheetId . '/' . $fileType . 's';
+
+        // Store in storage/app/public/...
+        $path = $file->storeAs($folder, $storedName, 'public');
+
+        $media = ProductionSheetMedia::create([
+            'idtbl_production_sheets' => $sheetId,
+            'file_type'               => $fileType,
+            'file_name'               => $storedName,
+            'original_name'           => $file->getClientOriginalName(),
+            'file_path'               => $path,
+            'mime_type'               => $file->getMimeType(),
+            'file_size'               => $file->getSize(),
+            'remarks'                 => $remarks ?: null,
+            'insertuser'              => auth()->id(),
+            'insertdatetime'          => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'media'   => [
+                'id'            => $media->idtbl_production_sheet_media,
+                'file_type'     => $media->file_type,
+                'original_name' => $media->original_name,
+                'file_size'     => $media->file_size_human,
+                'mime_type'     => $media->mime_type,
+                'url'           => Storage::url($media->file_path),
+                'inserted_at'   => $media->insertdatetime?->format('d M Y H:i'),
+            ],
+        ]);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // DELETE MEDIA – AJAX: remove a single media record + its stored file
+    // ────────────────────────────────────────────────────────────────────────────
+    public function deleteMedia(Request $request, int $mediaId)
+    {
+        $media = ProductionSheetMedia::findOrFail($mediaId);
+
+        // Delete the physical file from storage
+        if (Storage::disk('public')->exists($media->file_path)) {
+            Storage::disk('public')->delete($media->file_path);
+        }
+
+        $media->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // SHOW – AJAX endpoint: get a single production sheet details with relations
+    // ────────────────────────────────────────────────────────────────────────────
+    public function show(int $id)
+    {
+        $sheet = ProductionSheet::with(['productionType', 'insertUser', 'items', 'media'])
+            ->findOrFail($id);
+
+        $photos = $sheet->media->where('file_type', 'photo')->map(function ($m) {
+            return [
+                'id'            => $m->idtbl_production_sheet_media,
+                'original_name' => $m->original_name,
+                'url'           => Storage::url($m->file_path),
+                'file_size'     => $m->file_size_human,
+            ];
+        })->values();
+
+        $documents = $sheet->media->where('file_type', 'document')->map(function ($m) {
+            return [
+                'id'            => $m->idtbl_production_sheet_media,
+                'original_name' => $m->original_name,
+                'url'           => Storage::url($m->file_path),
+                'file_size'     => $m->file_size_human,
+            ];
+        })->values();
+
+        $items = $sheet->items->map(function ($i) {
+            return [
+                'id'          => $i->idtbl_production_sheet_items,
+                'sku'         => $i->sku ?? '—',
+                'description' => $i->description ?? '—',
+                'quantity'    => $i->quantity ?? '—',
+                'weight'      => $i->weight ? number_format($i->weight, 4) . ' ' . $i->weight_unit : '—',
+                'cost'        => $i->cost ? number_format($i->cost, 2) : '—',
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'sheet'   => [
+                'id'                 => $sheet->idtbl_production_sheets,
+                'sheet_number'       => $sheet->sheet_number,
+                'production_type'    => $sheet->productionType?->type_name ?? '—',
+                'reference'          => $sheet->reference ?? '—',
+                'status'             => $sheet->status,
+                'creation_date'      => $sheet->insertdatetime?->format('d M Y') ?? '—',
+                'due_date'           => $sheet->due_date?->format('d M Y') ?? '—',
+                'closed_date'        => $sheet->closed_date?->format('d M Y') ?? '—',
+                'creator'            => $sheet->insertUser?->name ?? '—',
+                'original_quantity'  => $sheet->original_quantity ?? '—',
+                'original_weight'    => $sheet->original_weight
+                    ? number_format($sheet->original_weight, 2) . ' ' . $sheet->weight_unit
+                    : '—',
+                'original_total_cost'=> $sheet->original_total_cost
+                    ? number_format($sheet->original_total_cost, 2) . ' ' . $sheet->currency
+                    : '—',
+                'notes'              => $sheet->notes ?? '—',
+                'discrepancy_reason' => $sheet->discrepancy_reason ?? '—',
+                'photos'             => $photos,
+                'documents'          => $documents,
+                'items'              => $items,
+            ]
+        ]);
+    }
 }
+
