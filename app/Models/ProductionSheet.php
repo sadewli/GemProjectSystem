@@ -88,6 +88,15 @@ class ProductionSheet extends Model
         );
     }
 
+    public function media()
+    {
+        return $this->hasMany(
+            ProductionSheetMedia::class,
+            'idtbl_production_sheets',
+            'idtbl_production_sheets'
+        );
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     /**
