@@ -43,7 +43,8 @@
                     @forelse($auditLogs ?? [] as $log)
                         <tr class="border-b border-slate-100">
                             <td class="p-4 text-[13px] text-slate-800">
-                                {{ \Carbon\Carbon::parse($log->insertdatetime)->format('d M Y, h:i A') }}</td>
+                                {{ \Carbon\Carbon::parse($log->insertdatetime)->format('d M Y, h:i A') }}
+                            </td>
                             <td class="p-4 text-[13px] text-slate-800 font-medium">{{ $log->user_name ?? 'System' }}</td>
                             <td class="p-4">
                                 <span
@@ -52,7 +53,8 @@
                                 </span>
                             </td>
                             <td class="p-4 text-[13px] text-slate-600">Product ID: {{ $log->entity_id }} (New values:
-                                {{ $log->new_values }})</td>
+                                {{ $log->new_values }})
+                            </td>
                         </tr>
                     @empty
                         <tr>
