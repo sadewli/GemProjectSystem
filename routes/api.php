@@ -34,3 +34,9 @@ Route::post('/create-certificate-lab', [MediaUploadController::class, 'createCer
 
 // Create New Photo Type
 Route::post('/create-photo-type', [MediaUploadController::class, 'createPhotoType']);
+
+// Certificate, Document, Traceability
+Route::post('/upload-certificate', [MediaUploadController::class, 'uploadCertificate']);
+Route::post('/upload-document', [MediaUploadController::class, 'uploadDocument']);
+Route::post('/upload-traceability', [MediaUploadController::class, 'uploadTraceability']);
+

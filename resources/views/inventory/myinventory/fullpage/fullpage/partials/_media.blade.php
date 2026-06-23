@@ -151,8 +151,12 @@
                 Add New
             </button>
         </div>
-        <div class="border-t border-slate-100 p-8 flex justify-center items-center py-12">
-            <span class="text-[14px] text-slate-500">No Certificates found.</span>
+        <div class="border-t border-slate-100">
+            <div id="certContainer" class="divide-y divide-slate-100">
+                <div id="certEmptyState" class="p-8 flex justify-center items-center py-12">
+                    <span class="text-[14px] text-slate-500">No Certificates found.</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -172,8 +176,12 @@
                 Add New
             </button>
         </div>
-        <div class="border-t border-slate-100 p-8 flex justify-center items-center py-12">
-            <span class="text-[14px] text-slate-500">No documents found.</span>
+        <div class="border-t border-slate-100">
+            <div id="docContainer" class="divide-y divide-slate-100">
+                <div id="docEmptyState" class="p-8 flex justify-center items-center py-12">
+                    <span class="text-[14px] text-slate-500">No documents found.</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -193,8 +201,12 @@
                 Add New
             </button>
         </div>
-        <div class="border-t border-slate-100 p-8 flex justify-center items-center py-12">
-            <span class="text-[14px] text-slate-500">No traceability documents found.</span>
+        <div class="border-t border-slate-100">
+            <div id="traceContainer" class="divide-y divide-slate-100">
+                <div id="traceEmptyState" class="p-8 flex justify-center items-center py-12">
+                    <span class="text-[14px] text-slate-500">No traceability documents found.</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -241,12 +253,12 @@
                 </div>
                 <div class="form-group !mb-0">
                     <label class="!text-[14px] !font-medium !text-slate-700 !mb-1">Report number</label>
-                    <input type="text" placeholder="e.g 10284528"
+                    <input type="text" id="cert_report_number" placeholder="e.g 10284528"
                         class="form-control w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#2563eb]">
                 </div>
                 <div class="form-group !mb-0">
                     <label class="!text-[14px] !font-medium !text-slate-700 !mb-1">Certificate URL</label>
-                    <input type="text" placeholder="e.g. www.gemtrademanager.com"
+                    <input type="text" id="cert_url" placeholder="e.g. www.gemtrademanager.com"
                         class="form-control w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#2563eb]">
                 </div>
                 <div class="form-group !mb-0">
@@ -255,14 +267,14 @@
                         <label
                             class="px-4 py-2 bg-slate-100 border-r border-slate-200 text-slate-700 text-[14px] font-medium cursor-pointer hover:bg-slate-200 transition-colors">
                             Choose File
-                            <input type="file" class="hidden">
+                            <input type="file" id="cert_file" class="hidden">
                         </label>
                         <span class="px-3 text-slate-500 text-[14px]">No file chosen</span>
                     </div>
                 </div>
             </div>
             <div class="p-6 pt-2 flex justify-end">
-                <button type="button"
+                <button type="button" onclick="saveCertificate(event)"
                     class="bg-[#2563eb] hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-[14px] font-medium flex items-center gap-2 transition-colors shadow-sm">
                     Submit
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,12 +302,12 @@
             <div class="p-6 space-y-4">
                 <div class="form-group !mb-0">
                     <label class="!text-[14px] !font-medium !text-slate-700 !mb-1">Title*</label>
-                    <input type="text" placeholder="Add title here"
+                    <input type="text" id="doc_title" placeholder="Add title here"
                         class="form-control w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#2563eb]">
                 </div>
                 <div class="form-group !mb-0">
                     <label class="!text-[14px] !font-medium !text-slate-700 !mb-1">Description</label>
-                    <textarea placeholder="Add description here"
+                    <textarea id="doc_description" placeholder="Add description here"
                         class="form-control w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#2563eb] min-h-[100px] resize-y"></textarea>
                 </div>
                 <div class="form-group !mb-0">
@@ -304,14 +316,14 @@
                         <label
                             class="px-4 py-2 bg-slate-100 border-r border-slate-200 text-slate-700 text-[14px] font-medium cursor-pointer hover:bg-slate-200 transition-colors">
                             Choose File
-                            <input type="file" class="hidden">
+                            <input type="file" id="doc_file" class="hidden">
                         </label>
                         <span class="px-3 text-slate-500 text-[14px]">No file chosen</span>
                     </div>
                 </div>
             </div>
             <div class="p-6 pt-2 flex justify-end">
-                <button type="button"
+                <button type="button" onclick="saveDocument(event)"
                     class="bg-[#2563eb] hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-[14px] font-medium transition-colors shadow-sm">
                     Upload
                 </button>
@@ -336,12 +348,12 @@
             <div class="p-6 space-y-4">
                 <div class="form-group !mb-0">
                     <label class="!text-[14px] !font-medium !text-slate-700 !mb-1">Title</label>
-                    <input type="text" placeholder="e.g. mining information"
+                    <input type="text" id="trace_title" placeholder="e.g. mining information"
                         class="form-control w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#2563eb]">
                 </div>
                 <div class="form-group !mb-0">
                     <label class="!text-[14px] !font-medium !text-slate-700 !mb-1">Description</label>
-                    <textarea
+                    <textarea id="trace_description"
                         class="form-control w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#2563eb] min-h-[100px] resize-y"></textarea>
                 </div>
                 <div class="form-group !mb-0">
@@ -350,14 +362,14 @@
                         <label
                             class="px-4 py-2 bg-slate-100 border-r border-slate-200 text-slate-700 text-[14px] font-medium cursor-pointer hover:bg-slate-200 transition-colors">
                             Choose File
-                            <input type="file" class="hidden">
+                            <input type="file" id="trace_file" class="hidden">
                         </label>
                         <span class="px-3 text-slate-500 text-[14px]">No file chosen</span>
                     </div>
                 </div>
             </div>
             <div class="p-6 pt-2 flex justify-end">
-                <button type="button"
+                <button type="button" onclick="saveTraceability(event)"
                     class="bg-[#2563eb] hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-[14px] font-medium flex items-center gap-2 transition-colors shadow-sm">
                     Submit
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -731,9 +743,11 @@
         // View full image
         function viewImage(photoUrl) {
             const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-[50000] flex items-center justify-center bg-black/70 cursor-pointer';
+            modal.className = 'fixed inset-0 flex items-center justify-center cursor-pointer';
+            modal.style.zIndex = '50000';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
             modal.onclick = () => modal.remove();
-            modal.innerHTML = `<img src="${photoUrl}" class="max-w-4xl max-h-[90vh] object-contain rounded-lg">`;
+            modal.innerHTML = `<img src="${photoUrl}" class="max-w-4xl max-h-[90vh] object-contain rounded-lg shadow-2xl">`;
             document.body.appendChild(modal);
         }
 
@@ -970,5 +984,208 @@
                 });
             });
         });
+
+        // Save Certificate
+        function saveCertificate(event) {
+            const labInput = document.getElementById('certificate_lab_input').value;
+            const labText = document.querySelector('#certificateLabSelect .selected-text').innerText;
+            const reportInput = document.getElementById('cert_report_number').value.trim();
+            const urlInput = document.getElementById('cert_url').value.trim();
+            const fileInput = document.getElementById('cert_file').files;
+
+            const formData = new FormData();
+            formData.append('certificate_lab', labInput);
+            formData.append('certificate_lab_name', labText);
+            formData.append('report_number', reportInput);
+            formData.append('certificate_url', urlInput);
+            if (fileInput.length > 0) {
+                formData.append('file', fileInput[0]);
+            }
+            
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            fetch('/api/upload-certificate', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Certificate uploaded successfully!');
+                    displaySavedCertificate(data.data);
+                    closeModal('certModal');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error uploading certificate');
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        function displaySavedCertificate(cert) {
+            const container = document.getElementById('certContainer');
+            const emptyState = document.getElementById('certEmptyState');
+            if (emptyState) emptyState.remove();
+
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-[1fr_120px] sm:grid-cols-[1fr_200px_1fr_120px] items-center px-6 py-4 hover:bg-slate-50 transition-colors gap-4';
+            row.innerHTML = `
+                <div>
+                    <div class="text-[14px] font-medium text-slate-800">${cert.lab}</div>
+                    <div class="text-[12px] text-slate-500 mt-0.5">Report: ${cert.report_number || 'N/A'}</div>
+                </div>
+                <div class="text-[13px] text-slate-600 truncate">${cert.url || '-'}</div>
+                <div class="text-[13px] text-slate-600 truncate">${cert.file_path ? cert.file_path.split('/').pop() : 'No file'}</div>
+                <div class="flex justify-end gap-2">
+                    ${cert.file_path ? `<button type="button" onclick="window.open('${cert.file_path}', '_blank')" class="p-1.5 rounded-lg text-slate-500 hover:text-[#2563eb] hover:bg-blue-50 transition-colors" title="View File"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg></button>` : ''}
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        // Save Document
+        function saveDocument(event) {
+            const titleInput = document.getElementById('doc_title').value.trim();
+            const descInput = document.getElementById('doc_description').value.trim();
+            const fileInput = document.getElementById('doc_file').files;
+
+            if (!titleInput) {
+                alert('Please enter a title');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('title', titleInput);
+            formData.append('description', descInput);
+            if (fileInput.length > 0) {
+                formData.append('file', fileInput[0]);
+            }
+            
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            fetch('/api/upload-document', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Document uploaded successfully!');
+                    displaySavedDocument(data.data);
+                    closeModal('docModal');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error uploading document');
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        function displaySavedDocument(doc) {
+            const container = document.getElementById('docContainer');
+            const emptyState = document.getElementById('docEmptyState');
+            if (emptyState) emptyState.remove();
+
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors gap-4';
+            row.innerHTML = `
+                <div class="flex-1 min-w-0">
+                    <div class="text-[14px] font-medium text-slate-800 truncate">${doc.title}</div>
+                    <div class="text-[12px] text-slate-500 mt-0.5 line-clamp-1">${doc.description || ''}</div>
+                </div>
+                <div class="flex justify-end gap-2 shrink-0">
+                    ${doc.file_path ? `<button type="button" onclick="window.open('${doc.file_path}', '_blank')" class="p-1.5 rounded-lg text-slate-500 hover:text-[#2563eb] hover:bg-blue-50 transition-colors" title="View File"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg></button>` : ''}
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        // Save Traceability
+        function saveTraceability(event) {
+            const titleInput = document.getElementById('trace_title').value.trim();
+            const descInput = document.getElementById('trace_description').value.trim();
+            const fileInput = document.getElementById('trace_file').files;
+
+            const formData = new FormData();
+            formData.append('title', titleInput);
+            formData.append('description', descInput);
+            if (fileInput.length > 0) {
+                formData.append('file', fileInput[0]);
+            }
+            
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            fetch('/api/upload-traceability', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Traceability uploaded successfully!');
+                    displaySavedTraceability(data.data);
+                    closeModal('traceModal');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error uploading traceability document');
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        function displaySavedTraceability(doc) {
+            const container = document.getElementById('traceContainer');
+            const emptyState = document.getElementById('traceEmptyState');
+            if (emptyState) emptyState.remove();
+
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors gap-4';
+            row.innerHTML = `
+                <div class="flex-1 min-w-0">
+                    <div class="text-[14px] font-medium text-slate-800 truncate">${doc.title || 'Traceability Document'}</div>
+                    <div class="text-[12px] text-slate-500 mt-0.5 line-clamp-1">${doc.description || ''}</div>
+                </div>
+                <div class="flex justify-end gap-2 shrink-0">
+                    ${doc.file_path ? `<button type="button" onclick="window.open('${doc.file_path}', '_blank')" class="p-1.5 rounded-lg text-slate-500 hover:text-[#2563eb] hover:bg-blue-50 transition-colors" title="View File"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg></button>` : ''}
+                </div>
+            `;
+            container.appendChild(row);
+        }
     </script>
 </div>
