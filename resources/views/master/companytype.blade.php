@@ -118,6 +118,13 @@
                                                         <i class="fas fa-check text-xs"></i>
                                                     </a>
                                                 @endif
+
+                                                {{-- Delete Button --}}
+                                                <button type="button" class="btn btn-danger btn-sm btnDelete rounded"
+                                                        data-id="{{ $type->idtbl_company_type }}"
+                                                        title="Delete Type">
+                                                    <i class="fas fa-trash-alt text-xs"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -175,6 +182,18 @@
             $('#displayID').val('{{ $nextId ?? 1 }}');
             $('#recordOption').val('1');
             $('#submitBtn').html('<i class="far fa-save"></i> Save Type').removeClass('bg-amber-600').addClass('bg-blue-600');
+        });
+
+        // Delete button handler
+        $('#dataTable').on('click', '.btnDelete', function() {
+            var recordID = $(this).data('id');
+            if (confirm('Are you sure you want to delete this company type?')) {
+                var form = $('<form method="POST" action="{{ route("master.companytype.delete") }}"></form>');
+                form.append('<input type="hidden" name="_token" value="{{ csrf_token() }}">');
+                form.append('<input type="hidden" name="recordID" value="' + recordID + '">');
+                $('body').append(form);
+                form.submit();
+            }
         });
     });
 </script>

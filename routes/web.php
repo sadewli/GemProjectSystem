@@ -137,6 +137,7 @@ Route::post('Master/CertificateLabdelete', [CertificateLabController::class, 'de
 Route::get('Master/CompanyType', [CompanyTypeController::class, 'index'])->name('master.companytype');
 Route::post('Master/CompanyTypeinsertupdate', [CompanyTypeController::class, 'insertupdate'])->name('master.companytype.insertupdate');
 Route::get('Master/CompanyTypestatus/{id}/{status}', [CompanyTypeController::class, 'status'])->name('master.companytype.status');
+Route::post('Master/CompanyTypeDelete', [CompanyTypeController::class, 'delete'])->name('master.companytype.delete');
 
 Route::get('Master/Sku', [SkuController::class, 'index'])->name('master.sku');
 Route::post('Master/Skuinsertupdate', [SkuController::class, 'insertupdate'])->name('master.sku.insertupdate');
@@ -168,14 +169,17 @@ Route::get('Sales/SupplierMemos/{id}', [SupplierMemoController::class, 'show'])-
 Route::get('Master/Role', [RoleController::class, 'index'])->name('master.role');
 Route::post('Master/Roleinsertupdate', [RoleController::class, 'insertupdate'])->name('master.role.insertupdate');
 Route::get('Master/Rolestatus/{id}/{status}', [RoleController::class, 'status'])->name('master.role.status');
+Route::post('Master/RoleDelete', [RoleController::class, 'delete'])->name('master.role.delete');
 
 Route::get('Master/State', [StateController::class, 'index'])->name('master.state');
 Route::post('Master/Stateinsertupdate', [StateController::class, 'insertupdate'])->name('master.state.insertupdate');
 Route::get('Master/Statestatus/{id}/{status}', [StateController::class, 'status'])->name('master.state.status');
+Route::post('Master/StateDelete', [StateController::class, 'delete'])->name('master.state.delete');
 
 Route::get('Master/Country', [CountryController::class, 'index'])->name('master.country');
 Route::post('Master/Countryinsertupdate', [CountryController::class, 'insertupdate'])->name('master.country.insertupdate');
 Route::get('Master/Countrystatus/{id}/{status}', [CountryController::class, 'status'])->name('master.country.status');
+Route::post('Master/CountryDelete', [CountryController::class, 'delete'])->name('master.country.delete');
 
 Route::get('Master/ColorGrade', [ColorGradeController::class, 'index'])->name('master.colorgrade');
 Route::post('Master/ColorGradeinsertupdate', [ColorGradeController::class, 'insertupdate'])->name('master.colorgrade.insertupdate');
@@ -187,7 +191,8 @@ Route::post('Master/ColorGradedelete', [ColorGradeController::class, 'delete'])-
 // Product Code
 Route::prefix('Inventory/productcode')->name('productcode.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Inventory\productcode::class, 'index'])->name('index');
-    Route::get('Inventory/stocktake', function() { return view('dashboard'); })->name('inventory.stocktake');
+    Route::get('Inventory/stocktake', function () {
+        return view('dashboard'); })->name('inventory.stocktake');
 });
 
 // Negative Inventory Routes
@@ -292,20 +297,25 @@ Route::prefix('crm')->name('crm.')->group(function () {
 
 //Production Routes
 Route::prefix('production')->name('production.')->group(function () {
-    Route::get('/overview',        [\App\Http\Controllers\production\overview::class, 'index'])->name('overview.index');
-    Route::post('/store',          [\App\Http\Controllers\production\overview::class, 'store'])->name('store');
-    Route::get('/data',            [\App\Http\Controllers\production\overview::class, 'data'])->name('data');
-    Route::get('/counts',          [\App\Http\Controllers\production\overview::class, 'counts'])->name('counts');
-    Route::get('/{id}',            [\App\Http\Controllers\production\overview::class, 'show'])->name('show');
-    Route::post('/media/upload',   [\App\Http\Controllers\production\overview::class, 'uploadMedia'])->name('media.upload');
-    Route::delete('/media/{id}',   [\App\Http\Controllers\production\overview::class, 'deleteMedia'])->name('media.delete');
+    Route::get('/overview', [\App\Http\Controllers\production\overview::class, 'index'])->name('overview.index');
+    Route::post('/store', [\App\Http\Controllers\production\overview::class, 'store'])->name('store');
+    Route::get('/data', [\App\Http\Controllers\production\overview::class, 'data'])->name('data');
+    Route::get('/counts', [\App\Http\Controllers\production\overview::class, 'counts'])->name('counts');
+    Route::get('/{id}', [\App\Http\Controllers\production\overview::class, 'show'])->name('show');
+    Route::post('/media/upload', [\App\Http\Controllers\production\overview::class, 'uploadMedia'])->name('media.upload');
+    Route::delete('/media/{id}', [\App\Http\Controllers\production\overview::class, 'deleteMedia'])->name('media.delete');
 
     // Placeholder routes for menubar items
-    Route::get('/recutting',       function() { return view('dashboard'); })->name('recutting');
-    Route::get('/cutting',         function() { return view('dashboard'); })->name('cutting');
-    Route::get('/reassortment',    function() { return view('dashboard'); })->name('reassortment');
-    Route::get('/treatment',       function() { return view('dashboard'); })->name('treatment');
-    Route::get('/producttransfer', function() { return view('dashboard'); })->name('producttransfer');
+    Route::get('/recutting', function () {
+        return view('dashboard'); })->name('recutting');
+    Route::get('/cutting', function () {
+        return view('dashboard'); })->name('cutting');
+    Route::get('/reassortment', function () {
+        return view('dashboard'); })->name('reassortment');
+    Route::get('/treatment', function () {
+        return view('dashboard'); })->name('treatment');
+    Route::get('/producttransfer', function () {
+        return view('dashboard'); })->name('producttransfer');
 });
 
 

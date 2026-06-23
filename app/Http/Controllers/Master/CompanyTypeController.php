@@ -59,4 +59,23 @@ class CompanyTypeController extends Controller
         $msg = json_encode(['type' => 'success', 'message' => 'Status changed successfully.']);
         return redirect()->back()->with('msg', $msg);
     }
+
+    public function delete(Request $request)
+    {
+        $recordID = $request->input('recordID');
+        try {
+            CompanyType::where('idtbl_company_type', $recordID)->delete();
+            $msg = json_encode(['type' => 'success', 'message' => 'Company Type deleted successfully.']);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                $msg = json_encode(['type' => 'danger', 'message' => 'Cannot delete this Company Type because it is referenced by other records.']);
+            } else {
+                $msg = json_encode(['type' => 'danger', 'message' => 'Failed to delete record. Error: ' . $e->getMessage()]);
+            }
+        } catch (\Exception $e) {
+            $msg = json_encode(['type' => 'danger', 'message' => 'Failed to delete record. Error: ' . $e->getMessage()]);
+        }
+
+        return redirect()->back()->with('msg', $msg);
+    }
 }
