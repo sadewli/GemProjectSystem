@@ -301,6 +301,10 @@ Route::prefix('production')->name('production.')->group(function () {
     Route::post('/store', [\App\Http\Controllers\production\overview::class, 'store'])->name('store');
     Route::get('/data', [\App\Http\Controllers\production\overview::class, 'data'])->name('data');
     Route::get('/counts', [\App\Http\Controllers\production\overview::class, 'counts'])->name('counts');
+
+    // SKU / Product search (AJAX autocomplete for items tab)
+    Route::get('/product-search', [\App\Http\Controllers\production\overview::class, 'productSearch'])->name('product.search');
+
     Route::get('/{id}', [\App\Http\Controllers\production\overview::class, 'show'])->name('show');
     Route::post('/media/upload', [\App\Http\Controllers\production\overview::class, 'uploadMedia'])->name('media.upload');
     Route::delete('/media/{id}', [\App\Http\Controllers\production\overview::class, 'deleteMedia'])->name('media.delete');
