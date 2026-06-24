@@ -771,8 +771,13 @@
                                     <label
                                         class="block text-[12px] font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">SKU
                                         / Item</label>
-                                    <input type="text" id="item-input-sku" class="form-control px-3 bg-white"
-                                        placeholder="e.g. GEM-001">
+                                    {{-- Select2 AJAX search — populated by /production/product-search --}}
+                                    <select id="item-select-product" class="w-full" style="width:100%;">
+                                        <option></option>
+                                    </select>
+                                    {{-- hidden fields filled by Select2 on selection --}}
+                                    <input type="hidden" id="item-input-sku">
+                                    <input type="hidden" id="item-input-product-id">
                                 </div>
 
                                 <div class="md:col-span-1">
@@ -1158,6 +1163,45 @@
     </div>
 @endsection
 
+{{-- Select2 CSS for SKU autocomplete (JS already loaded in layout) --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<style>
+    /* Make Select2 match the existing form-control style */
+    .select2-container .select2-selection--single {
+        height: 42px !important;
+        border-radius: 6px !important;
+        border: 1px solid #e2e8f0 !important;
+        display: flex; align-items: center;
+        font-size: 14px !important;
+        background: #fff;
+        transition: all 0.2s;
+    }
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 42px !important;
+        padding-left: 12px !important;
+        color: #334155;
+    }
+    .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 42px !important;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--open .select2-selection--single {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 4px rgba(59,130,246,0.1) !important;
+    }
+    .select2-results__option {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    .select2-results__option--highlighted { background: #eff6ff !important; color: #1e40af !important; }
+    .select2-search--dropdown .select2-search__field {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 4px !important;
+        font-size: 13px !important;
+        padding: 6px 10px !important;
+    }
+</style>
+
 @section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1285,11 +1329,56 @@
             // —— Create Modal Open/Close ——————————————————————————————————————
             var modal = document.getElementById('create-modal');
             var btnOpen = document.getElementById('btn-create');
+            var _skuSelect2Inited = false;
+
+            function _initSkuSelect2() {
+                if (_skuSelect2Inited || !window.jQuery) return;
+                var $sel = $('#item-select-product');
+                if (!$sel.length) return;
+                _skuSelect2Inited = true;
+
+                $sel.select2({
+                    placeholder: 'Search by SKU or name…',
+                    allowClear: true,
+                    minimumInputLength: 1,
+                    dropdownParent: $('#create-modal'),
+                    ajax: {
+                        url: '/production/product-search',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) { return { q: params.term }; },
+                        processResults: function (data) { return { results: data.results }; },
+                        cache: true
+                    }
+                });
+
+                $sel.on('select2:select', function (e) {
+                    var d = e.params.data;
+                    var val = d.id || '';
+                    if (val.indexOf(':::') !== -1) {
+                        var parts = val.split(':::');
+                        $('#item-input-sku').val(parts[1]);
+                        $('#item-input-product-id').val(parts[0]);
+                    } else {
+                        $('#item-input-sku').val(d.sku || '');
+                        $('#item-input-product-id').val(d.id || '');
+                    }
+                    var descEl = document.getElementById('item-input-desc');
+                    if (descEl && !descEl.value && d.description) descEl.value = d.description;
+                });
+
+                $sel.on('select2:clear', function () {
+                    $('#item-input-sku').val('');
+                    $('#item-input-product-id').val('');
+                });
+            }
 
             function openModal() {
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
+                // Initialize Select2 lazily — after modal is visible
+                setTimeout(_initSkuSelect2, 50);
             }
 
             function closeModal() {
@@ -1831,7 +1920,7 @@
                 if (!container) return;
                 container.innerHTML = '';
                 itemsList.forEach(function (item, idx) {
-                    var fields = { sku: item.sku, description: item.desc, quantity: item.qty, weight: item.weight, weight_unit: item.unit, cost: item.cost };
+                    var fields = { sku: item.sku, product_id: item.product_id, description: item.desc, quantity: item.qty, weight: item.weight, weight_unit: item.unit, cost: item.cost };
                     Object.keys(fields).forEach(function (key) {
                         var inp = document.createElement('input');
                         inp.type = 'hidden';
@@ -1846,13 +1935,32 @@
             var btnAddItem = document.getElementById('btn-add-item');
             if (btnAddItem) {
                 btnAddItem.addEventListener('click', function () {
-                    var sku = (document.getElementById('item-input-sku') || {}).value || '';
-                    var desc = (document.getElementById('item-input-desc') || {}).value || '';
-                    var qty = (document.getElementById('item-input-qty') || {}).value || '';
-                    var weight = (document.getElementById('item-input-weight') || {}).value || '';
-                    var unit = (document.getElementById('ddMcItemUnitHidden') || {}).value || 'ct';
-                    var cost = (document.getElementById('item-input-cost') || {}).value || '';
-                    var errEl = document.getElementById('item-add-error');
+                    // Try to get SKU and Product ID directly from Select2 first (failsafe)
+                    var sku = '';
+                    var productId = '';
+                    if (window.jQuery && $('#item-select-product').length && $('#item-select-product').val()) {
+                        var selectedVal = $('#item-select-product').val();
+                        if (selectedVal && selectedVal.indexOf(':::') !== -1) {
+                            var parts = selectedVal.split(':::');
+                            productId = parts[0];
+                            sku = parts[1];
+                        }
+                    }
+
+                    // Fallback to hidden inputs if Select2 query returned nothing
+                    if (!sku) {
+                        sku = (document.getElementById('item-input-sku') || {}).value || '';
+                    }
+                    if (!productId) {
+                        productId = (document.getElementById('item-input-product-id') || {}).value || '';
+                    }
+
+                    var desc      = (document.getElementById('item-input-desc') || {}).value || '';
+                    var qty       = (document.getElementById('item-input-qty') || {}).value || '';
+                    var weight    = (document.getElementById('item-input-weight') || {}).value || '';
+                    var unit      = (document.getElementById('ddMcItemUnitHidden') || {}).value || 'ct';
+                    var cost      = (document.getElementById('item-input-cost') || {}).value || '';
+                    var errEl     = document.getElementById('item-add-error');
 
                     if (!sku.trim() && !desc.trim()) {
                         if (errEl) errEl.classList.remove('hidden');
@@ -1860,21 +1968,24 @@
                     }
                     if (errEl) errEl.classList.add('hidden');
 
-                    itemsList.push({ key: itemIndex++, sku: sku.trim(), desc: desc.trim(), qty: qty, weight: weight, unit: unit, cost: cost });
+                    itemsList.push({ key: itemIndex++, sku: sku.trim(), product_id: productId, desc: desc.trim(), qty: qty, weight: weight, unit: unit, cost: cost });
 
                     // Clear input fields
-                    ['item-input-sku', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
+                    ['item-input-sku', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost', 'item-input-product-id'].forEach(function (id) {
                         var el = document.getElementById(id);
                         if (el) el.value = '';
                     });
-                    document.getElementById('item-input-sku').focus();
+                    // Also reset the Select2 visual dropdown
+                    if (window.jQuery && $('#item-select-product').length) {
+                        $('#item-select-product').val(null).trigger('change');
+                    }
 
                     renderItems();
                 });
             }
 
             // ── Enter key in item inputs triggers Add ────────────────────────
-            ['item-input-sku', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
+            ['item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
                 var el = document.getElementById(id);
                 if (el) {
                     el.addEventListener('keydown', function (e) {
@@ -1900,10 +2011,14 @@
                 itemsList = [];
                 itemIndex = 0;
                 renderItems();
-                ['item-input-sku', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
+                ['item-input-sku', 'item-input-product-id', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
                     var el = document.getElementById(id);
                     if (el) el.value = '';
                 });
+                // Reset Select2 visual state
+                if (window.jQuery && $('#item-select-product').length) {
+                    $('#item-select-product').val(null).trigger('change');
+                }
                 var errEl = document.getElementById('item-add-error');
                 if (errEl) errEl.classList.add('hidden');
             };

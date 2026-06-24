@@ -156,12 +156,14 @@ class overview extends Controller
                 $itemRows = [];
                 $now      = now();
                 foreach ($itemsInput as $item) {
-                    $sku  = trim($item['sku']         ?? '');
-                    $desc = trim($item['description'] ?? '');
+                    $sku       = trim($item['sku']         ?? '');
+                    $desc      = trim($item['description'] ?? '');
+                    $productId = trim($item['product_id']  ?? '');
                     if ($sku === '' && $desc === '') continue; // skip blank rows
 
                     $itemRows[] = [
                         'idtbl_production_sheets' => $sheet->idtbl_production_sheets,
+                        'idtbl_products'          => $productId ?: null,
                         'sku_number'              => $sku ?: null,
                         'description'             => $desc ?: null,
                         'quantity'                => isset($item['quantity'])    && $item['quantity']    !== '' ? (int)   $item['quantity']    : null,
@@ -445,7 +447,7 @@ class overview extends Controller
         $items = $sheet->items->map(function ($i) {
             return [
                 'id'          => $i->idtbl_production_sheet_items,
-                'sku'         => $i->sku ?? '—',
+                'sku'         => $i->sku_number ?? '—',
                 'description' => $i->description ?? '—',
                 'quantity'    => $i->quantity ?? '—',
                 'weight'      => $i->weight ? number_format($i->weight, 4) . ' ' . $i->weight_unit : '—',
@@ -479,6 +481,41 @@ class overview extends Controller
                 'items'              => $items,
             ]
         ]);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // PRODUCT SEARCH – AJAX autocomplete for the Items tab SKU dropdown
+    // GET /production/product-search?q=<term>
+    // Returns products matching sku_code or title from tbl_products (inventory)
+    // ────────────────────────────────────────────────────────────────────────────
+    public function productSearch(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+
+        if (strlen($q) < 1) {
+            return response()->json(['results' => []]);
+        }
+
+        $rows = DB::table('tbl_products')
+            ->where('status', 1)
+            ->where(function ($query) use ($q) {
+                $query->where('sku_number', 'like', '%' . $q . '%')
+                      ->orWhere('product_title', 'like', '%' . $q . '%');
+            })
+            ->select('idtbl_products as id', 'sku_number as sku', 'product_title as description')
+            ->orderBy('sku_number')
+            ->limit(30)
+            ->get();
+
+        // Format for Select2: { id, text, sku, description }
+        $results = $rows->map(fn($r) => [
+            'id'          => $r->id . ':::' . $r->sku,
+            'text'        => $r->sku . ($r->description ? ' — ' . $r->description : ''),
+            'sku'         => $r->sku,
+            'description' => $r->description ?? '',
+        ]);
+
+        return response()->json(['results' => $results]);
     }
 }
 
