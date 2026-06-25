@@ -1390,22 +1390,40 @@
 
             function resetModal() {
                 var resets = [
-                    ['ddMcTypeLabel', 'Select type', 'ddMcTypeHidden'],
-                    ['ddMcCatLabel', 'Select category', 'ddMcCatHidden'],
-                    ['ddMcTplLabel', 'Default', 'ddMcTplHidden'],
-                    ['ddMcCreatorLabel', 'Select creator', 'ddMcCreatorHidden'],
-                    ['ddMcDiscLabel', 'Select reason', 'ddMcDiscHidden'],
+                    ['ddMcTypeLabel', 'Select type',    'ddMcTypeHidden',    ''],
+                    ['ddMcCatLabel',  'Select category', 'ddMcCatHidden',     ''],
+                    ['ddMcTplLabel',  'Default',         'ddMcTplHidden',     'default'],
+                    ['ddMcCreatorLabel', 'Select creator', 'ddMcCreatorHidden', ''],
+                    ['ddMcDiscLabel', 'Select reason',   'ddMcDiscHidden',    ''],
                 ];
                 resets.forEach(function (r) {
                     var lbl = document.getElementById(r[0]);
                     var hid = document.getElementById(r[2]);
                     if (lbl) { lbl.textContent = r[1]; lbl.className = 'truncate text-slate-400'; }
-                    if (hid) hid.value = '';
+                    if (hid) hid.value = r[3];
                 });
+
+                // Reset badge
                 var badge = document.getElementById('mc-badge-type');
-                badge.classList.add('hidden');
-                badge.textContent = '';
-                document.getElementById('createProductionForm').reset();
+                if (badge) { badge.classList.add('hidden'); badge.textContent = ''; }
+
+                // Reset the HTML form fields
+                var form = document.getElementById('createProductionForm');
+                if (form) form.reset();
+
+                // Reset Costs tab calculated fields
+                ['mc-cost-total', 'mc-my-cost-total', 'mc-loss-pct', 'mc-loss-wt'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+
+                // Reset items list (defined later in ITEMS section)
+                if (typeof window._resetItemsList === 'function') window._resetItemsList();
+
+                // Reset media queues (defined later in MEDIA section)
+                if (typeof window._resetMediaQueues === 'function') window._resetMediaQueues();
+
+                // Go back to Details tab
                 activateTab('mc-tab-details');
             }
 
@@ -1524,10 +1542,23 @@
 
             // —— AJAX Form Submission (handles media upload after sheet creation) ——
             function submitProductionForm(statusOverride) {
-                var type = document.getElementById('ddMcTypeHidden') ? document.getElementById('ddMcTypeHidden').value : '';
-                var cat  = document.getElementById('ddMcCatHidden')  ? document.getElementById('ddMcCatHidden').value  : '';
-                if (!type || !cat) {
-                    alert('Please select a production type and category before creating.');
+                var type    = document.getElementById('ddMcTypeHidden') ? document.getElementById('ddMcTypeHidden').value : '';
+                var cat     = document.getElementById('ddMcCatHidden')  ? document.getElementById('ddMcCatHidden').value  : '';
+                var typeBtn = document.getElementById('ddMcTypeBtn');
+                var catBtn  = document.getElementById('ddMcCatBtn');
+                var valid   = true;
+
+                if (!type) {
+                    if (typeBtn) { typeBtn.classList.add('ring-2', 'ring-red-400'); setTimeout(function () { typeBtn.classList.remove('ring-2', 'ring-red-400'); }, 3000); }
+                    valid = false;
+                }
+                if (!cat) {
+                    if (catBtn) { catBtn.classList.add('ring-2', 'ring-red-400'); setTimeout(function () { catBtn.classList.remove('ring-2', 'ring-red-400'); }, 3000); }
+                    valid = false;
+                }
+                if (!valid) {
+                    // Switch to Details tab to show the error fields
+                    activateTab('mc-tab-details');
                     return;
                 }
 
@@ -1562,21 +1593,30 @@
                         return;
                     }
 
-                    var sheetId = json.sheet_id;
+                    var sheetId  = json.sheet_id;
+                    var sheetNum = json.sheet_number;
                     var allQueued = mediaQueued.photos.concat(mediaQueued.documents);
 
+                    function onAllDone() {
+                        // Close modal and reset
+                        closeModal();
+                        // Refresh table and counts without full page reload
+                        currentPage = 1;
+                        loadTable(getFilters());
+                        refreshCounts();
+                        // Show success toast
+                        showToast(sheetNum + ' created successfully!', 'success');
+                    }
+
                     if (allQueued.length === 0) {
-                        window.location.href = '{{ route("production.overview.index") }}';
+                        onAllDone();
                         return;
                     }
 
-                    // Upload files sequentially
-                    var uploadCount = 0;
-                    var uploadTotal = allQueued.length;
-
+                    // Upload files sequentially, then refresh
                     function uploadNext(index) {
-                        if (index >= uploadTotal) {
-                            window.location.href = '{{ route("production.overview.index") }}';
+                        if (index >= allQueued.length) {
+                            onAllDone();
                             return;
                         }
                         var item = allQueued[index];
@@ -2152,15 +2192,20 @@
             })();
 
             // ── Reset media queues when modal closes ────────────────────────
+            window._resetMediaQueues = function () {
+                mediaQueued.photos    = [];
+                mediaQueued.documents = [];
+                renderMediaTable('photo');
+                renderMediaTable('document');
+            };
+
+            // ── Also expose for resetModal ─────────────────────────────────
             var origCloseMedia  = document.getElementById('create-close');
             var origCancelMedia = document.getElementById('create-cancel');
             [origCloseMedia, origCancelMedia].forEach(function (btn) {
                 if (btn) {
                     btn.addEventListener('click', function () {
-                        mediaQueued.photos    = [];
-                        mediaQueued.documents = [];
-                        renderMediaTable('photo');
-                        renderMediaTable('document');
+                        window._resetMediaQueues();
                     });
                 }
             });
@@ -2322,6 +2367,113 @@
                 btn.addEventListener('click', function () { activateViewTab(btn.dataset.target); });
             });
 
+            // ══════════════════════════════════════════════════════════════════
+            // COSTS TAB — Auto-calculate totals, loss % and loss weight
+            // ══════════════════════════════════════════════════════════════════
+            (function () {
+                var costUnit    = document.getElementById('mc-cost-unit');
+                var costTotal   = document.getElementById('mc-cost-total');
+                var myCostUnit  = document.getElementById('mc-my-cost-unit');
+                var myCostTotal = document.getElementById('mc-my-cost-total');
+                var origWtInp   = document.querySelector('[name="original_weight"]');
+                var outWtInp    = document.querySelector('[name="expected_output_weight"]');
+                var origQtyInp  = document.querySelector('[name="original_quantity"]');
+                var outQtyInp   = document.querySelector('[name="expected_output_quantity"]');
+                var lossPctEl   = document.getElementById('mc-loss-pct');
+                var lossWtEl    = document.getElementById('mc-loss-wt');
+
+                function recalcCosts() {
+                    // Qty-based total cost
+                    var cpuVal  = parseFloat((costUnit  && costUnit.value)  || 0);
+                    var qty     = parseFloat((origQtyInp && origQtyInp.value) || 0);
+                    if (costTotal) {
+                        costTotal.value = (cpuVal && qty) ? (cpuVal * qty).toFixed(2) : '';
+                    }
+
+                    // My total cost
+                    var mcpuVal = parseFloat((myCostUnit && myCostUnit.value) || 0);
+                    if (myCostTotal) {
+                        myCostTotal.value = (mcpuVal && qty) ? (mcpuVal * qty).toFixed(2) : '';
+                    }
+
+                    // Loss % and loss weight (weight-based)
+                    var inWt  = parseFloat((origWtInp && origWtInp.value) || 0);
+                    var outWt = parseFloat((outWtInp  && outWtInp.value)  || 0);
+                    if (lossPctEl) {
+                        if (inWt > 0 && outWt >= 0 && outWt <= inWt) {
+                            lossPctEl.value = (((inWt - outWt) / inWt) * 100).toFixed(2) + ' %';
+                        } else {
+                            lossPctEl.value = '';
+                        }
+                    }
+                    if (lossWtEl) {
+                        if (inWt > 0 && outWt >= 0 && outWt <= inWt) {
+                            lossWtEl.value = (inWt - outWt).toFixed(4);
+                        } else {
+                            lossWtEl.value = '';
+                        }
+                    }
+                }
+
+                // Bind to all relevant inputs
+                [costUnit, myCostUnit, origWtInp, outWtInp, origQtyInp, outQtyInp].forEach(function (el) {
+                    if (el) el.addEventListener('input', recalcCosts);
+                });
+            })();
+
+            // ══════════════════════════════════════════════════════════════════
+            // FORM VALIDATION — inline highlight required fields
+            // ══════════════════════════════════════════════════════════════════
+            function highlightRequired(elementId, valid) {
+                var el = document.getElementById(elementId);
+                if (!el) return;
+                if (valid) {
+                    el.classList.remove('ring-2', 'ring-red-400');
+                } else {
+                    el.classList.add('ring-2', 'ring-red-400');
+                    setTimeout(function () { el.classList.remove('ring-2', 'ring-red-400'); }, 3000);
+                }
+            }
+
         });
+
+        // ── Global Toast Helper ───────────────────────────────────────────────
+        // Usage: showToast('Message', 'success' | 'error' | 'info')
+        function showToast(message, type) {
+            var existing = document.getElementById('prod-toast');
+            if (existing) existing.remove();
+
+            var colors = {
+                success: 'bg-green-600',
+                error:   'bg-red-600',
+                info:    'bg-blue-600',
+            };
+            var color = colors[type] || colors.info;
+
+            var toast = document.createElement('div');
+            toast.id = 'prod-toast';
+            toast.className = 'fixed bottom-6 right-6 z-[99999] flex items-center gap-3 px-5 py-3.5 rounded-lg shadow-2xl text-white text-[14px] font-semibold transition-all duration-300 opacity-0 translate-y-4 ' + color;
+            toast.innerHTML =
+                '<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>' +
+                '</svg>' +
+                '<span>' + message + '</span>';
+
+            document.body.appendChild(toast);
+
+            // Animate in
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    toast.classList.remove('opacity-0', 'translate-y-4');
+                    toast.classList.add('opacity-100', 'translate-y-0');
+                });
+            });
+
+            // Auto-dismiss after 3.5s
+            setTimeout(function () {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(function () { toast.remove(); }, 350);
+            }, 3500);
+        }
     </script>
 @endsection

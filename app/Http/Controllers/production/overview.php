@@ -141,7 +141,9 @@ class overview extends Controller
                 'expected_output_weight' => $request->input('expected_output_weight') ?: null,
                 'output_weight_unit'     => $request->input('output_weight_unit', 'ct'),
                 'expected_output_quantity'=> $request->input('expected_output_quantity') ?: null,
-                'loss_percent'           => $request->input('loss_percent') ?: null,
+                'loss_percent'           => $request->filled('loss_percent')
+                    ? (float) str_replace(['%', ' '], '', $request->input('loss_percent'))
+                    : null,
                 'loss_weight'            => $request->input('loss_weight') ?: null,
                 'discrepancy_reason'     => $request->input('discrepancy_reason') ?: null,
                 'notes'                  => $request->input('notes'),
