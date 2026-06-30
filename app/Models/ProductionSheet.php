@@ -19,6 +19,7 @@ class ProductionSheet extends Model
         'due_date',
         'closed_date',
         'creator_id',
+        'supplier_id',
         'original_quantity',
         'original_weight',
         'weight_unit',
@@ -63,6 +64,11 @@ class ProductionSheet extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id', 'idtbl_user');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'idtbl_suppliers');
     }
 
     public function insertUser()
