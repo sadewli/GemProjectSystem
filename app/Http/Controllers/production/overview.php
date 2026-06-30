@@ -31,19 +31,18 @@ class overview extends Controller
             ])
             ->toArray();
 
-        // ── Creators from DB (all active users) ──────────────────────────────
-        $users = User::active()
-            ->orderBy('name')
-            ->get(['idtbl_user', 'name']);
+        // ── Suppliers from DB (all active suppliers) ──────────────────────────────
+        $suppliersList = \App\Models\Supplier::where('status', 1)
+            ->orderBy('supplier_name')
+            ->get(['idtbl_suppliers', 'supplier_name']);
 
-        $creators   = [];
-        $creators[] = ['value' => 'all',          'label' => 'All'];
-        $creators[] = ['value' => 'created-by-me', 'label' => 'Created by me'];
+        $suppliers   = [];
+        $suppliers[] = ['value' => 'all', 'label' => 'All'];
 
-        foreach ($users as $u) {
-            $creators[] = [
-                'value' => $u->idtbl_user,
-                'label' => $u->name,
+        foreach ($suppliersList as $s) {
+            $suppliers[] = [
+                'value' => $s->idtbl_suppliers,
+                'label' => $s->supplier_name,
             ];
         }
 
@@ -82,7 +81,7 @@ class overview extends Controller
 
         return view('production.overview', compact(
             'productionTypes',
-            'creators',
+            'suppliers',
             'counts',
             'totals'
         ));
@@ -107,11 +106,12 @@ class overview extends Controller
                 ->firstOrFail();
 
             // Resolve creator FK (fallback to logged-in user)
-            $creatorId = null;
-            if ($request->filled('creator_id') && is_numeric($request->creator_id)) {
-                $creatorId = (int) $request->creator_id;
-            } else {
-                $creatorId = auth()->id();
+            $creatorId = auth()->id();
+
+            // Resolve supplier FK
+            $supplierId = null;
+            if ($request->filled('supplier_id') && is_numeric($request->supplier_id)) {
+                $supplierId = (int) $request->supplier_id;
             }
 
             // Auto-generate sheet number
@@ -129,6 +129,7 @@ class overview extends Controller
                 'reference'              => $request->input('reference'),
                 'due_date'               => $request->input('due_date') ?: null,
                 'creator_id'             => $creatorId,
+                'supplier_id'            => $supplierId,
                 'original_quantity'      => $request->input('original_quantity') ?: null,
                 'original_weight'        => $request->input('original_weight') ?: null,
                 'weight_unit'            => $request->input('weight_unit', 'ct'),
@@ -228,7 +229,7 @@ class overview extends Controller
     // ────────────────────────────────────────────────────────────────────────────
     public function data(Request $request)
     {
-        $query = ProductionSheet::with(['productionType', 'insertUser', 'media'])
+        $query = ProductionSheet::with(['productionType', 'insertUser', 'media', 'supplier'])
             ->select('tbl_production_sheets.*');
 
         // Filter: status tab
@@ -251,12 +252,10 @@ class overview extends Controller
             $query->whereDate('insertdatetime', '<=', $request->date_to);
         }
 
-        // Filter: creator
-        if ($request->filled('creator') && $request->creator !== 'all') {
-            if ($request->creator === 'created-by-me') {
-                $query->where('insertuser', auth()->id());
-            } elseif (is_numeric($request->creator)) {
-                $query->where('creator_id', $request->creator);
+        // Filter: supplier
+        if ($request->filled('supplier') && $request->supplier !== 'all') {
+            if (is_numeric($request->supplier)) {
+                $query->where('supplier_id', $request->supplier);
             }
         }
 
@@ -299,6 +298,7 @@ class overview extends Controller
                 'creation_date'      => $s->insertdatetime?->format('d M Y') ?? '—',
                 'due_date'           => $s->due_date?->format('d M Y') ?? '—',
                 'closed_date'        => $s->closed_date?->format('d M Y') ?? '—',
+                'supplier'           => $s->supplier?->supplier_name ?? '—',
                 'original_quantity'  => $s->original_quantity ?? '—',
                 'original_weight'    => $s->original_weight
                     ? number_format($s->original_weight, 2) . ' ' . $s->weight_unit
@@ -425,7 +425,7 @@ class overview extends Controller
     // ────────────────────────────────────────────────────────────────────────────
     public function show(int $id)
     {
-        $sheet = ProductionSheet::with(['productionType', 'insertUser', 'items', 'media'])
+        $sheet = ProductionSheet::with(['productionType', 'insertUser', 'items', 'media', 'supplier'])
             ->findOrFail($id);
 
         $photos = $sheet->media->where('file_type', 'photo')->map(function ($m) {
@@ -469,6 +469,7 @@ class overview extends Controller
                 'due_date'           => $sheet->due_date?->format('d M Y') ?? '—',
                 'closed_date'        => $sheet->closed_date?->format('d M Y') ?? '—',
                 'creator'            => $sheet->insertUser?->name ?? '—',
+                'supplier'           => $sheet->supplier?->supplier_name ?? '—',
                 'original_quantity'  => $sheet->original_quantity ?? '—',
                 'original_weight'    => $sheet->original_weight
                     ? number_format($sheet->original_weight, 2) . ' ' . $sheet->weight_unit
