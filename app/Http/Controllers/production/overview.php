@@ -125,7 +125,6 @@ class overview extends Controller
                 'sheet_number'           => $sheetNumber,
                 'idtbl_production_types' => $productionType->idtbl_production_types,
                 'production_category'    => $request->production_category,
-                'template'               => $request->input('template', 'default'),
                 'reference'              => $request->input('reference'),
                 'due_date'               => $request->input('due_date') ?: null,
                 'creator_id'             => $creatorId,
@@ -499,23 +498,36 @@ class overview extends Controller
             return response()->json(['results' => []]);
         }
 
-        $rows = DB::table('tbl_products')
-            ->where('status', 1)
+        // Join tbl_product_pricing to get available stock quantity and weight
+        $rows = DB::table('tbl_products as p')
+            ->leftJoin('tbl_product_pricing as pr', 'pr.idtbl_products', '=', 'p.idtbl_products')
+            ->leftJoin('tbl_weight_units as wu', 'wu.idtbl_weight_units', '=', 'pr.idtbl_weight_units')
+            ->where('p.status', 1)
             ->where(function ($query) use ($q) {
-                $query->where('sku_number', 'like', '%' . $q . '%')
-                      ->orWhere('product_title', 'like', '%' . $q . '%');
+                $query->where('p.sku_number', 'like', '%' . $q . '%')
+                      ->orWhere('p.product_title', 'like', '%' . $q . '%');
             })
-            ->select('idtbl_products as id', 'sku_number as sku', 'product_title as description')
-            ->orderBy('sku_number')
+            ->select(
+                'p.idtbl_products as id',
+                'p.sku_number as sku',
+                'p.product_title as description',
+                DB::raw('COALESCE(pr.quantity, 0) as stock_qty'),
+                DB::raw('COALESCE(pr.weight, 0) as stock_weight'),
+                'wu.unit_name as stock_unit'
+            )
+            ->orderBy('p.sku_number')
             ->limit(30)
             ->get();
 
-        // Format for Select2: { id, text, sku, description }
+        // Format for Select2: { id, text, sku, description, stock_qty, stock_weight, stock_unit }
         $results = $rows->map(fn($r) => [
-            'id'          => $r->id . ':::' . $r->sku,
-            'text'        => $r->sku . ($r->description ? ' — ' . $r->description : ''),
-            'sku'         => $r->sku,
-            'description' => $r->description ?? '',
+            'id'           => $r->id . ':::' . $r->sku,
+            'text'         => $r->sku . ($r->description ? ' — ' . $r->description : ''),
+            'sku'          => $r->sku,
+            'description'  => $r->description ?? '',
+            'stock_qty'    => (float) $r->stock_qty,
+            'stock_weight' => (float) $r->stock_weight,
+            'stock_unit'   => $r->stock_unit ?? 'ct',
         ]);
 
         return response()->json(['results' => $results]);
