@@ -43,7 +43,6 @@ CREATE TABLE IF NOT EXISTS tbl_production_sheets (
     sheet_number                VARCHAR(50)     DEFAULT NULL COLLATE utf8mb4_general_ci COMMENT 'Auto-generated sheet number e.g PS-0001',
     idtbl_production_types      INT(11)         NOT NULL COMMENT 'Production type FK',
     production_category         VARCHAR(50)     DEFAULT NULL COLLATE utf8mb4_general_ci COMMENT 'gemstones / rough / diamond',
-    template                    VARCHAR(50)     DEFAULT 'default' COLLATE utf8mb4_general_ci,
     reference                   VARCHAR(100)    DEFAULT NULL COLLATE utf8mb4_general_ci,
 
     -- Dates

@@ -140,53 +140,55 @@
                     </div>
                 </div>
 
-                {{-- Supplier + Buttons --}}
-                <div class="flex items-end gap-2">
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Supplier:</label>
-                        <div class="relative" id="w-supplier">
-                            <input type="hidden" id="filter-supplier-id" value="all">
-                            <button id="btn-supplier" type="button"
-                                class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm bg-slate-100 border border-slate-200 rounded-md hover:border-blue-400 transition-colors">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    <span id="lbl-supplier" class="text-slate-600 text-sm">All</span>
-                                </div>
-                            </button>
-                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
+                {{-- Supplier --}}
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Supplier:</label>
+                    <div class="relative" id="w-supplier">
+                        <input type="hidden" id="filter-supplier-id" value="all">
+                        <button id="btn-supplier" type="button"
+                            class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm bg-slate-100 border border-slate-200 rounded-md hover:border-blue-400 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
+                                <span id="lbl-supplier" class="text-slate-600 text-sm">All</span>
                             </div>
-                            <div id="panel-supplier"
-                                class="prod-panel hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
-                                <div class="p-2 border-b border-slate-100">
-                                    <input id="search-supplier" type="text" placeholder="Search..."
-                                        class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                                <ul class="py-1 max-h-40 overflow-y-auto">
-                                    @foreach($suppliers as $s)
-                                        <li class="opt-supplier px-4 py-2.5 text-sm cursor-pointer hover:bg-slate-50 text-slate-700"
-                                            data-label="{{ $s['label'] }}" data-value="{{ $s['value'] }}">{{ $s['label'] }}</li>
-                                    @endforeach
-                                </ul>
+                        </button>
+                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div id="panel-supplier"
+                            class="prod-panel hidden absolute left-0 z-50 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                            <div class="p-2 border-b border-slate-100">
+                                <input id="search-supplier" type="text" placeholder="Search..."
+                                    class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                             </div>
+                            <ul class="py-1 max-h-40 overflow-y-auto">
+                                @foreach($suppliers as $s)
+                                    <li class="opt-supplier px-4 py-2.5 text-sm cursor-pointer hover:bg-slate-50 text-slate-700"
+                                        data-label="{{ $s['label'] }}" data-value="{{ $s['value'] }}">{{ $s['label'] }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
+                </div>
+
+                {{-- Action Buttons --}}
+                <div class="flex items-center gap-2">
                     <button id="btn-reset" title="Clear"
-                        class="flex-shrink-0 flex items-center justify-center w-[42px] h-[42px] bg-white border border-slate-200 rounded-md hover:bg-slate-50 text-slate-500 shadow-sm transition-colors">
+                        class="flex-1 flex items-center justify-center h-[42px] bg-white border border-slate-200 rounded-md hover:bg-slate-50 text-slate-500 shadow-sm transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
                     </button>
                     <button id="btn-apply"
-                        class="flex-shrink-0 inline-flex items-center justify-center px-7 h-[42px] text-[13px] font-bold text-white bg-[#2563eb] rounded-md hover:bg-blue-700 shadow-sm transition-colors">
+                        class="flex-[2] inline-flex items-center justify-center h-[42px] text-[13px] font-bold text-white bg-[#2563eb] rounded-md hover:bg-blue-700 shadow-sm transition-colors">
                         Apply
                     </button>
                 </div>
@@ -562,21 +564,21 @@
                             {{-- Original Quantity --}}
                             <div>
                                 <label class="block text-[13px] text-slate-700 mb-1.5">Original quantity</label>
-                                <input type="number" name="original_quantity" placeholder="e.g. 10"
-                                    class="form-control px-3">
+                                <input type="number" name="original_quantity" placeholder="Auto-calculated from Items tab"
+                                    readonly class="form-control px-3 bg-slate-50 cursor-not-allowed">
                             </div>
 
                             {{-- Original Weight --}}
                             <div>
                                 <label class="block text-[13px] text-slate-700 mb-1.5">Original weight</label>
                                 <div class="flex gap-2">
-                                    <input type="text" name="original_weight" placeholder='e.g. "5.20"'
-                                        class="form-control flex-1 px-3">
+                                    <input type="text" name="original_weight" placeholder="Auto-calculated from Items tab"
+                                        readonly class="form-control flex-1 px-3 bg-slate-50 cursor-not-allowed">
                                     <div class="relative w-[85px] searchable-dropdown" id="ddMcWeightUnitWrapper">
                                         <input type="hidden" name="weight_unit" id="ddMcWeightUnitHidden" value="ct">
                                         <button type="button" id="ddMcWeightUnitBtn"
-                                            class="form-control flex items-center pl-3 pr-7 text-left">
-                                            <span id="ddMcWeightUnitLabel" class="truncate text-slate-800">ct</span>
+                                            class="form-control flex items-center pl-3 pr-7 text-left bg-slate-50 cursor-not-allowed" disabled>
+                                            <span id="ddMcWeightUnitLabel" class="truncate text-slate-500">ct</span>
                                         </button>
                                         <div class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none">
                                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
@@ -632,7 +634,7 @@
                                         </div>
                                     </div>
                                     <input type="text" name="original_total_cost" placeholder="0.00"
-                                        class="form-control flex-1 px-3">
+                                        readonly class="form-control flex-1 px-3 bg-slate-50 cursor-not-allowed">
                                 </div>
                             </div>
 
@@ -738,6 +740,10 @@
                                     {{-- hidden fields filled by Select2 on selection --}}
                                     <input type="hidden" id="item-input-sku">
                                     <input type="hidden" id="item-input-product-id">
+                                    {{-- stock data from API (for soft warning) --}}
+                                    <input type="hidden" id="item-stock-qty" value="">
+                                    <input type="hidden" id="item-stock-weight" value="">
+                                    <input type="hidden" id="item-stock-unit" value="">
                                 </div>
 
                                 <div class="md:col-span-1">
@@ -810,6 +816,13 @@
                             </div>
                             <p id="item-add-error" class="hidden mt-2 text-[12px] text-red-500 font-medium">Please enter at
                                 least a SKU or description before adding.</p>
+                            {{-- Stock warning banner (blocking error) --}}
+                            <div id="item-stock-warning" class="hidden mt-3 flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-md px-4 py-3">
+                                <svg class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p id="item-stock-warning-text" class="text-[12px] text-red-700 font-medium leading-snug"></p>
+                            </div>
                         </div>
 
                         {{-- Hidden container where JS writes serialized items for form POST --}}
@@ -1389,11 +1402,31 @@
                     }
                     var descEl = document.getElementById('item-input-desc');
                     if (descEl && !descEl.value && d.description) descEl.value = d.description;
+
+                    // Store available stock from API response for soft warning
+                    var stockQtyEl = document.getElementById('item-stock-qty');
+                    var stockWtEl = document.getElementById('item-stock-weight');
+                    var stockUnitEl = document.getElementById('item-stock-unit');
+                    if (stockQtyEl) stockQtyEl.value = d.stock_qty != null ? d.stock_qty : '';
+                    if (stockWtEl) stockWtEl.value = d.stock_weight != null ? d.stock_weight : '';
+                    if (stockUnitEl) stockUnitEl.value = d.stock_unit != null ? d.stock_unit : 'ct';
+
+                    // Clear any previous warning
+                    var warnEl = document.getElementById('item-stock-warning');
+                    if (warnEl) warnEl.classList.add('hidden');
                 });
 
                 $sel.on('select2:clear', function () {
                     $('#item-input-sku').val('');
                     $('#item-input-product-id').val('');
+                    var stockQtyEl = document.getElementById('item-stock-qty');
+                    var stockWtEl = document.getElementById('item-stock-weight');
+                    var stockUnitEl = document.getElementById('item-stock-unit');
+                    if (stockQtyEl) stockQtyEl.value = '';
+                    if (stockWtEl) stockWtEl.value = '';
+                    if (stockUnitEl) stockUnitEl.value = '';
+                    var warnEl = document.getElementById('item-stock-warning');
+                    if (warnEl) warnEl.classList.add('hidden');
                 });
             }
 
@@ -1922,6 +1955,14 @@
                         tbody.innerHTML = '<tr id="items-empty-row"><td colspan="7" class="px-4 py-10 text-center text-slate-400 text-[13px]">No items added yet</td></tr>';
                     }
                     if (tfoot) tfoot.classList.add('hidden');
+
+                    // If no items left, clear the synced details fields too
+                    var origQtyInp = document.querySelector('[name="original_quantity"]');
+                    var origWtInp = document.querySelector('[name="original_weight"]');
+                    var origCostInp = document.querySelector('[name="original_total_cost"]');
+                    if (origQtyInp) { origQtyInp.value = ''; origQtyInp.dispatchEvent(new Event('input')); }
+                    if (origWtInp) { origWtInp.value = ''; origWtInp.dispatchEvent(new Event('input')); }
+                    if (origCostInp) { origCostInp.value = ''; origCostInp.dispatchEvent(new Event('input')); }
                 } else {
                     if (tfoot) tfoot.classList.remove('hidden');
                     // Rebuild tbody rows (only the data rows — NOT emptyRow)
@@ -1958,10 +1999,15 @@
                     var totalCost = 0;
                     var hasWeight = false;
                     var hasCost = false;
+                    var lastUnit = 'ct';
 
                     itemsList.forEach(function (item) {
                         if (item.qty !== '') totalQty += parseFloat(item.qty) || 0;
-                        if (item.weight !== '') { totalWeight += parseFloat(item.weight) || 0; hasWeight = true; }
+                        if (item.weight !== '') { 
+                            totalWeight += parseFloat(item.weight) || 0; 
+                            hasWeight = true; 
+                            lastUnit = item.unit;
+                        }
                         if (item.cost !== '') { totalCost += parseFloat(item.cost) || 0; hasCost = true; }
                     });
 
@@ -1972,6 +2018,32 @@
                     if (qtyEl) qtyEl.textContent = totalQty > 0 ? totalQty : '—';
                     if (weightEl) weightEl.textContent = hasWeight ? totalWeight.toFixed(4) : '—';
                     if (costEl) costEl.textContent = hasCost ? totalCost.toFixed(2) : '—';
+
+                    // ── Sync with Details Tab fields ─────────────────────────────
+                    var origQtyInp = document.querySelector('[name="original_quantity"]');
+                    var origWtInp = document.querySelector('[name="original_weight"]');
+                    var origCostInp = document.querySelector('[name="original_total_cost"]');
+                    
+                    if (origQtyInp) {
+                        origQtyInp.value = totalQty > 0 ? totalQty : '';
+                        origQtyInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
+                    }
+                    if (origWtInp) {
+                        origWtInp.value = hasWeight ? totalWeight.toFixed(4) : '';
+                        origWtInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
+                    }
+                    if (origCostInp) {
+                        origCostInp.value = hasCost ? totalCost.toFixed(2) : '';
+                        origCostInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
+                    }
+
+                    // Sync Weight Unit
+                    if (hasWeight) {
+                        var unitHidden = document.getElementById('ddMcWeightUnitHidden');
+                        var unitLabel = document.getElementById('ddMcWeightUnitLabel');
+                        if (unitHidden) unitHidden.value = lastUnit;
+                        if (unitLabel) unitLabel.textContent = lastUnit;
+                    }
                 }
 
                 // Always rebuild hidden inputs for form submission
@@ -2030,6 +2102,31 @@
                         return;
                     }
                     if (errEl) errEl.classList.add('hidden');
+
+                    // ── Soft stock warning check ──────────────────────────────
+                    var warnEl = document.getElementById('item-stock-warning');
+                    var warnTextEl = document.getElementById('item-stock-warning-text');
+                    var stockQty = parseFloat((document.getElementById('item-stock-qty') || {}).value || '');
+                    var stockWt = parseFloat((document.getElementById('item-stock-weight') || {}).value || '');
+                    var stockUnit = (document.getElementById('item-stock-unit') || {}).value || 'ct';
+                    var requestedQty = parseFloat(qty) || 0;
+                    var requestedWt = parseFloat(weight) || 0;
+                    var warnings = [];
+
+                    if (!isNaN(stockQty) && stockQty >= 0 && requestedQty > 0 && requestedQty > stockQty) {
+                        warnings.push('Quantity requested (' + requestedQty + ') exceeds available stock (' + stockQty + ').');
+                    }
+                    if (!isNaN(stockWt) && stockWt >= 0 && requestedWt > 0 && requestedWt > stockWt) {
+                        warnings.push('Weight requested (' + requestedWt + ' ' + unit + ') exceeds available stock (' + stockWt.toFixed(4) + ' ' + stockUnit + ').');
+                    }
+
+                    if (warnings.length > 0 && warnEl && warnTextEl) {
+                        warnTextEl.innerHTML = '<strong>Stock error for ' + sku.trim() + ':</strong> ' + warnings.join(' ');
+                        warnEl.classList.remove('hidden');
+                        return; // Block adding the item
+                    } else if (warnEl) {
+                        warnEl.classList.add('hidden');
+                    }
 
                     itemsList.push({ key: itemIndex++, sku: sku.trim(), product_id: productId, desc: desc.trim(), qty: qty, weight: weight, unit: unit, cost: cost });
 

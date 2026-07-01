@@ -14,7 +14,6 @@ class ProductionSheet extends Model
         'sheet_number',
         'idtbl_production_types',
         'production_category',
-        'template',
         'reference',
         'due_date',
         'closed_date',
