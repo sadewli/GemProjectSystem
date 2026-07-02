@@ -322,13 +322,50 @@ class overview extends Controller
     // ────────────────────────────────────────────────────────────────────────────
     // COUNTS – AJAX endpoint: refresh tab counts & totals
     // ────────────────────────────────────────────────────────────────────────────
-    public function counts()
+    public function counts(Request $request)
     {
-        $rawCounts = ProductionSheet::select('status', DB::raw('COUNT(*) as cnt'))
+        $queryCount = ProductionSheet::query();
+        $queryTotal = ProductionSheet::query();
+
+        // Apply same filters as data()
+        foreach ([$queryCount, $queryTotal] as $query) {
+            // Filter: production type
+            if ($request->filled('production_type')) {
+                $query->whereHas('productionType', function ($q) use ($request) {
+                    $q->where('type_value', $request->production_type);
+                });
+            }
+
+            // Filter: date range
+            if ($request->filled('date_from')) {
+                $query->whereDate('insertdatetime', '>=', $request->date_from);
+            }
+            if ($request->filled('date_to')) {
+                $query->whereDate('insertdatetime', '<=', $request->date_to);
+            }
+
+            // Filter: supplier
+            if ($request->filled('supplier') && $request->supplier !== 'all') {
+                if (is_numeric($request->supplier)) {
+                    $query->where('supplier_id', $request->supplier);
+                }
+            }
+
+            // Search
+            if ($request->filled('search')) {
+                $q = $request->search;
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('sheet_number', 'like', "%{$q}%")
+                        ->orWhere('reference', 'like', "%{$q}%");
+                });
+            }
+        }
+
+        $rawCounts = $queryCount->select('status', DB::raw('COUNT(*) as cnt'))
             ->groupBy('status')
             ->pluck('cnt', 'status');
 
-        $rawTotals = ProductionSheet::select('status', DB::raw('SUM(original_total_cost) as tot'))
+        $rawTotals = $queryTotal->select('status', DB::raw('SUM(original_total_cost) as tot'))
             ->groupBy('status')
             ->pluck('tot', 'status');
 
