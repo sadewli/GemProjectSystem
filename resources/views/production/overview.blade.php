@@ -1329,18 +1329,22 @@
                 });
                 var ptLbl = document.getElementById('lbl-prodtype');
                 if (ptLbl) { ptLbl.textContent = 'Select'; ptLbl.classList.add('text-slate-500'); ptLbl.classList.remove('text-slate-800'); }
-                ['lbl-supplier'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.textContent = 'Select';
-                        el.classList.add('text-slate-400');
-                        el.classList.remove('text-slate-600');
-                    }
-                });
+                
+                var supLbl = document.getElementById('lbl-supplier');
+                if (supLbl) {
+                    supLbl.textContent = 'All';
+                    supLbl.classList.remove('text-slate-400');
+                    supLbl.classList.add('text-slate-600');
+                }
+                
                 var filterSupId = document.getElementById('filter-supplier-id');
                 if (filterSupId) filterSupId.value = 'all';
+                
                 document.getElementById('date-from').value = '';
                 document.getElementById('date-to').value = '';
+                
+                currentPage = 1;
+                loadTable(getFilters());
             });
 
             // —— Date guard ———————————————————————————————————————————————————
@@ -1752,15 +1756,13 @@
                 if (activeOpt) {
                     selectedTypeValue = activeOpt.dataset.value || '';
                 }
+                var filterSupId = document.getElementById('filter-supplier-id');
                 return {
                     status: currentStatus,
                     production_type: selectedTypeValue,
                     date_from: document.getElementById('date-from').value,
                     date_to: document.getElementById('date-to').value,
-                    creator: (function () {
-                        var lbl = document.getElementById('lbl-creator');
-                        return lbl ? lbl.textContent : '';
-                    })(),
+                    supplier: filterSupId ? filterSupId.value : 'all',
                     search: document.getElementById('prod-search').value,
                     per_page: document.getElementById('prod-per-page').value,
                     page: currentPage,
@@ -1880,7 +1882,12 @@
             }
 
             function refreshCounts() {
-                fetch('{{ route("production.counts") }}', {
+                var params = getFilters();
+                var qs = Object.keys(params).map(function (k) {
+                    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] || '');
+                }).join('&');
+
+                fetch('{{ route("production.counts") }}?' + qs, {
                     headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
                 })
                     .then(function (r) { return r.json(); })
@@ -1906,25 +1913,39 @@
             // ── Apply filter ─────────────────────────────────────────────────
             document.getElementById('btn-apply').addEventListener('click', function () {
                 currentPage = 1;
-                loadTable(getFilters());
+                var filters = getFilters();
+                loadTable(filters);
+                refreshCounts();
             });
 
             // ── Search (enter key) ────────────────────────────────────────────
             document.getElementById('prod-search').addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') { currentPage = 1; loadTable(getFilters()); }
+                if (e.key === 'Enter') { 
+                    currentPage = 1; 
+                    var filters = getFilters();
+                    loadTable(filters);
+                    refreshCounts();
+                }
             });
             document.querySelector('#prod-search + button').addEventListener('click', function () {
-                currentPage = 1; loadTable(getFilters());
+                currentPage = 1; 
+                var filters = getFilters();
+                loadTable(filters);
+                refreshCounts();
             });
 
             // ── Per-page change ───────────────────────────────────────────────
             document.getElementById('prod-per-page').addEventListener('change', function () {
-                currentPage = 1; loadTable(getFilters());
+                currentPage = 1; 
+                var filters = getFilters();
+                loadTable(filters);
+                refreshCounts();
             });
 
             // ── Initial load on page ready (with optional URL type pre-select) ──
             preSelectTypeFromUrl();
             loadTable(getFilters());
+            refreshCounts();
 
             // ══════════════════════════════════════════════════════════════════
             // ITEMS TAB — fully functional add/remove/totals/serialize
