@@ -145,6 +145,7 @@ Route::post('Master/Skuedit', [SkuController::class, 'edit'])->name('master.sku.
 Route::post('Master/Skustatus', [SkuController::class, 'status'])->name('master.sku.status');
 Route::post('Master/Skudelete', [SkuController::class, 'delete'])->name('master.sku.delete');
 
+//Sales Routes
 Route::get('Sales/Invoices', [SalesController::class, 'invoices'])->name('sales.invoices');
 Route::get('Sales/Invoice', [SalesController::class, 'invoice'])->name('sales.invoice');
 Route::get('Sales/CustomerMemo', [CustomerMemoController::class, 'index'])->name('sales.customermemo');
