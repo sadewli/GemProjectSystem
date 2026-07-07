@@ -179,6 +179,23 @@ class overview extends Controller
                 }
                 if (!empty($itemRows)) {
                     ProductionSheetItem::insert($itemRows);
+
+                    // Update inventorystatus and productionmanagetype in tbl_products for all items in the sheet
+                    $productIdsToUpdate = [];
+                    foreach ($itemRows as $row) {
+                        if (!empty($row['idtbl_products'])) {
+                            $productIdsToUpdate[] = $row['idtbl_products'];
+                        }
+                    }
+
+                    if (!empty($productIdsToUpdate)) {
+                        DB::table('tbl_products')
+                            ->whereIn('idtbl_products', $productIdsToUpdate)
+                            ->update([
+                                'inventorystatus' => 2, // 2 = out
+                                'productionmanagetype' => $productionType->idtbl_production_types
+                            ]);
+                    }
                 }
             }
 
@@ -540,6 +557,7 @@ class overview extends Controller
             ->leftJoin('tbl_product_pricing as pr', 'pr.idtbl_products', '=', 'p.idtbl_products')
             ->leftJoin('tbl_weight_units as wu', 'wu.idtbl_weight_units', '=', 'pr.idtbl_weight_units')
             ->where('p.status', 1)
+            ->where('p.inventorystatus', 1)
             ->where(function ($query) use ($q) {
                 $query->where('p.sku_number', 'like', '%' . $q . '%')
                       ->orWhere('p.product_title', 'like', '%' . $q . '%');
@@ -568,6 +586,65 @@ class overview extends Controller
         ]);
 
         return response()->json(['results' => $results]);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // DELETE SHEET – mark sheet as deleted & restore inventory status to "in"
+    // ────────────────────────────────────────────────────────────────────────────
+    public function deleteSheet(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $sheet = ProductionSheet::findOrFail($id);
+
+            // Collect all product IDs linked to this sheet
+            $productIds = ProductionSheetItem::where('idtbl_production_sheets', $sheet->idtbl_production_sheets)
+                ->whereNotNull('idtbl_products')
+                ->pluck('idtbl_products')
+                ->toArray();
+
+            // Restore inventory status to "in" and clear production manage type
+            if (!empty($productIds)) {
+                DB::table('tbl_products')
+                    ->whereIn('idtbl_products', $productIds)
+                    ->update([
+                        'inventorystatus'      => 1, // 1 = in
+                        'productionmanagetype' => null,
+                    ]);
+            }
+
+            // Mark the production sheet as deleted
+            $sheet->status = 'deleted';
+            $sheet->save();
+
+            // Log history entry
+            ProductionSheetHistory::create([
+                'idtbl_production_sheets' => $sheet->idtbl_production_sheets,
+                'action_date'             => now()->toDateString(),
+                'action_time'             => now()->toTimeString(),
+                'action_user'             => auth()->id(),
+                'action'                  => 'Deleted',
+                'note'                    => 'Production sheet ' . $sheet->sheet_number . ' deleted. '
+                                             . count($productIds) . ' item(s) returned to inventory (status: in).',
+                'insertdatetime'          => now(),
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Production sheet deleted and inventory restored.',
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
 }
 

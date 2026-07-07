@@ -309,6 +309,7 @@ Route::prefix('production')->name('production.')->group(function () {
     Route::get('/{id}', [\App\Http\Controllers\production\overview::class, 'show'])->name('show');
     Route::post('/media/upload', [\App\Http\Controllers\production\overview::class, 'uploadMedia'])->name('media.upload');
     Route::delete('/media/{id}', [\App\Http\Controllers\production\overview::class, 'deleteMedia'])->name('media.delete');
+    Route::delete('/{id}/delete', [\App\Http\Controllers\production\overview::class, 'deleteSheet'])->name('delete');
 
     // Placeholder routes for menubar items
     Route::get('/recutting', function () {
