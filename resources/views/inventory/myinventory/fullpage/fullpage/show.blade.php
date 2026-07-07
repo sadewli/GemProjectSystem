@@ -136,6 +136,9 @@
     <div class="p-6 bg-[#f8fafc] min-h-screen font-sans">
         <form id="productForm" method="POST" action="{{ route('inventory.myinventory.store') }}">
             @csrf
+            @if(request()->has('production_sheet_id'))
+                <input type="hidden" name="production_sheet_id" value="{{ (int) request('production_sheet_id') }}">
+            @endif
 
         {{-- Top Header --}}
         <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6 flex justify-between items-center shadow-sm">

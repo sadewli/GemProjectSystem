@@ -170,24 +170,8 @@ class InventoryController extends Controller
 
 		$prefixName = $sku ? $sku->sku_name : 'Prefix';
 
-		// 3. Get next number from sku_counters
-		$counter = \Illuminate\Support\Facades\DB::table('sku_counters')
-			->where('idtbl_product_types', $productTypeId)
-			->first();
-
-		if ($counter) {
-			$next = $counter->last_number + 1;
-		} else {
-			try {
-				$count = \Illuminate\Support\Facades\DB::table('tbl_products')
-					->where('idtbl_product_types', $productTypeId)
-					->count();
-				$next = $count + 1;
-			} catch (\Exception $e) {
-				$next = 1;
-			}
-		}
-
+		// 3. Calculate next number: max(highest existing SKU suffix, counter) + 1
+		$next = $this->getNextSkuNumber((int) $productTypeId);
 		$nextNumber = str_pad($next, 2, '0', STR_PAD_LEFT);
 
 		// 4. Return a JSON response
@@ -211,6 +195,39 @@ class InventoryController extends Controller
 			return null;
 		}
 		return intval($value);
+	}
+
+	/**
+	 * Returns the next safe sequential number for a SKU, guaranteed to be
+	 * strictly greater than both the highest number already in tbl_products
+	 * AND the last recorded counter — so consumed / sold / deleted gems
+	 * can never cause a SKU to be reused.
+	 */
+	private function getNextSkuNumber(int $productTypeId): int
+	{
+		$productType = \Illuminate\Support\Facades\DB::table('tbl_product_types')
+			->where('idtbl_product_types', $productTypeId)
+			->first();
+
+		$prefix       = $productType->skuname ?? '';
+		$prefixLength = strlen($prefix);
+
+		// Highest numeric suffix already stored in tbl_products for this type
+		$maxDbSku = 0;
+		if ($prefixLength > 0) {
+			$maxDbSku = (int) \Illuminate\Support\Facades\DB::table('tbl_products')
+				->where('idtbl_product_types', $productTypeId)
+				->where('sku_number', 'LIKE', $prefix . '%')
+				->selectRaw('MAX(CAST(SUBSTRING(sku_number, ?) AS UNSIGNED)) as max_num', [$prefixLength + 1])
+				->value('max_num') ?? 0;
+		}
+
+		// Counter table value
+		$counterVal = (int) (\Illuminate\Support\Facades\DB::table('sku_counters')
+			->where('idtbl_product_types', $productTypeId)
+			->value('last_number') ?? 0);
+
+		return max($maxDbSku, $counterVal) + 1;
 	}
 
 	private function floatVal($value)
@@ -262,34 +279,21 @@ class InventoryController extends Controller
 				$productType = \Illuminate\Support\Facades\DB::table('tbl_product_types')
 					->where('idtbl_product_types', $productTypeId)
 					->first();
-					
+
 				do {
-					$counter = \Illuminate\Support\Facades\DB::table('sku_counters')
-						->where('idtbl_product_types', $productTypeId)
-						->lockForUpdate()
-						->first();
-						
-					if ($counter) {
-						$next = $counter->last_number + 1;
-						\Illuminate\Support\Facades\DB::table('sku_counters')
-							->where('idtbl_product_types', $productTypeId)
-							->update(['last_number' => $next, 'updated_at' => now()]);
-					} else {
-						$count = \Illuminate\Support\Facades\DB::table('tbl_products')
-							->where('idtbl_product_types', $productTypeId)
-							->count();
-						$next = $count + 1;
-						\Illuminate\Support\Facades\DB::table('sku_counters')->insert([
-							'idtbl_product_types' => $productTypeId,
-							'last_number' => $next,
-							'created_at' => now(),
-							'updated_at' => now(),
-						]);
-					}
-					
+					// Always use max(highest existing SKU, counter) + 1 to prevent reuse
+					$next = $this->getNextSkuNumber($productTypeId);
+
+					// Sync the counter table so it never falls behind
+					\Illuminate\Support\Facades\DB::table('sku_counters')
+						->updateOrInsert(
+							['idtbl_product_types' => $productTypeId],
+							['last_number' => $next, 'updated_at' => now()]
+						);
+
 					$proposedSku = ($productType->skuname ?? '') . str_pad($next, 2, '0', STR_PAD_LEFT);
 				} while (\Illuminate\Support\Facades\DB::table('tbl_products')->where('sku_number', $proposedSku)->exists());
-				
+
 				return $proposedSku;
 			});
 		}
@@ -481,6 +485,59 @@ class InventoryController extends Controller
 				]);
 			} catch (\Exception $e) {
 				// Silently skip if tbl_product_advance_details does not exist yet
+			}
+		}
+
+		// ── Production Sheet Completion ──────────────────────────────────────────
+		if ($request->filled('production_sheet_id')) {
+			$sheetId = (int) $request->production_sheet_id;
+			$sheet   = \DB::table('tbl_production_sheets')
+				->where('idtbl_production_sheets', $sheetId)
+				->first();
+
+			if ($sheet && $sheet->status !== 'completed' && $sheet->status !== 'deleted') {
+				// 1. Collect linked product IDs from the sheet items
+				$inputProductIds = \DB::table('tbl_production_sheet_items')
+					->where('idtbl_production_sheets', $sheetId)
+					->whereNotNull('idtbl_products')
+					->pluck('idtbl_products');
+
+				// 2. Mark input items as Consumed in Production (inventorystatus = 3)
+				if ($inputProductIds->isNotEmpty()) {
+					\DB::table('tbl_products')
+						->whereIn('idtbl_products', $inputProductIds)
+						->update([
+							'inventorystatus'      => 3, // 3 = Consumed in Production
+							'productionmanagetype' => null,
+						]);
+				}
+
+				// 3. Close the production sheet
+				\DB::table('tbl_production_sheets')
+					->where('idtbl_production_sheets', $sheetId)
+					->update([
+						'status'      => 'completed',
+						'closed_date' => now()->toDateString(),
+					]);
+
+				// 4. Log history (silently skip if table doesn't exist yet)
+				try {
+					\DB::table('tbl_production_sheet_history')->insert([
+						'idtbl_production_sheets' => $sheetId,
+						'action'                  => 'Completed',
+						'note'                    => 'Production completed. New gemstone registered: ' . ($product->sku_number ?? 'N/A')
+						                             . '. ' . $inputProductIds->count() . ' item(s) marked as Consumed.',
+						'action_date'             => now()->toDateString(),
+						'action_time'             => now()->toTimeString(),
+						'action_user'             => auth()->id(),
+						'insertdatetime'          => now(),
+					]);
+				} catch (\Exception $e) {
+					// tbl_production_sheet_history may not exist yet – silently skip
+				}
+
+				return redirect()->route('production.overview.index')
+					->with('success', 'Gemstone ' . $product->sku_number . ' added to inventory and production sheet completed successfully!');
 			}
 		}
 
