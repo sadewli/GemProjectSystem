@@ -250,7 +250,7 @@
                 <button data-tab="deleted"
                     class="status-tab tab-del flex items-start justify-between px-5 py-4 hover:bg-slate-50 transition-colors">
                     <div class="text-left">
-                        <p class="text-sm font-bold text-red-500 mb-1">Deleted</p>
+                        <p class="text-sm font-bold text-red-500 mb-1">Canceled</p>
                         <p class="text-xs text-slate-500">items: <span id="cnt-deleted"
                                 class="font-semibold text-slate-700">{{ $counts['deleted'] ?? '0' }}</span></p>
                         <p class="text-xs text-red-500 font-semibold mt-0.5">VEF: <span
@@ -265,11 +265,7 @@
             </div>
 
             {{-- TOOLBAR --}}
-            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                <button id="btn-manage-cols"
-                    class="inline-flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">
-                    Manage columns
-                </button>
+            <div class="flex items-center justify-end px-4 py-3 border-b border-slate-100">
                 <div class="relative flex items-center">
                     <input id="prod-search" type="text" placeholder="e.g Production sheet #, refer"
                         class="w-64 pl-4 pr-10 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 placeholder-slate-400">
@@ -1745,7 +1741,7 @@
                     'draft': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">Draft</span>',
                     'in_production': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-800">In production</span>',
                     'completed': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-100 text-green-800">Completed</span>',
-                    'deleted': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-800">Deleted</span>',
+                    'deleted': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-800">Canceled</span>',
                 };
                 return map[status] || '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">' + status + '</span>';
             }
@@ -1831,16 +1827,38 @@
                             tbody.innerHTML = '<tr><td colspan="12" class="px-4 py-12 text-center text-slate-400 text-sm">No records found</td></tr>';
                         } else {
                             tbody.innerHTML = rows.map(function (r) {
-                                var deleteBtn = r.status !== 'deleted'
-                                    ? '<button type="button" ' +
-                                        'class="inline-flex items-center gap-1 px-2.5 py-1 text-[12px] font-medium text-red-600 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition-colors" ' +
-                                        'onclick="confirmDeleteSheet(' + r.id + ', \'' + r.sheet_number + '\')">'
-                                        + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>'
-                                        + 'Delete</button>'
-                                    : '<span class="text-xs text-slate-400 italic">Deleted</span>';
+                                var completeUrl = '{{ url("Inventory/MyInventory/new") }}?production_sheet_id=' + r.id;
+                                var viewBtn = '<button type="button" '
+                                    +   'title="View Details" '
+                                    +   'class="inline-flex items-center justify-center w-7 h-7 rounded text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors" '
+                                    +   'onclick="openViewModal(' + r.id + ')">'
+                                    +   '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>'
+                                    + '</button>';
+
+                                var actions = '<div class="flex items-center gap-1.5">' + viewBtn;
+
+                                if (r.status === 'deleted') {
+                                    actions += '<span class="text-xs text-slate-400 italic">Canceled</span>';
+                                } else if (r.status === 'completed') {
+                                    actions += '<span class="text-xs text-slate-400 italic">Completed</span>';
+                                } else {
+                                    actions +=
+                                        '<a href="' + completeUrl + '" '
+                                        +   'title="Complete & Add to Inventory" '
+                                        +   'class="inline-flex items-center justify-center w-7 h-7 rounded text-green-600 bg-green-50 border border-green-200 hover:bg-green-100 transition-colors">'
+                                        +   '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
+                                        + '</a>'
+                                        + '<button type="button" '
+                                        +   'title="Cancel" '
+                                        +   'class="inline-flex items-center justify-center w-7 h-7 rounded text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors" '
+                                        +   'onclick="confirmDeleteSheet(' + r.id + ', \'' + r.sheet_number + '\')" >'
+                                        +   '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                                        + '</button>';
+                                }
+                                actions += '</div>';
                                 return '<tr class="hover:bg-slate-50 transition-colors">' +
                                     '<td class="px-4 py-3 font-medium">' +
-                                    '<button type="button" class="text-blue-600 hover:text-blue-800 hover:underline font-semibold focus:outline-none" onclick="openViewModal(' + r.id + ')">' + r.sheet_number + '</button>' +
+                                    '<span class="font-semibold text-slate-700">' + r.sheet_number + '</span>' +
                                     '</td>' +
                                     '<td class="px-4 py-3">' + r.production_type + '</td>' +
                                     '<td class="px-4 py-3">' + r.reference + '</td>' +
@@ -1852,7 +1870,7 @@
                                     '<td class="px-4 py-3">' + r.original_weight + '</td>' +
                                     '<td class="px-4 py-3">' + r.original_total_cost + '</td>' +
                                     '<td class="px-4 py-3">' + (r.discrepancy_reason !== '—' ? r.discrepancy_reason : '—') + '</td>' +
-                                    '<td class="px-4 py-3">' + deleteBtn + '</td>' +
+                                    '<td class="px-4 py-3">' + actions + '</td>' +
                                     '</tr>';
                             }).join('');
                         }
@@ -2617,7 +2635,7 @@
                     if (!_deleteSheetId) return;
                     var btn = this;
                     btn.disabled = true;
-                    btn.textContent = 'Deleting…';
+                    btn.textContent = 'Canceling…';
 
                     fetch('{{ url("production") }}/' + _deleteSheetId + '/delete', {
                         method: 'DELETE',
@@ -2630,23 +2648,23 @@
                     .then(function (r) { return r.json(); })
                     .then(function (json) {
                         btn.disabled = false;
-                        btn.textContent = 'Yes, Delete';
+                        btn.textContent = 'Yes, Cancel';
                         var modal = document.getElementById('delete-sheet-modal');
                         modal.classList.add('hidden');
                         modal.classList.remove('flex');
                         _deleteSheetId = null;
 
                         if (json.success) {
-                            showToast('Production sheet deleted and inventory restored.', 'success');
+                            showToast('Production sheet canceled and inventory restored.', 'success');
                             loadTable(getFilters());
                             refreshCounts();
                         } else {
-                            showToast(json.message || 'Delete failed.', 'error');
+                            showToast(json.message || 'Cancel failed.', 'error');
                         }
                     })
                     .catch(function () {
                         btn.disabled = false;
-                        btn.textContent = 'Yes, Delete';
+                        btn.textContent = 'Yes, Cancel';
                         showToast('An error occurred. Please try again.', 'error');
                     });
                 });
@@ -2694,7 +2712,7 @@
         }
     </script>
 
-    {{-- ===== DELETE SHEET CONFIRMATION MODAL ===== --}}
+    {{-- ===== CANCEL SHEET CONFIRMATION MODAL ===== --}}
     <div id="delete-sheet-modal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4"
         style="background:rgba(0,0,0,0.5);">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
@@ -2706,12 +2724,12 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-base font-bold text-slate-800">Delete Production Sheet</h3>
+                    <h3 class="text-base font-bold text-slate-800">Cancel Production Sheet</h3>
                     <p class="text-sm text-slate-500">This action cannot be undone.</p>
                 </div>
             </div>
             <p class="text-sm text-slate-600 mb-6">
-                Are you sure you want to delete sheet <span class="font-semibold text-slate-800" id="delete-sheet-label"></span>?
+                Are you sure you want to cancel sheet <span class="font-semibold text-slate-800" id="delete-sheet-label"></span>?
                 All linked items will have their inventory status restored to <span class="font-semibold text-green-600">In</span>.
             </p>
             <div class="flex items-center justify-end gap-3">
@@ -2721,7 +2739,7 @@
                 </button>
                 <button id="btn-delete-sheet-confirm"
                     class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
-                    Yes, Delete
+                    Yes, Cancel
                 </button>
             </div>
         </div>
