@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Crm;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class CreateContact extends Model
 {
