@@ -350,7 +350,7 @@
                 ══════════════════════════════════════════ --}}
                 @if ($showSales)
                     <div data-kt-menu-trigger="click"
-                        class="menu-item menu-accordion{{ request()->is('Distributor/*') ? ' show' : '' }}">
+                        class="menu-item menu-accordion{{ request()->is('Sales/*') ? ' show' : '' }}">
                         <span class="menu-link">
                             <span class="menu-icon">
                                 <i class="ki-duotone ki-chart-line-star fs-2">
@@ -363,8 +363,8 @@
                         <div class="menu-sub menu-sub-accordion">
                             @if ($salesInvoice)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('Distributor/Invoice*') ? ' active' : '' }}"
-                                        href="{{ url('Distributor/Invoice') }}">
+                                    <a class="menu-link{{ request()->is('Sales/Invoice*') ? ' active' : '' }}"
+                                        href="{{ url('Sales/Invoice') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Invoice</span>
                                     </a>
@@ -372,8 +372,8 @@
                             @endif
                             @if ($customerMemo)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('Distributor/CustomerMemo*') ? ' active' : '' }}"
-                                        href="{{ url('Distributor/CustomerMemo') }}">
+                                    <a class="menu-link{{ request()->is('Sales/CustomerMemo*') ? ' active' : '' }}"
+                                        href="{{ url('Sales/CustomerMemo') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Customer Memo</span>
                                     </a>
@@ -381,8 +381,8 @@
                             @endif
                             @if ($quotation)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('Distributor/Quotation*') ? ' active' : '' }}"
-                                        href="{{ url('Distributor/Quotation') }}">
+                                    <a class="menu-link{{ request()->is('Sales/Quotations*') ? ' active' : '' }}"
+                                        href="{{ url('Sales/Quotations') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Quotation</span>
                                     </a>
@@ -390,8 +390,8 @@
                             @endif
                             @if ($shippingInvoice)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('Distributor/ShippingInvoice*') ? ' active' : '' }}"
-                                        href="{{ url('Distributor/ShippingInvoice') }}">
+                                    <a class="menu-link{{ request()->is('Sales/ShippingInvoices*') ? ' active' : '' }}"
+                                        href="{{ url('Sales/ShippingInvoices') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Shipping Invoice</span>
                                     </a>
@@ -399,8 +399,8 @@
                             @endif
                             @if ($transferDocs)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('Distributor/TransferDocuments*') ? ' active' : '' }}"
-                                        href="{{ url('Distributor/TransferDocuments') }}">
+                                    <a class="menu-link{{ request()->is('Sales/LocationTransfer*') ? ' active' : '' }}"
+                                        href="{{ url('Sales/LocationTransfer') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Transfer Documents</span>
                                     </a>
@@ -408,8 +408,8 @@
                             @endif
                             @if ($purchaseOrder)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('Distributor/PurchaseOrder*') ? ' active' : '' }}"
-                                        href="{{ url('Distributor/PurchaseOrder') }}">
+                                    <a class="menu-link{{ request()->is('Sales/PurchaseOrders*') ? ' active' : '' }}"
+                                        href="{{ url('Sales/PurchaseOrders') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Purchase Order</span>
                                     </a>
@@ -417,8 +417,8 @@
                             @endif
                             @if ($supplierMemo)
                                 <div class="menu-item">
-                                    <a class="menu-link{{ request()->is('Distributor/SupplierMemo*') ? ' active' : '' }}"
-                                        href="{{ url('Distributor/SupplierMemo') }}">
+                                    <a class="menu-link{{ request()->is('Sales/SupplierMemos*') ? ' active' : '' }}"
+                                        href="{{ url('Sales/SupplierMemos') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Supplier Memo</span>
                                     </a>

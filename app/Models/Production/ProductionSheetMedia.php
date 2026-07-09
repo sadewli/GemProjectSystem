@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Production;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class ProductionSheetMedia extends Model
 {
