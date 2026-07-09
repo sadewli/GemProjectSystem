@@ -36,7 +36,7 @@ class overview extends Controller
             ->orderBy('supplier_name')
             ->get(['idtbl_suppliers', 'supplier_name']);
 
-        $suppliers   = [];
+        $suppliers = [];
         $suppliers[] = ['value' => 'all', 'label' => 'All'];
 
         foreach ($suppliersList as $s) {
@@ -66,17 +66,17 @@ class overview extends Controller
         }
 
         $counts = [
-            'all'           => $count_all,
+            'all' => $count_all,
             'in_production' => $rawCounts['in_production'] ?? 0,
-            'completed'     => $rawCounts['completed']     ?? 0,
-            'deleted'       => $rawCounts['deleted']       ?? 0,
+            'completed' => $rawCounts['completed'] ?? 0,
+            'deleted' => $rawCounts['deleted'] ?? 0,
         ];
 
         $totals = [
-            'all'           => number_format($total_all, 2) . ' VEF',
+            'all' => number_format($total_all, 2) . ' VEF',
             'in_production' => number_format($rawTotals['in_production'] ?? 0, 2) . ' VEF',
-            'completed'     => number_format($rawTotals['completed']     ?? 0, 2) . ' VEF',
-            'deleted'       => number_format($rawTotals['deleted']       ?? 0, 2) . ' VEF',
+            'completed' => number_format($rawTotals['completed'] ?? 0, 2) . ' VEF',
+            'deleted' => number_format($rawTotals['deleted'] ?? 0, 2) . ' VEF',
         ];
 
         return view('production.overview', compact(
@@ -93,7 +93,7 @@ class overview extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'production_type'     => 'required|string',
+            'production_type' => 'required|string',
             'production_category' => 'required|string',
         ]);
 
@@ -122,59 +122,60 @@ class overview extends Controller
 
             // Create the sheet
             $sheet = ProductionSheet::create([
-                'sheet_number'           => $sheetNumber,
+                'sheet_number' => $sheetNumber,
                 'idtbl_production_types' => $productionType->idtbl_production_types,
-                'production_category'    => $request->production_category,
-                'reference'              => $request->input('reference'),
-                'due_date'               => $request->input('due_date') ?: null,
-                'creator_id'             => $creatorId,
-                'supplier_id'            => $supplierId,
-                'original_quantity'      => $request->input('original_quantity') ?: null,
-                'original_weight'        => $request->input('original_weight') ?: null,
-                'weight_unit'            => $request->input('weight_unit', 'ct'),
-                'original_total_cost'    => $request->input('original_total_cost') ?: null,
-                'currency'               => $request->input('currency', 'VEF'),
-                'cost_per_unit'          => $request->input('cost_per_unit') ?: null,
-                'total_cost'             => $request->input('total_cost') ?: null,
-                'my_cost_per_unit'       => $request->input('my_cost_per_unit') ?: null,
-                'my_total_cost'          => $request->input('my_total_cost') ?: null,
+                'production_category' => $request->production_category,
+                'reference' => $request->input('reference'),
+                'due_date' => $request->input('due_date') ?: null,
+                'creator_id' => $creatorId,
+                'supplier_id' => $supplierId,
+                'original_quantity' => $request->input('original_quantity') ?: null,
+                'original_weight' => $request->input('original_weight') ?: null,
+                'weight_unit' => $request->input('weight_unit', 'ct'),
+                'original_total_cost' => $request->input('original_total_cost') ?: null,
+                'currency' => $request->input('currency', 'VEF'),
+                'cost_per_unit' => $request->input('cost_per_unit') ?: null,
+                'total_cost' => $request->input('total_cost') ?: null,
+                'my_cost_per_unit' => $request->input('my_cost_per_unit') ?: null,
+                'my_total_cost' => $request->input('my_total_cost') ?: null,
                 'expected_output_weight' => $request->input('expected_output_weight') ?: null,
-                'output_weight_unit'     => $request->input('output_weight_unit', 'ct'),
-                'expected_output_quantity'=> $request->input('expected_output_quantity') ?: null,
-                'loss_percent'           => $request->filled('loss_percent')
+                'output_weight_unit' => $request->input('output_weight_unit', 'ct'),
+                'expected_output_quantity' => $request->input('expected_output_quantity') ?: null,
+                'loss_percent' => $request->filled('loss_percent')
                     ? (float) str_replace(['%', ' '], '', $request->input('loss_percent'))
                     : null,
-                'loss_weight'            => $request->input('loss_weight') ?: null,
-                'discrepancy_reason'     => $request->input('discrepancy_reason') ?: null,
-                'notes'                  => $request->input('notes'),
-                'status'                 => $status,
-                'insertuser'             => auth()->id(),
-                'insertdatetime'         => now(),
+                'loss_weight' => $request->input('loss_weight') ?: null,
+                'discrepancy_reason' => $request->input('discrepancy_reason') ?: null,
+                'notes' => $request->input('notes'),
+                'status' => $status,
+                'insertuser' => auth()->id(),
+                'insertdatetime' => now(),
             ]);
 
             // ── Save submitted items to tbl_production_sheet_items ────────────
             $itemsInput = $request->input('items', []);
             if (is_array($itemsInput) && count($itemsInput) > 0) {
                 $itemRows = [];
-                $now      = now();
+                $now = now();
                 foreach ($itemsInput as $item) {
-                    $sku       = trim($item['sku']         ?? '');
-                    $desc      = trim($item['description'] ?? '');
-                    $productId = trim($item['product_id']  ?? '');
-                    if ($sku === '' && $desc === '') continue; // skip blank rows
+                    $sku = trim($item['sku'] ?? '');
+                    $desc = trim($item['description'] ?? '');
+                    $productId = trim($item['product_id'] ?? '');
+                    if ($sku === '' && $desc === '')
+                        continue; // skip blank rows
 
                     $itemRows[] = [
                         'idtbl_production_sheets' => $sheet->idtbl_production_sheets,
-                        'idtbl_products'          => $productId ?: null,
-                        'sku_number'              => $sku ?: null,
-                        'description'             => $desc ?: null,
-                        'quantity'                => isset($item['quantity'])    && $item['quantity']    !== '' ? (int)   $item['quantity']    : null,
-                        'weight'                  => isset($item['weight'])      && $item['weight']      !== '' ? (float) $item['weight']      : null,
-                        'weight_unit'             => $item['weight_unit'] ?? 'ct',
-                        'cost'                    => isset($item['cost'])        && $item['cost']        !== '' ? (float) $item['cost']        : null,
-                        'status'                  => 1,
-                        'insertuser'              => auth()->id(),
-                        'insertdatetime'          => $now,
+                        'idtbl_products' => $productId ?: null,
+                        'sku_number' => $sku ?: null,
+                        'description' => $desc ?: null,
+                        'quantity' => isset($item['quantity']) && $item['quantity'] !== '' ? (int) $item['quantity'] : null,
+                        'weight' => isset($item['weight']) && $item['weight'] !== '' ? (float) $item['weight'] : null,
+                        'weight_unit' => $item['weight_unit'] ?? 'ct',
+                        'cost' => isset($item['cost']) && $item['cost'] !== '' ? (float) $item['cost'] : null,
+                        'status' => 1,
+                        'insertuser' => auth()->id(),
+                        'insertdatetime' => $now,
                     ];
                 }
                 if (!empty($itemRows)) {
@@ -203,21 +204,21 @@ class overview extends Controller
             $itemCount = count($itemRows ?? []);
             ProductionSheetHistory::create([
                 'idtbl_production_sheets' => $sheet->idtbl_production_sheets,
-                'action_date'             => now()->toDateString(),
-                'action_time'             => now()->toTimeString(),
-                'action_user'             => auth()->id(),
-                'action'                  => 'Created',
-                'note'                    => 'Production sheet ' . $sheetNumber . ' created with status: ' . $status
-                                             . ($itemCount > 0 ? ' (' . $itemCount . ' item(s) added)' : ''),
-                'insertdatetime'          => now(),
+                'action_date' => now()->toDateString(),
+                'action_time' => now()->toTimeString(),
+                'action_user' => auth()->id(),
+                'action' => 'Created',
+                'note' => 'Production sheet ' . $sheetNumber . ' created with status: ' . $status
+                    . ($itemCount > 0 ? ' (' . $itemCount . ' item(s) added)' : ''),
+                'insertdatetime' => now(),
             ]);
 
             DB::commit();
 
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
-                    'success'      => true,
-                    'sheet_id'     => $sheet->idtbl_production_sheets,
+                    'success' => true,
+                    'sheet_id' => $sheet->idtbl_production_sheets,
                     'sheet_number' => $sheetNumber,
                 ]);
             }
@@ -286,53 +287,53 @@ class overview extends Controller
 
         // Paginate
         $perPage = (int) $request->input('per_page', 50);
-        $sheets  = $query->orderByDesc('insertdatetime')->paginate($perPage);
+        $sheets = $query->orderByDesc('insertdatetime')->paginate($perPage);
 
         $rows = $sheets->map(function ($s) {
             $photos = $s->media->where('file_type', 'photo')->map(function ($m) {
                 return [
-                    'id'            => $m->idtbl_production_sheet_media,
+                    'id' => $m->idtbl_production_sheet_media,
                     'original_name' => $m->original_name,
-                    'url'           => Storage::url($m->file_path),
+                    'url' => Storage::url($m->file_path),
                 ];
             })->values();
 
             $documents = $s->media->where('file_type', 'document')->map(function ($m) {
                 return [
-                    'id'            => $m->idtbl_production_sheet_media,
+                    'id' => $m->idtbl_production_sheet_media,
                     'original_name' => $m->original_name,
-                    'url'           => Storage::url($m->file_path),
+                    'url' => Storage::url($m->file_path),
                 ];
             })->values();
 
             return [
-                'id'                 => $s->idtbl_production_sheets,
-                'sheet_number'       => $s->sheet_number,
-                'production_type'    => $s->productionType?->type_name ?? '—',
-                'reference'          => $s->reference ?? '—',
-                'status'             => $s->status,
-                'creation_date'      => $s->insertdatetime?->format('d M Y') ?? '—',
-                'due_date'           => $s->due_date?->format('d M Y') ?? '—',
-                'closed_date'        => $s->closed_date?->format('d M Y') ?? '—',
-                'supplier'           => $s->supplier?->supplier_name ?? '—',
-                'original_quantity'  => $s->original_quantity ?? '—',
-                'original_weight'    => $s->original_weight
+                'id' => $s->idtbl_production_sheets,
+                'sheet_number' => $s->sheet_number,
+                'production_type' => $s->productionType?->type_name ?? '—',
+                'reference' => $s->reference ?? '—',
+                'status' => $s->status,
+                'creation_date' => $s->insertdatetime?->format('d M Y') ?? '—',
+                'due_date' => $s->due_date?->format('d M Y') ?? '—',
+                'closed_date' => $s->closed_date?->format('d M Y') ?? '—',
+                'supplier' => $s->supplier?->supplier_name ?? '—',
+                'original_quantity' => $s->original_quantity ?? '—',
+                'original_weight' => $s->original_weight
                     ? number_format($s->original_weight, 2) . ' ' . $s->weight_unit
                     : '—',
-                'original_total_cost'=> $s->original_total_cost
+                'original_total_cost' => $s->original_total_cost
                     ? number_format($s->original_total_cost, 2) . ' ' . $s->currency
                     : '—',
                 'discrepancy_reason' => $s->discrepancy_reason ?? '—',
-                'photos'             => $photos,
-                'documents'          => $documents,
+                'photos' => $photos,
+                'documents' => $documents,
             ];
         });
 
         return response()->json([
-            'data'         => $rows,
-            'total'        => $sheets->total(),
+            'data' => $rows,
+            'total' => $sheets->total(),
             'current_page' => $sheets->currentPage(),
-            'last_page'    => $sheets->lastPage(),
+            'last_page' => $sheets->lastPage(),
         ]);
     }
 
@@ -391,16 +392,16 @@ class overview extends Controller
 
         return response()->json([
             'counts' => [
-                'all'           => $count_all,
+                'all' => $count_all,
                 'in_production' => $rawCounts['in_production'] ?? 0,
-                'completed'     => $rawCounts['completed']     ?? 0,
-                'deleted'       => $rawCounts['deleted']       ?? 0,
+                'completed' => $rawCounts['completed'] ?? 0,
+                'deleted' => $rawCounts['deleted'] ?? 0,
             ],
             'totals' => [
-                'all'           => number_format($total_all, 2) . ' VEF',
+                'all' => number_format($total_all, 2) . ' VEF',
                 'in_production' => number_format($rawTotals['in_production'] ?? 0, 2) . ' VEF',
-                'completed'     => number_format($rawTotals['completed']     ?? 0, 2) . ' VEF',
-                'deleted'       => number_format($rawTotals['deleted']       ?? 0, 2) . ' VEF',
+                'completed' => number_format($rawTotals['completed'] ?? 0, 2) . ' VEF',
+                'deleted' => number_format($rawTotals['deleted'] ?? 0, 2) . ' VEF',
             ],
         ]);
     }
@@ -411,47 +412,47 @@ class overview extends Controller
     public function uploadMedia(Request $request)
     {
         $request->validate([
-            'sheet_id'  => 'required|integer|exists:tbl_production_sheets,idtbl_production_sheets',
+            'sheet_id' => 'required|integer|exists:tbl_production_sheets,idtbl_production_sheets',
             'file_type' => 'required|in:photo,document',
-            'file'      => 'required|file|max:20480', // max 20 MB
+            'file' => 'required|file|max:20480', // max 20 MB
         ]);
 
-        $file      = $request->file('file');
-        $fileType  = $request->input('file_type');
-        $sheetId   = (int) $request->input('sheet_id');
-        $remarks   = $request->input('remarks');
+        $file = $request->file('file');
+        $fileType = $request->input('file_type');
+        $sheetId = (int) $request->input('sheet_id');
+        $remarks = $request->input('remarks');
 
         // Build a unique stored filename
-        $ext          = $file->getClientOriginalExtension();
-        $storedName   = Str::uuid() . '.' . $ext;
-        $folder       = 'production_media/' . $sheetId . '/' . $fileType . 's';
+        $ext = $file->getClientOriginalExtension();
+        $storedName = Str::uuid() . '.' . $ext;
+        $folder = 'production_media/' . $sheetId . '/' . $fileType . 's';
 
         // Store in storage/app/public/...
         $path = $file->storeAs($folder, $storedName, 'public');
 
         $media = ProductionSheetMedia::create([
             'idtbl_production_sheets' => $sheetId,
-            'file_type'               => $fileType,
-            'file_name'               => $storedName,
-            'original_name'           => $file->getClientOriginalName(),
-            'file_path'               => $path,
-            'mime_type'               => $file->getMimeType(),
-            'file_size'               => $file->getSize(),
-            'remarks'                 => $remarks ?: null,
-            'insertuser'              => auth()->id(),
-            'insertdatetime'          => now(),
+            'file_type' => $fileType,
+            'file_name' => $storedName,
+            'original_name' => $file->getClientOriginalName(),
+            'file_path' => $path,
+            'mime_type' => $file->getMimeType(),
+            'file_size' => $file->getSize(),
+            'remarks' => $remarks ?: null,
+            'insertuser' => auth()->id(),
+            'insertdatetime' => now(),
         ]);
 
         return response()->json([
             'success' => true,
-            'media'   => [
-                'id'            => $media->idtbl_production_sheet_media,
-                'file_type'     => $media->file_type,
+            'media' => [
+                'id' => $media->idtbl_production_sheet_media,
+                'file_type' => $media->file_type,
                 'original_name' => $media->original_name,
-                'file_size'     => $media->file_size_human,
-                'mime_type'     => $media->mime_type,
-                'url'           => Storage::url($media->file_path),
-                'inserted_at'   => $media->insertdatetime?->format('d M Y H:i'),
+                'file_size' => $media->file_size_human,
+                'mime_type' => $media->mime_type,
+                'url' => Storage::url($media->file_path),
+                'inserted_at' => $media->insertdatetime?->format('d M Y H:i'),
             ],
         ]);
     }
@@ -483,58 +484,58 @@ class overview extends Controller
 
         $photos = $sheet->media->where('file_type', 'photo')->map(function ($m) {
             return [
-                'id'            => $m->idtbl_production_sheet_media,
+                'id' => $m->idtbl_production_sheet_media,
                 'original_name' => $m->original_name,
-                'url'           => Storage::url($m->file_path),
-                'file_size'     => $m->file_size_human,
+                'url' => Storage::url($m->file_path),
+                'file_size' => $m->file_size_human,
             ];
         })->values();
 
         $documents = $sheet->media->where('file_type', 'document')->map(function ($m) {
             return [
-                'id'            => $m->idtbl_production_sheet_media,
+                'id' => $m->idtbl_production_sheet_media,
                 'original_name' => $m->original_name,
-                'url'           => Storage::url($m->file_path),
-                'file_size'     => $m->file_size_human,
+                'url' => Storage::url($m->file_path),
+                'file_size' => $m->file_size_human,
             ];
         })->values();
 
         $items = $sheet->items->map(function ($i) {
             return [
-                'id'          => $i->idtbl_production_sheet_items,
-                'sku'         => $i->sku_number ?? '—',
+                'id' => $i->idtbl_production_sheet_items,
+                'sku' => $i->sku_number ?? '—',
                 'description' => $i->description ?? '—',
-                'quantity'    => $i->quantity ?? '—',
-                'weight'      => $i->weight ? number_format($i->weight, 4) . ' ' . $i->weight_unit : '—',
-                'cost'        => $i->cost ? number_format($i->cost, 2) : '—',
+                'quantity' => $i->quantity ?? '—',
+                'weight' => $i->weight ? number_format($i->weight, 4) . ' ' . $i->weight_unit : '—',
+                'cost' => $i->cost ? number_format($i->cost, 2) : '—',
             ];
         });
 
         return response()->json([
             'success' => true,
-            'sheet'   => [
-                'id'                 => $sheet->idtbl_production_sheets,
-                'sheet_number'       => $sheet->sheet_number,
-                'production_type'    => $sheet->productionType?->type_name ?? '—',
-                'reference'          => $sheet->reference ?? '—',
-                'status'             => $sheet->status,
-                'creation_date'      => $sheet->insertdatetime?->format('d M Y') ?? '—',
-                'due_date'           => $sheet->due_date?->format('d M Y') ?? '—',
-                'closed_date'        => $sheet->closed_date?->format('d M Y') ?? '—',
-                'creator'            => $sheet->insertUser?->name ?? '—',
-                'supplier'           => $sheet->supplier?->supplier_name ?? '—',
-                'original_quantity'  => $sheet->original_quantity ?? '—',
-                'original_weight'    => $sheet->original_weight
+            'sheet' => [
+                'id' => $sheet->idtbl_production_sheets,
+                'sheet_number' => $sheet->sheet_number,
+                'production_type' => $sheet->productionType?->type_name ?? '—',
+                'reference' => $sheet->reference ?? '—',
+                'status' => $sheet->status,
+                'creation_date' => $sheet->insertdatetime?->format('d M Y') ?? '—',
+                'due_date' => $sheet->due_date?->format('d M Y') ?? '—',
+                'closed_date' => $sheet->closed_date?->format('d M Y') ?? '—',
+                'creator' => $sheet->insertUser?->name ?? '—',
+                'supplier' => $sheet->supplier?->supplier_name ?? '—',
+                'original_quantity' => $sheet->original_quantity ?? '—',
+                'original_weight' => $sheet->original_weight
                     ? number_format($sheet->original_weight, 2) . ' ' . $sheet->weight_unit
                     : '—',
-                'original_total_cost'=> $sheet->original_total_cost
+                'original_total_cost' => $sheet->original_total_cost
                     ? number_format($sheet->original_total_cost, 2) . ' ' . $sheet->currency
                     : '—',
-                'notes'              => $sheet->notes ?? '—',
+                'notes' => $sheet->notes ?? '—',
                 'discrepancy_reason' => $sheet->discrepancy_reason ?? '—',
-                'photos'             => $photos,
-                'documents'          => $documents,
-                'items'              => $items,
+                'photos' => $photos,
+                'documents' => $documents,
+                'items' => $items,
             ]
         ]);
     }
@@ -552,15 +553,18 @@ class overview extends Controller
             return response()->json(['results' => []]);
         }
 
-        // Join tbl_product_pricing to get available stock quantity and weight
+        // Join tbl_product_pricing, tbl_product_purchasing, tbl_suppliers, and tbl_product_types
         $rows = DB::table('tbl_products as p')
             ->leftJoin('tbl_product_pricing as pr', 'pr.idtbl_products', '=', 'p.idtbl_products')
             ->leftJoin('tbl_weight_units as wu', 'wu.idtbl_weight_units', '=', 'pr.idtbl_weight_units')
+            ->leftJoin('tbl_product_purchasing as pp', 'pp.idtbl_products', '=', 'p.idtbl_products')
+            ->leftJoin('tbl_suppliers as s', 's.idtbl_suppliers', '=', 'pp.idtbl_suppliers')
+            ->leftJoin('tbl_product_types as pt', 'pt.idtbl_product_types', '=', 'p.idtbl_product_types')
             ->where('p.status', 1)
             ->where('p.inventorystatus', 1)
             ->where(function ($query) use ($q) {
                 $query->where('p.sku_number', 'like', '%' . $q . '%')
-                      ->orWhere('p.product_title', 'like', '%' . $q . '%');
+                    ->orWhere('p.product_title', 'like', '%' . $q . '%');
             })
             ->select(
                 'p.idtbl_products as id',
@@ -568,21 +572,35 @@ class overview extends Controller
                 'p.product_title as description',
                 DB::raw('COALESCE(pr.quantity, 0) as stock_qty'),
                 DB::raw('COALESCE(pr.weight, 0) as stock_weight'),
-                'wu.unit_name as stock_unit'
+                'wu.unit_name as stock_unit',
+                DB::raw('COALESCE(pr.total_cost, 0) as stock_cost'),
+                DB::raw('COALESCE(pr.cost_per_unit, 0) as cost_per_unit'),
+                DB::raw('COALESCE(pr.my_cost_per_unit, 0) as my_cost_per_unit'),
+                DB::raw('COALESCE(pr.my_total_cost, 0) as my_total_cost'),
+                'pp.idtbl_suppliers as supplier_id',
+                's.supplier_name',
+                'pt.name as product_type_name'
             )
             ->orderBy('p.sku_number')
             ->limit(30)
             ->get();
 
-        // Format for Select2: { id, text, sku, description, stock_qty, stock_weight, stock_unit }
+        // Format for Select2: { id, text, sku, description, stock_qty, stock_weight, stock_unit, stock_cost, etc. }
         $results = $rows->map(fn($r) => [
-            'id'           => $r->id . ':::' . $r->sku,
-            'text'         => $r->sku . ($r->description ? ' — ' . $r->description : ''),
-            'sku'          => $r->sku,
-            'description'  => $r->description ?? '',
-            'stock_qty'    => (float) $r->stock_qty,
+            'id' => $r->id . ':::' . $r->sku,
+            'text' => $r->sku,
+            'sku' => $r->sku,
+            'description' => $r->description ?? '',
+            'stock_qty' => (float) $r->stock_qty,
             'stock_weight' => (float) $r->stock_weight,
-            'stock_unit'   => $r->stock_unit ?? 'ct',
+            'stock_unit' => $r->stock_unit ?? 'ct',
+            'stock_cost' => (float) $r->stock_cost,
+            'cost_per_unit' => (float) $r->cost_per_unit,
+            'my_cost_per_unit' => (float) $r->my_cost_per_unit,
+            'my_total_cost' => (float) $r->my_total_cost,
+            'supplier_id' => $r->supplier_id,
+            'supplier_name' => $r->supplier_name ?? '',
+            'product_type_name' => $r->product_type_name ?? '',
         ]);
 
         return response()->json(['results' => $results]);
@@ -609,7 +627,7 @@ class overview extends Controller
                 DB::table('tbl_products')
                     ->whereIn('idtbl_products', $productIds)
                     ->update([
-                        'inventorystatus'      => 1, // 1 = in
+                        'inventorystatus' => 1, // 1 = in
                         'productionmanagetype' => null,
                     ]);
             }
@@ -621,13 +639,13 @@ class overview extends Controller
             // Log history entry
             ProductionSheetHistory::create([
                 'idtbl_production_sheets' => $sheet->idtbl_production_sheets,
-                'action_date'             => now()->toDateString(),
-                'action_time'             => now()->toTimeString(),
-                'action_user'             => auth()->id(),
-                'action'                  => 'Deleted',
-                'note'                    => 'Production sheet ' . $sheet->sheet_number . ' deleted. '
-                                             . count($productIds) . ' item(s) returned to inventory (status: in).',
-                'insertdatetime'          => now(),
+                'action_date' => now()->toDateString(),
+                'action_time' => now()->toTimeString(),
+                'action_user' => auth()->id(),
+                'action' => 'Deleted',
+                'note' => 'Production sheet ' . $sheet->sheet_number . ' deleted. '
+                    . count($productIds) . ' item(s) returned to inventory (status: in).',
+                'insertdatetime' => now(),
             ]);
 
             DB::commit();
