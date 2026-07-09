@@ -313,15 +313,20 @@ Route::prefix('production')->name('production.')->group(function () {
 
     // Placeholder routes for menubar items
     Route::get('/recutting', function () {
-        return view('dashboard'); })->name('recutting');
+        return view('dashboard');
+    })->name('recutting');
     Route::get('/cutting', function () {
-        return view('dashboard'); })->name('cutting');
+        return view('dashboard');
+    })->name('cutting');
     Route::get('/reassortment', function () {
-        return view('dashboard'); })->name('reassortment');
+        return view('dashboard');
+    })->name('reassortment');
     Route::get('/treatment', function () {
-        return view('dashboard'); })->name('treatment');
+        return view('dashboard');
+    })->name('treatment');
     Route::get('/producttransfer', function () {
-        return view('dashboard'); })->name('producttransfer');
+        return view('dashboard');
+    })->name('producttransfer');
 });
 
 
