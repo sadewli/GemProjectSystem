@@ -1217,35 +1217,123 @@
 </style>
 
 @section('script')
-    <script>     document.addEventListener('DOMContentLoaded', function () {
-             const DROPS = [             { btn: 'btn-prodtype', panel: 'panel-prodtype' },             { btn: 'btn-supplier', panel: 'panel-supplier' },         ];
-             function closeAll() {             DROPS.forEach(d => {                 const p = document.getElementById(d.panel);                 if (p) p.classList.add('hidden');             });         }
-             DROPS.forEach(d => {             const btn = document.getElementById(d.btn);             const panel = document.getElementById(d.panel);             if (!btn || !panel) return;
-                 btn.addEventListener('click', e => {                 e.stopPropagation();                 const wasHidden = panel.classList.contains('hidden');                 closeAll();                 if (wasHidden) panel.classList.remove('hidden');             });
-                 panel.addEventListener('click', e => e.stopPropagation());         });
-             document.addEventListener('click', closeAll);
-             // —— Option selection helpers —————————————————————————————————————         function bindOptions(selector, labelId) {             document.querySelectorAll(selector).forEach(el => {                 el.addEventListener('click', function () {                     const lbl = document.getElementById(labelId);                     lbl.textContent = this.dataset.label;                     lbl.classList.remove('text-slate-400');                     lbl.classList.add('text-slate-600');                     closeAll();                 });             });         }
-             // Production type: custom bind that marks selected option with text-slate-800 for getFilters()         document.querySelectorAll('.opt-prodtype').forEach(function (el) {             el.addEventListener('click', function () {                 // Deselect all                 document.querySelectorAll('.opt-prodtype').forEach(function (o) {                     o.classList.remove('text-slate-800', 'bg-slate-100', 'font-semibold');                     o.classList.add('text-slate-700');                 });                 // Mark this one as selected                 this.classList.add('text-slate-800', 'bg-slate-100', 'font-semibold');                 this.classList.remove('text-slate-700');                 // Update visible label                 var lbl = document.getElementById('lbl-prodtype');                 if (lbl) {                     lbl.textContent = this.dataset.label;                     lbl.classList.remove('text-slate-500');                     lbl.classList.add('text-slate-800');                 }                 closeAll();             });         });
-             bindOptions('.opt-creator', 'lbl-creator'); // Kept as fallback if needed, but not used
-             // Supplier filter option click         document.querySelectorAll('.opt-supplier').forEach(function (el) {             el.addEventListener('click', function () {                 var lbl = document.getElementById('lbl-supplier');                 if (lbl) {                     lbl.textContent = this.dataset.label;                     lbl.classList.remove('text-slate-400');                     lbl.classList.add('text-slate-600');                 }                 var hid = document.getElementById('filter-supplier-id');                 if (hid) hid.value = this.dataset.value || 'all';                 closeAll();             });         });
-             // —— Supplier search ───────────────────────────────────────────────         const ss = document.getElementById('search-supplier');         if (ss) {             ss.addEventListener('click', e => e.stopPropagation());             ss.addEventListener('input', function () {                 const q = this.value.toLowerCase();                 document.querySelectorAll('.opt-supplier').forEach(o => {                     o.style.display = o.dataset.label.toLowerCase().includes(q) ? '' : 'none';                 });             });         }
-             // —— Creator search ———————————————————————————————————————————————         const cs = document.getElementById('search-creator');         if (cs) {             cs.addEventListener('click', e => e.stopPropagation());             cs.addEventListener('input', function () {                 const q = this.value.toLowerCase();                 document.querySelectorAll('.opt-creator').forEach(o => {                     o.style.display = o.dataset.label.toLowerCase().includes(q) ? '' : 'none';                 });             });         }
-             // —— Reset ————————————————————————————————————————————————————————         document.getElementById('btn-reset').addEventListener('click', () => {             // Clear prodtype selection marker             document.querySelectorAll('.opt-prodtype').forEach(function (o) {                 o.classList.remove('text-slate-800', 'bg-slate-100', 'font-semibold');                 o.classList.add('text-slate-700');             });             var ptLbl = document.getElementById('lbl-prodtype');             if (ptLbl) { ptLbl.textContent = 'Select'; ptLbl.classList.add('text-slate-500'); ptLbl.classList.remove('text-slate-800'); }             var supLbl = document.getElementById('lbl-supplier');
-                    if (supLbl) {
-                        supLbl.textContent = 'All';
-                        supLbl.classList.remove('text-slate-400');
-                        supLbl.classList.add('text-slate-600');
-                    }
-
-                    var filterSupId = document.getElementById('filter-supplier-id');
-                    if (filterSupId) filterSupId.value = 'all';
-
-                    document.getElementById('date-from').value = '';
-                    document.getElementById('date-to').value = '';
-
-                    currentPage = 1;
-                    loadTable(getFilters());
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const DROPS = [
+                { btn: 'btn-prodtype', panel: 'panel-prodtype' },
+                { btn: 'btn-supplier', panel: 'panel-supplier' },
+            ];
+            function closeAll() {
+                DROPS.forEach(d => {
+                    const p = document.getElementById(d.panel);
+                    if (p) p.classList.add('hidden');
                 });
+            }
+            DROPS.forEach(d => {
+                const btn = document.getElementById(d.btn);
+                const panel = document.getElementById(d.panel);
+                if (!btn || !panel) return;
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    const wasHidden = panel.classList.contains('hidden');
+                    closeAll();
+                    if (wasHidden) panel.classList.remove('hidden');
+                });
+                panel.addEventListener('click', e => e.stopPropagation());
+            });
+            document.addEventListener('click', closeAll);
+            // —— Option selection helpers —————————————————————————————————
+            function bindOptions(selector, labelId) {
+                document.querySelectorAll(selector).forEach(el => {
+                    el.addEventListener('click', function () {
+                        const lbl = document.getElementById(labelId);
+                        lbl.textContent = this.dataset.label;
+                        lbl.classList.remove('text-slate-400');
+                        lbl.classList.add('text-slate-600');
+                        closeAll();
+                    });
+                });
+            }
+            // Production type: custom bind
+            document.querySelectorAll('.opt-prodtype').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    document.querySelectorAll('.opt-prodtype').forEach(function (o) {
+                        o.classList.remove('text-slate-800', 'bg-slate-100', 'font-semibold');
+                        o.classList.add('text-slate-700');
+                    });
+                    this.classList.add('text-slate-800', 'bg-slate-100', 'font-semibold');
+                    this.classList.remove('text-slate-700');
+                    var lbl = document.getElementById('lbl-prodtype');
+                    if (lbl) {
+                        lbl.textContent = this.dataset.label;
+                        lbl.classList.remove('text-slate-500');
+                        lbl.classList.add('text-slate-800');
+                    }
+                    closeAll();
+                });
+            });
+            bindOptions('.opt-creator', 'lbl-creator');
+            // Supplier filter option click
+            document.querySelectorAll('.opt-supplier').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    var lbl = document.getElementById('lbl-supplier');
+                    if (lbl) {
+                        lbl.textContent = this.dataset.label;
+                        lbl.classList.remove('text-slate-400');
+                        lbl.classList.add('text-slate-600');
+                    }
+                    var hid = document.getElementById('filter-supplier-id');
+                    if (hid) hid.value = this.dataset.value || 'all';
+                    closeAll();
+                });
+            });
+            // —— Supplier search ──────────────────────────────────────────
+            const ss = document.getElementById('search-supplier');
+            if (ss) {
+                ss.addEventListener('click', e => e.stopPropagation());
+                ss.addEventListener('input', function () {
+                    const q = this.value.toLowerCase();
+                    document.querySelectorAll('.opt-supplier').forEach(o => {
+                        o.style.display = o.dataset.label.toLowerCase().includes(q) ? '' : 'none';
+                    });
+                });
+            }
+            // —— Creator search ————————————————————————————————————————————
+            const cs = document.getElementById('search-creator');
+            if (cs) {
+                cs.addEventListener('click', e => e.stopPropagation());
+                cs.addEventListener('input', function () {
+                    const q = this.value.toLowerCase();
+                    document.querySelectorAll('.opt-creator').forEach(o => {
+                        o.style.display = o.dataset.label.toLowerCase().includes(q) ? '' : 'none';
+                    });
+                });
+            }
+            // —— Reset ————————————————————————————————————————————————————
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                document.querySelectorAll('.opt-prodtype').forEach(function (o) {
+                    o.classList.remove('text-slate-800', 'bg-slate-100', 'font-semibold');
+                    o.classList.add('text-slate-700');
+                });
+                var ptLbl = document.getElementById('lbl-prodtype');
+                if (ptLbl) { ptLbl.textContent = 'Select'; ptLbl.classList.add('text-slate-500'); ptLbl.classList.remove('text-slate-800'); }
+
+                var supLbl = document.getElementById('lbl-supplier');
+                if (supLbl) {
+                    supLbl.textContent = 'All';
+                    supLbl.classList.remove('text-slate-400');
+                    supLbl.classList.add('text-slate-600');
+                }
+
+                var filterSupId = document.getElementById('filter-supplier-id');
+                if (filterSupId) filterSupId.value = 'all';
+
+                document.getElementById('date-from').value = '';
+                document.getElementById('date-to').value = '';
+
+                currentPage = 1;
+                loadTable(getFilters());
+            });
 
                 // —— Date guard ———————————————————————————————————————————————————
                 const df = document.getElementById('date-from');
