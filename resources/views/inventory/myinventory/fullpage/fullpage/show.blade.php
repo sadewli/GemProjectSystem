@@ -155,8 +155,8 @@
                     <div class="text-[11px] font-semibold text-amber-500">Draft</div>
                 </div>
             </div>
-            <button type="submit"
-                class="bg-[#2563eb] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors shadow-sm">
+            <button type="submit" id="globalSaveBtn"
+                class="hidden bg-[#2563eb] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors shadow-sm">
                 Save
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -175,6 +175,10 @@
                 class="tab-link border-b-[3px] border-transparent text-slate-500 hover:text-slate-700 font-semibold py-3.5 px-4 text-[13px] flex items-center gap-2 whitespace-nowrap">
                 Advance Details
             </a>
+            <a href="#pricing" data-target="tab-pricing"
+                class="tab-link border-b-[3px] border-transparent text-slate-500 hover:text-slate-700 font-semibold py-3.5 px-4 text-[13px] flex items-center gap-2 whitespace-nowrap">
+                Pricing
+            </a>
             <a href="#media" data-target="tab-media"
                 class="tab-link border-b-[3px] border-transparent text-slate-500 hover:text-slate-700 font-semibold py-3.5 px-4 text-[13px] flex items-center gap-2 whitespace-nowrap">
                 Media & Docs
@@ -192,16 +196,14 @@
         <div class="flex flex-col lg:flex-row gap-6 items-start">
 
             {{-- ================= LEFT COLUMN ================= --}}
-            <div class="flex-1 w-full flex flex-col gap-6">
+            <div class="w-full flex flex-col gap-6">
                 @include('inventory.myinventory.fullpage.fullpage.partials._overview')
                 @include('inventory.myinventory.fullpage.fullpage.partials._advance')
+                @include('inventory.myinventory.fullpage.fullpage.partials._pricing')
                 @include('inventory.myinventory.fullpage.fullpage.partials._media')
                 @include('inventory.myinventory.fullpage.fullpage.partials._memo')
                 @include('inventory.myinventory.fullpage.fullpage.partials._history')
             </div>
-
-            {{-- ================= RIGHT COLUMN (Sidebar) ================= --}}
-            @include('inventory.myinventory.fullpage.fullpage.partials._sidebar')
 
         </div>
         </div>
@@ -302,6 +304,21 @@
                             pricingModule.style.display = 'none';
                         } else {
                             pricingModule.style.display = 'block';
+                        }
+                    }
+                });
+            });
+
+            // Wizard Next/Prev Buttons
+            document.querySelectorAll('.btn-next, .btn-prev').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-next') || this.getAttribute('data-prev');
+                    if(targetId) {
+                        const tabLink = document.querySelector(`.tab-link[data-target="${targetId}"]`);
+                        if(tabLink) {
+                            tabLink.click();
+                            // Scroll up slightly so the user sees the start of the next tab
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
                     }
                 });
@@ -472,7 +489,6 @@
                     
                     if (data.success) {
                         // Successfully created
-                        closeCreateModal();
                         
                         // Append new item to the dropdown panel
                         if (currentDropdownPanel && currentWrapper) {
@@ -518,6 +534,8 @@
                                 currentWrapper.classList.remove('open');
                             });
                         }
+                        
+                        closeCreateModal();
                     } else {
                         Swal.fire({icon: 'error', title: 'Error', text: data.message || 'Failed to create value.'});
                     }

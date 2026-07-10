@@ -4,7 +4,7 @@
             <div class="form-group">
                 <label>Created Date</label>
                 <span class="sub-label">Date and time of creation</span>
-                <input type="text" value="{{ date('d M Y, h:i A') }}" readonly
+                <input type="text" value="{{ isset($product) && $product->insertdatetime ? \Carbon\Carbon::parse($product->insertdatetime)->format('d M Y, h:i A') : date('d M Y, h:i A') }}" readonly
                     class="form-control px-3 bg-slate-50/50 text-slate-500">
             </div>
         </div>
@@ -37,11 +37,12 @@
                         <th class="p-4">User</th>
                         <th class="p-4">Action</th>
                         <th class="p-4">Details</th>
+                        <th class="p-4 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($auditLogs ?? [] as $log)
-                        <tr class="border-b border-slate-100">
+                        <tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
                             <td class="p-4 text-[13px] text-slate-800">
                                 {{ \Carbon\Carbon::parse($log->insertdatetime)->format('d M Y, h:i A') }}
                             </td>
@@ -52,18 +53,118 @@
                                     {{ $log->action }}
                                 </span>
                             </td>
-                            <td class="p-4 text-[13px] text-slate-600">Product ID: {{ $log->entity_id }} (New values:
-                                {{ $log->new_values }})
+                            <td class="p-4 text-[13px] text-slate-600 max-w-xs truncate">
+                                {{ $log->note ?? 'Product ID: ' . $log->entity_id }}
+                                
+                                <div id="log-details-{{ $loop->index }}" class="hidden text-left">
+                                    <div class="font-bold text-[16px] text-slate-800 mb-4 border-b pb-2">{{ $log->note ?? 'Activity Details (Product ID: ' . $log->entity_id . ')' }}</div>
+                                    @php
+                                        $newValues = json_decode($log->new_values, true) ?? [];
+                                        $oldValues = json_decode($log->old_values, true) ?? [];
+                                        
+                                        $categories = [
+                                            'Overview' => ['sku_number', 'product_title', 'product_description', 'length_mm', 'width_mm', 'height_mm', 'idtbl_product_types', 'idtbl_categories', 'idtbl_sub_categories', 'idtbl_varieties', 'idtbl_colors', 'idtbl_shapes', 'idtbl_cuts', 'idtbl_treatments', 'idtbl_origins', 'idtbl_color_grade', 'idtbl_cuttinggrade', 'idtbl_clarity_grade', 'idtbl_storage_locations', 'idtbl_tray_box'],
+                                            'Advance Details' => ['color_distribution', 'size_length_from', 'size_length_to', 'color_grade_from', 'clarity_grade_to', 'rfid', 'tolerance_mm', 'allow_selection', 'direct_sales'],
+                                            'Memo & Purchases' => ['idtbl_suppliers', 'supplier_stone_ref', 'date_of_purchase', 'idtbl_ownership_type', 'my_company_id', 'my_ownership_percentage', 'my_profit_share_percentage', 'partner_ids', 'ownership_percentages', 'profit_percentages'],
+                                            'Pricing' => ['weight', 'quantity', 'cost_per_unit', 'total_cost', 'my_cost_per_unit', 'my_total_cost', 'wholesale_per_unit', 'wholesale_total', 'retail_per_unit', 'retail_total', 'matrix_per_unit', 'matrix_total', 'idtbl_weight_units'],
+                                            'System' => ['insertdatetime', 'updatedatetime', 'insertuser', 'updateuser', 'idtbl_products']
+                                        ];
+
+                                        $allCategorizedKeys = [];
+                                        foreach($categories as $cat => $keys) {
+                                            $allCategorizedKeys = array_merge($allCategorizedKeys, $keys);
+                                        }
+
+                                        // Any key not explicitly categorized goes to 'Other'
+                                        $otherKeys = array_diff(array_keys($newValues), $allCategorizedKeys);
+                                        if(!empty($otherKeys)) {
+                                            $categories['Other'] = $otherKeys;
+                                        }
+                                    @endphp
+                                    
+                                    @if(!empty($newValues))
+                                        <div class="space-y-6">
+                                            @foreach($categories as $categoryName => $keys)
+                                                @php
+                                                    $hasData = false;
+                                                    foreach($keys as $k) {
+                                                        if(isset($newValues[$k]) && $newValues[$k] !== null && $newValues[$k] !== '') {
+                                                            if(in_array($k, ['insertdatetime', 'updatedatetime', 'insertuser', 'updateuser', 'idtbl_products']) && $categoryName === 'System') continue; // Skip system noise
+                                                            $hasData = true; break;
+                                                        }
+                                                    }
+                                                @endphp
+                                                
+                                                @if($hasData && $categoryName !== 'System')
+                                                    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                                        <div class="bg-slate-50 px-4 py-2 border-b border-slate-200">
+                                                            <h3 class="text-[13px] font-bold text-slate-700 uppercase tracking-wide">{{ $categoryName }}</h3>
+                                                        </div>
+                                                        <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white">
+                                                            @foreach($keys as $key)
+                                                                @php
+                                                                    $value = $newValues[$key] ?? null;
+                                                                    $oldVal = $oldValues[$key] ?? null;
+                                                                    if($value === null || $value === '') continue;
+                                                                    if($oldVal == $value && $log->action !== 'Created') continue;
+                                                                @endphp
+                                                                <div class="flex flex-col">
+                                                                    <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-1">{{ str_replace(['idtbl_', '_'], ['', ' '], $key) }}</span>
+                                                                    <div class="flex items-center gap-2 text-[13px]">
+                                                                        @if($oldVal !== null && $oldVal != $value)
+                                                                            <span class="text-rose-500 line-through">{{ is_array($oldVal) ? json_encode($oldVal) : $oldVal }}</span>
+                                                                            <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                                                        @endif
+                                                                        <span class="text-slate-800 font-medium">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="p-4 text-right">
+                                <button type="button" onclick="viewHistoryDetails({{ $loop->index }})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors border border-blue-100">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    View
+                                </button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="p-4 text-center text-slate-400">No activity history found.</td>
+                            <td colspan="5" class="p-4 text-center text-slate-400">No activity history found.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
-
 </div>
+
+<script>
+    function viewHistoryDetails(index) {
+        const contentHtml = document.getElementById('log-details-' + index).innerHTML;
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Activity Details',
+                html: contentHtml,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    container: 'font-sans',
+                    popup: 'rounded-xl',
+                    htmlContainer: 'text-left'
+                },
+                width: '600px'
+            });
+        } else {
+            // Fallback if sweetalert is not loaded
+            const win = window.open('', '_blank', 'width=600,height=400');
+            win.document.write('<html><head><title>Activity Details</title><style>body{font-family:sans-serif;padding:20px;}</style><link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"></head><body>' + contentHtml + '</body></html>');
+        }
+    }
+</script>

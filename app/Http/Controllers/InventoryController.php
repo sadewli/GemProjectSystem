@@ -184,6 +184,118 @@ class InventoryController extends Controller
 		]);
 	}
 
+	public function update(Request $request)
+	{
+		$productId = $request->product_id;
+		if (!$productId) {
+			return response()->json(['success' => false, 'message' => 'Product ID is missing']);
+		}
+
+		$product = \App\Models\Inventory\Product::findOrFail($productId);
+		$product->update([
+			'idtbl_product_types' => $this->intVal($request->idtbl_product_types) ?: $product->idtbl_product_types,
+			'idtbl_sub_categories' => $this->intVal($request->idtbl_sub_categories),
+			'idtbl_varieties' => $this->intVal($request->idtbl_varieties),
+			'idtbl_colors' => $this->intVal($request->idtbl_colors),
+			'idtbl_shapes' => $this->intVal($request->idtbl_shapes),
+			'idtbl_cuts' => $this->intVal($request->idtbl_cuts),
+			'idtbl_treatments' => $this->intVal($request->idtbl_treatments),
+			'idtbl_origins' => $this->intVal($request->idtbl_origins),
+			'idtbl_color_grade' => $this->intVal($request->idtbl_color_grade),
+			'idtbl_cuttinggrade' => $this->intVal($request->idtbl_cuttinggrade),
+			'idtbl_clarity_grade' => $this->intVal($request->idtbl_clarity_grade),
+			'idtbl_storage_locations' => $this->intVal($request->idtbl_storage_locations),
+			'idtbl_tray_box' => $this->intVal($request->idtbl_tray_box),
+			'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
+			'length_mm' => $this->floatVal($request->length_mm),
+			'width_mm' => $this->floatVal($request->width_mm),
+			'height_mm' => $this->floatVal($request->height_mm),
+			'product_title' => $request->product_title,
+			'product_description' => $request->product_description,
+			// status is intentionally left alone during update unless explicitly requested
+		]);
+
+		$weightUnitId = null;
+		$weightUnitStr = $request->idtbl_weight_units;
+		if ($weightUnitStr) {
+			if (is_numeric($weightUnitStr)) {
+				$weightUnitId = intval($weightUnitStr);
+			} else {
+				$wu = \DB::table('tbl_weight_units')->where('unit_name', $weightUnitStr)->first();
+				if ($wu) {
+					$weightUnitId = $wu->idtbl_weight_units;
+				} else {
+					$weightUnitId = \DB::table('tbl_weight_units')->insertGetId([
+						'unit_name' => $weightUnitStr,
+						'status' => 1,
+						'insertdatetime' => now(),
+					]);
+				}
+			}
+		}
+
+		$dateOfPurchase = $request->date_of_purchase ?: null;
+		if ($dateOfPurchase) {
+			$timestamp = strtotime($dateOfPurchase);
+			if ($timestamp) {
+				$dateOfPurchase = date('Y-m-d', $timestamp);
+			} else {
+				$dateOfPurchase = null;
+			}
+		}
+
+		\App\Models\Inventory\ProductPurchasing::updateOrCreate(
+			['idtbl_products' => $productId],
+			[
+				'idtbl_suppliers' => $this->intVal($request->idtbl_suppliers),
+				'supplier_stone_ref' => $request->supplier_stone_ref,
+				'date_of_purchase' => $dateOfPurchase,
+				'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
+				'status' => 1,
+			]
+		);
+
+		$sellingUnit = ($request->pricing_unit === 'Quantity') ? 2 : 1;
+		\App\Models\Inventory\ProductPricing::updateOrCreate(
+			['idtbl_products' => $productId],
+			[
+				'selling_unit' => $sellingUnit,
+				'idtbl_weight_units' => $weightUnitId,
+				'weight' => $this->floatVal($request->weight),
+				'quantity' => $this->intVal($request->quantity),
+				'cost_per_unit' => $this->floatVal($request->cost_per_unit),
+				'total_cost' => $this->floatVal($request->total_cost),
+				'my_cost_per_unit' => $this->floatVal($request->my_cost_per_unit),
+				'my_total_cost' => $this->floatVal($request->my_total_cost),
+				'wholesale_price_per_unit' => $this->floatVal($request->wholesale_per_unit),
+				'wholesale_total_price' => $this->floatVal($request->wholesale_total),
+				'retail_price_per_unit' => $this->floatVal($request->retail_per_unit),
+				'retail_total_price' => $this->floatVal($request->retail_total),
+				'matrix_price_per_unit' => $this->floatVal($request->matrix_per_unit),
+				'matrix_total_price' => $this->floatVal($request->matrix_total),
+				'status' => 1,
+			]
+		);
+
+		try {
+			$auditData = $request->except(['_token']);
+			\DB::table('tbl_audit_logs')->insert([
+				'user_id' => \Session::get('userid') ?: 1,
+				'org_id' => \Session::get('org_id') ?: 1,
+				'action' => 'Updated',
+				'entity_type' => 'tbl_products',
+				'entity_id' => $productId,
+				'old_values' => null,
+				'new_values' => json_encode($auditData),
+				'ip_address' => $request->ip(),
+				'user_agent' => $request->userAgent(),
+				'insertdatetime' => now(),
+			]);
+		} catch (\Exception $e) {}
+
+		return redirect()->route('inventory.myinventory.index')->with('success', 'Product updated successfully');
+	}
+
 	public function memoOut()
 	{
 		return view('inventory.memo_out');
@@ -325,6 +437,9 @@ class InventoryController extends Controller
 
 		// Record in tbl_audit_logs
 		try {
+			$auditData = $request->except(['_token']);
+			$auditData['insertdatetime'] = $product->insertdatetime ?? now()->toDateTimeString();
+
 			\DB::table('tbl_audit_logs')->insert([
 				'user_id' => Session::get('userid') ?: 1,
 				'org_id' => Session::get('org_id') ?: 1,
@@ -332,14 +447,7 @@ class InventoryController extends Controller
 				'entity_type' => 'tbl_products',
 				'entity_id' => $product->idtbl_products,
 				'old_values' => null,
-				'new_values' => json_encode([
-					'sku_number' => $product->sku_number,
-					'product_title' => $product->product_title,
-					'length_mm' => $product->length_mm,
-					'width_mm' => $product->width_mm,
-					'height_mm' => $product->height_mm,
-					'insertdatetime' => $product->insertdatetime ?? now()->toDateTimeString(),
-				]),
+				'new_values' => json_encode($auditData),
 				'ip_address' => $request->ip(),
 				'user_agent' => $request->userAgent(),
 				'insertdatetime' => now(),
@@ -349,7 +457,8 @@ class InventoryController extends Controller
 		}
 
 		$productPurchasing = null;
-		if ($request->idtbl_suppliers || $request->supplier_stone_ref || $dateOfPurchase || $request->idtbl_ownership_type) {
+		$hasPartners = !empty(array_filter($request->input('partner_ids', [])));
+		if ($request->idtbl_suppliers || $request->supplier_stone_ref || $dateOfPurchase || $request->idtbl_ownership_type || $hasPartners) {
 			$productPurchasing = \App\Models\Inventory\ProductPurchasing::create([
 				'idtbl_products' => $product->idtbl_products,
 				'idtbl_suppliers' => $this->intVal($request->idtbl_suppliers),
@@ -664,7 +773,7 @@ class InventoryController extends Controller
 		if ($purchasing) {
 			$master = \DB::table('tbl_partners_master')
 				->leftJoin('tbl_partners', 'tbl_partners_master.idtbl_partners', '=', 'tbl_partners.idtbl_partners')
-				->where('idtbl_product_purchasing', $purchasing->idtbl_product_purchasing ?? clone($purchasing)->id ?? null)
+				->where('idtbl_product_purchasing', $purchasing->idtbl_product_purchasing ?? null)
 				->select('tbl_partners_master.*', 'tbl_partners.partner_name')
 				->first();
 			
@@ -730,7 +839,8 @@ class InventoryController extends Controller
 			'tbl_storage_locations' => ['pk' => 'idtbl_storage_locations', 'name' => 'location_name', 'has_pt' => false],
 			'tbl_tray_box' => ['pk' => 'idtbl_tray_box', 'name' => 'tray_box_number', 'has_pt' => false],
 			'tbl_suppliers' => ['pk' => 'idtbl_suppliers', 'name' => 'supplier_name', 'has_pt' => false],
-			'tbl_ownership_type' => ['pk' => 'idtbl_ownership_type', 'name' => 'ownership_type_name', 'has_pt' => false]
+			'tbl_ownership_type' => ['pk' => 'idtbl_ownership_type', 'name' => 'ownership_type_name', 'has_pt' => false],
+			'tbl_partners' => ['pk' => 'idtbl_partners', 'name' => 'partner_name', 'has_pt' => false]
 		];
 
 		if (!array_key_exists($table, $map)) {

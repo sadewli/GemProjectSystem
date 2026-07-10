@@ -210,6 +210,18 @@
         </div>
     </div>
 
+    {{-- Wizard Navigation --}}
+    <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-200">
+        <button type="button" class="btn-prev bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-6 py-2.5 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors shadow-sm" data-prev="tab-pricing">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Previous
+        </button>
+        <button type="button" class="btn-save bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors shadow-sm" onclick="document.getElementById('productForm').submit();">
+            Save
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </button>
+    </div>
+
     {{-- MODALS --}}
 
     {{-- Certificate Modal --}}

@@ -560,6 +560,18 @@
                     </div>
                 @endif
 
+                {{-- ══════════════════════════════════════════
+                LOT SPLIT
+                ══════════════════════════════════════════ --}}
+                <div class="menu-item">
+                    <a class="menu-link{{ request()->is('production/lot-split') ? ' active' : '' }}" href="{{ url('production/lot-split') }}">
+                        <span class="menu-icon">
+                            <i class="ki-duotone ki-element-plus fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+                        </span>
+                        <span class="menu-title">Lot Split</span>
+                    </a>
+                </div>
+
 
                 {{-- ══════════════════════════════════════════
                 SYSTEM USERS
