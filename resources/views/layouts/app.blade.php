@@ -260,6 +260,10 @@
     @yield('script')
     @yield('scripts')
 
+    @if(Session::get('loggedin'))
+        @include('session_timeout')
+    @endif
+
 </body>
 <!--end::Body-->
 
