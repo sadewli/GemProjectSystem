@@ -654,6 +654,12 @@
                                     {{ $partner->partner_name }}</li>
                             @endforeach
                         </ul>
+                        <div class="border-t border-slate-100 mt-1 pt-1">
+                            <button type="button" class="create-new-btn flex items-center gap-2 text-[13px] font-semibold text-[#2563eb] hover:text-blue-800 w-full px-3 py-2 transition-colors" data-table="tbl_partners">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Create New
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -687,6 +693,13 @@
         </div>
     </div>
 
+    {{-- Wizard Navigation --}}
+    <div class="flex justify-end mt-2 pt-4 border-t border-slate-200">
+        <button type="button" class="btn-next bg-[#2563eb] hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors shadow-sm" data-next="tab-advance">
+            Next
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

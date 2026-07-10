@@ -116,6 +116,7 @@
         <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
             <form id="createGemstoneForm" action="{{ route('inventory.myinventory.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="product_id" id="edit_product_id" value="">
                 <input type="hidden" name="my_company_id" value="1">
                 <input type="hidden" name="idtbl_product_types" id="ddProductTypeHidden" value="">
 
@@ -763,7 +764,7 @@
                                                 <button type="button" onclick='viewAuditLog({{ $log->entity_id }}, @json($log->action ?? ""), @json($log->user_name ?? "System"), @json($log->insertdatetime ?? ""))' class="text-slate-400 hover:text-blue-600 transition-colors" title="View">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                                 </button>
-                                                <button type="button" onclick='editAuditLog({{ $log->idtbl_audit_logs }}, @json($log->note ?? ""))' class="text-slate-400 hover:text-emerald-600 transition-colors" title="Edit">
+                                                <button type="button" onclick='editProduct({{ $log->entity_id }})' class="text-slate-400 hover:text-emerald-600 transition-colors" title="Edit">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                 </button>
                                                 <button type="button" onclick='deleteAuditLog({{ $log->idtbl_audit_logs }})' class="text-slate-400 hover:text-rose-600 transition-colors" title="Delete">
@@ -1607,6 +1608,83 @@
         };
 
         // --- Audit Log Actions ---
+        window.editProduct = function(id) {
+            fetch(`/Inventory/MyInventory/product-details/${id}`)
+                .then(res => res.json())
+                .then(json => {
+                    if (json.success && json.data.product) {
+                        const p = json.data.product;
+                        const pr = json.data.pricing || {};
+                        const pu = json.data.purchasing || {};
+
+                        toggleModal(true);
+
+                        document.getElementById('edit_product_id').value = id;
+                        const form = document.getElementById('createGemstoneForm');
+                        form.action = "{{ route('inventory.myinventory.update') }}";
+
+                        const submitBtn = document.getElementById('saveMediaDocsBtn') || document.querySelector('#createGemstoneForm button[type="submit"]');
+                        if (submitBtn) submitBtn.innerHTML = '<i class="fa-regular fa-save mr-2"></i> Update Product';
+
+                        function setVal(idName, val) {
+                            const el = document.getElementById(idName) || document.querySelector(`[name="${idName}"]`);
+                            if (el) {
+                                el.value = val !== null && val !== undefined ? val : '';
+                                if (el.tagName === 'SELECT' && window.jQuery) {
+                                    $(el).trigger('change');
+                                }
+                            }
+                        }
+
+                        setVal('idtbl_product_types', p.idtbl_product_types);
+                        setVal('idtbl_sub_categories', p.idtbl_sub_categories);
+                        setVal('idtbl_varieties', p.idtbl_varieties);
+                        setVal('idtbl_colors', p.idtbl_colors);
+                        setVal('idtbl_shapes', p.idtbl_shapes);
+                        setVal('idtbl_cuts', p.idtbl_cuts);
+                        setVal('idtbl_treatments', p.idtbl_treatments);
+                        setVal('idtbl_origins', p.idtbl_origins);
+                        setVal('idtbl_color_grade', p.idtbl_color_grade);
+                        setVal('idtbl_cuttinggrade', p.idtbl_cuttinggrade);
+                        setVal('idtbl_clarity_grade', p.idtbl_clarity_grade);
+                        setVal('idtbl_storage_locations', p.idtbl_storage_locations);
+                        setVal('idtbl_tray_box', p.idtbl_tray_box);
+                        setVal('idtbl_ownership_type', pu.idtbl_ownership_type || p.idtbl_ownership_type);
+                        
+                        setVal('length_mm', p.length_mm);
+                        setVal('width_mm', p.width_mm);
+                        setVal('height_mm', p.height_mm);
+                        setVal('product_title', p.product_title);
+                        setVal('product_description', p.product_description);
+
+                        setVal('pricing_unit', pr.selling_unit == 2 ? 'Quantity' : 'Weight');
+                        setVal('idtbl_weight_units', pr.idtbl_weight_units);
+                        setVal('weight', pr.weight);
+                        setVal('quantity', pr.quantity);
+                        setVal('cost_per_unit', pr.cost_per_unit);
+                        setVal('total_cost', pr.total_cost);
+                        setVal('my_cost_per_unit', pr.my_cost_per_unit);
+                        setVal('my_total_cost', pr.my_total_cost);
+                        setVal('wholesale_per_unit', pr.wholesale_price_per_unit);
+                        setVal('wholesale_total', pr.wholesale_total_price);
+                        setVal('retail_per_unit', pr.retail_price_per_unit);
+                        setVal('retail_total', pr.retail_total_price);
+                        setVal('matrix_per_unit', pr.matrix_price_per_unit);
+                        setVal('matrix_total', pr.matrix_total_price);
+
+                        const quickViewTab = document.querySelector('button[data-target="#tab-quick-view"]');
+                        if (quickViewTab) {
+                            quickViewTab.click();
+                        }
+                    } else {
+                        alert('Could not fetch product details.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error fetching product details:', err);
+                    alert('Failed to fetch product details.');
+                });
+        };
         window.viewAuditLog = function(id, action, user, date) {
             document.getElementById('vLogActionBadge').textContent = action;
             document.getElementById('vLogUser').textContent = user;

@@ -239,6 +239,7 @@ Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(fu
     Route::get('/create', [InventoryController::class, 'create'])->name('create');
     Route::get('/new', [InventoryController::class, 'show'])->name('new');
     Route::post('/store', [InventoryController::class, 'store'])->name('store');
+    Route::post('/update', [InventoryController::class, 'update'])->name('update');
     Route::get('/next-sku/{productTypeId}', [InventoryController::class, 'nextSku'])->name('next_sku');
     Route::get('/dependent-data/{productTypeId}', [InventoryController::class, 'getDependentData'])->name('dependent_data');
     Route::post('/audit-log/update', [InventoryController::class, 'updateAuditLog'])->name('auditlog.update');
@@ -305,7 +306,7 @@ Route::prefix('production')->name('production.')->group(function () {
 
     // SKU / Product search (AJAX autocomplete for items tab)
     Route::get('/product-search', [\App\Http\Controllers\production\overview::class, 'productSearch'])->name('product.search');
-
+    Route::get('/lot-split', function () { return view('production.lotsplit'); })->name('lotsplit');
     Route::get('/{id}', [\App\Http\Controllers\production\overview::class, 'show'])->name('show');
     Route::post('/media/upload', [\App\Http\Controllers\production\overview::class, 'uploadMedia'])->name('media.upload');
     Route::delete('/media/{id}', [\App\Http\Controllers\production\overview::class, 'deleteMedia'])->name('media.delete');
