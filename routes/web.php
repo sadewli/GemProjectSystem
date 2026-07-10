@@ -53,6 +53,7 @@ Route::get('Welcome', [WelcomeController::class, 'index']);
 Route::post('Welcome/getBranchesByCompany', [WelcomeController::class, 'getBranchesByCompany'])->name('welcome.getBranchesByCompany');
 Route::post('Welcome/LoginUser', [WelcomeController::class, 'LoginUser']);
 Route::get('Welcome/Logout', [WelcomeController::class, 'Logout']);
+Route::post('keep-alive', [WelcomeController::class, 'keepAlive'])->name('keep-alive');
 Route::get('Welcome/Dashboard', [WelcomeController::class, 'Dashboard']);
 
 Route::get('User/Useraccount', [UserController::class, 'Useraccount']);

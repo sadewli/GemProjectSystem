@@ -131,13 +131,21 @@ class WelcomeController extends Controller
             }
         }
 
-        Session::forget([
-            'userid', 'name', 'username', 'type', 'typename',
-            'company_id', 'company_name', 'company_code',
-            'branch_id', 'branch_name', 'branch_code', 'loggedin',
-        ]);
+        // Flush and invalidate session
+        $request->session()->invalidate();
+
+        // Regenerate CSRF token
+        $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function keepAlive(Request $request)
+    {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Session extended'
+        ]);
     }
 
     public function Dashboard()
