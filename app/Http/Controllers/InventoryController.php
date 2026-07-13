@@ -18,6 +18,7 @@ use App\Models\CuttingGrade;
 use App\Models\ClarityGrade;
 use App\Models\StorageLocation;
 use App\Models\TrayBox;
+use App\Models\Inventory\TrackSkuid;
 use App\Models\Supplier;
 use App\Models\Sku;
 use App\Models\WeightUnit;
@@ -312,7 +313,7 @@ class InventoryController extends Controller
 			$existingMaster = \Illuminate\Support\Facades\DB::table('tbl_partners_master')
 				->where('idtbl_product_purchasing', $productPurchasing->idtbl_product_purchasing ?? $productPurchasing->id)
 				->first();
-			
+
 			if ($existingMaster) {
 				\Illuminate\Support\Facades\DB::table('tbl_partners_details')
 					->where('idtbl_partners_master', $existingMaster->idtbl_partners_master)
@@ -491,7 +492,7 @@ class InventoryController extends Controller
 		}
 
 		$skuNumber = $request->sku_number ?: 'DEFAULT-SKU';
-		
+
 		// If the requested SKU already exists or is default, generate a new one using the counter.
 		if ($skuNumber === 'DEFAULT-SKU' || \Illuminate\Support\Facades\DB::table('tbl_products')->where('sku_number', $skuNumber)->exists()) {
 			$productTypeId = $this->intVal($request->idtbl_product_types) ?: 1;
@@ -725,6 +726,18 @@ class InventoryController extends Controller
 							'inventorystatus'      => 3, // 3 = Consumed in Production
 							'productionmanagetype' => null,
 						]);
+
+					// 2b. Track the SKU-id change: each consumed (Production stage) item
+					// -> the newly registered gemstone (Inventory stage)
+					foreach ($inputProductIds as $consumedProductId) {
+						TrackSkuid::logChange(
+							$consumedProductId,
+							$product->idtbl_products,
+							TrackSkuid::PISTATUS_PRODUCTION,
+							'production_complete',
+							auth()->id()
+						);
+					}
 				}
 
 				// 3. Close the production sheet
@@ -890,7 +903,7 @@ class InventoryController extends Controller
 		}
 
 		$pricing = \DB::table('tbl_product_pricing')->where('idtbl_products', $id)->first();
-		
+
 		$purchasing = \DB::table('tbl_product_purchasing')
 			->leftJoin('tbl_suppliers', 'tbl_product_purchasing.idtbl_suppliers', '=', 'tbl_suppliers.idtbl_suppliers')
 			->leftJoin('tbl_ownership_type', 'tbl_product_purchasing.idtbl_ownership_type', '=', 'tbl_ownership_type.idtbl_ownership_type')
@@ -905,7 +918,7 @@ class InventoryController extends Controller
 				->where('idtbl_product_purchasing', $purchasing->idtbl_product_purchasing ?? null)
 				->select('tbl_partners_master.*', 'tbl_partners.partner_name')
 				->first();
-			
+
 			if ($master) {
 				$partners[] = [
 					'name' => 'My Company',
@@ -918,7 +931,7 @@ class InventoryController extends Controller
 					->where('idtbl_partners_master', $master->idtbl_partners_master)
 					->select('tbl_partners_details.*', 'tbl_partners.partner_name')
 					->get();
-				
+
 				foreach ($details as $d) {
 					$partners[] = [
 						'name' => $d->partner_name,
