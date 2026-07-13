@@ -1,4 +1,77 @@
 <div id="tab-overview" class="tab-content active flex flex-col gap-6">
+    {{-- Inventory Type --}}
+    <div class="card !mb-0">
+        <h2 class="card-title mb-4" style="text-transform: uppercase;">Inventory Type</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label
+                class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none inventory-type-label {{ ($product->inventory_type ?? 'individual') === 'individual' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-slate-300 hover:border-slate-400' }}">
+                <input type="radio" name="inventory_type" value="individual"
+                    class="sr-only inventory-type-radio" {{ ($product->inventory_type ?? 'individual') === 'individual' ? 'checked' : '' }}>
+                <span class="flex flex-1">
+                    <span class="flex flex-col">
+                        <span class="block text-sm font-medium text-slate-900 flex items-center gap-2"><i
+                                class="fa-regular fa-gem {{ ($product->inventory_type ?? 'individual') === 'individual' ? 'text-blue-500' : 'text-slate-400' }}"></i> Individual (Single
+                            piece)</span>
+                        <span class="mt-1 flex items-center text-xs text-slate-500">
+                            <ul class="list-disc pl-4 mt-1 space-y-1">
+
+                            </ul>
+                        </span>
+                    </span>
+                </span>
+                <svg class="h-5 w-5 text-blue-600 check-icon {{ ($product->inventory_type ?? 'individual') === 'individual' ? '' : 'hidden' }}" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                        clip-rule="evenodd" />
+                </svg>
+            </label>
+            <label
+                class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none inventory-type-label {{ ($product->inventory_type ?? 'individual') === 'lot' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-slate-300 hover:border-slate-400' }}">
+                <input type="radio" name="inventory_type" value="lot" class="sr-only inventory-type-radio" {{ ($product->inventory_type ?? 'individual') === 'lot' ? 'checked' : '' }}>
+                <span class="flex flex-1">
+                    <span class="flex flex-col">
+                        <span class="block text-sm font-medium text-slate-900 flex items-center gap-2"><i
+                                class="fa-solid fa-boxes-stacked {{ ($product->inventory_type ?? 'individual') === 'lot' ? 'text-blue-500' : 'text-slate-400' }}"></i> Lot (Multiple
+                            pieces)</span>
+                        <span class="mt-1 flex items-center text-xs text-slate-500">
+                            <ul class="list-disc pl-4 mt-1 space-y-1">
+
+                            </ul>
+                        </span>
+                    </span>
+                </span>
+                <svg class="h-5 w-5 text-blue-600 check-icon {{ ($product->inventory_type ?? 'individual') === 'lot' ? '' : 'hidden' }}" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                        clip-rule="evenodd" />
+                </svg>
+            </label>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.inventory-type-radio').forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.querySelectorAll('.inventory-type-label').forEach(label => {
+                    label.classList.remove('border-blue-500', 'ring-1', 'ring-blue-500');
+                    label.classList.add('border-slate-300', 'hover:border-slate-400');
+                    label.querySelector('.check-icon').classList.add('hidden');
+                    label.querySelector('i').classList.remove('text-blue-500');
+                    label.querySelector('i').classList.add('text-slate-400');
+                });
+                if (this.checked) {
+                    const parent = this.closest('.inventory-type-label');
+                    parent.classList.remove('border-slate-300', 'hover:border-slate-400');
+                    parent.classList.add('border-blue-500', 'ring-1', 'ring-blue-500');
+                    parent.querySelector('.check-icon').classList.remove('hidden');
+                    parent.querySelector('i').classList.add('text-blue-500');
+                    parent.querySelector('i').classList.remove('text-slate-400');
+                }
+            });
+        });
+    </script>
+
     {{-- Basic Information --}}
     <div class="card !mb-0">
         <h2 class="card-title">Basic information</h2>
