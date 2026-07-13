@@ -258,6 +258,14 @@ Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(fu
     Route::post('/audit-log/delete', [InventoryController::class, 'deleteAuditLog'])->name('auditlog.delete');
     Route::get('/product-details/{id}', [InventoryController::class, 'getProductDetails'])->name('product_details');
     Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
+    Route::delete('/{id}', [InventoryController::class, 'destroy'])->name('destroy');
+});
+
+// Lot Split Routes
+Route::prefix('Inventory/LotSplit')->name('inventory.lotsplit.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\inventory\LotSplitController::class, 'index'])->name('index');
+    Route::get('/search', [\App\Http\Controllers\inventory\LotSplitController::class, 'searchLot'])->name('search');
+    Route::post('/store', [\App\Http\Controllers\inventory\LotSplitController::class, 'store'])->name('store');
 });
 
 Route::get('Inventory/MemoOut', [InventoryController::class, 'memoOut'])->name('inventory.memoout');
@@ -318,7 +326,7 @@ Route::prefix('production')->name('production.')->group(function () {
 
     // SKU / Product search (AJAX autocomplete for items tab)
     Route::get('/product-search', [\App\Http\Controllers\production\overview::class, 'productSearch'])->name('product.search');
-    Route::get('/lot-split', function () { return view('production.lotsplit'); })->name('lotsplit');
+    Route::get('/lot-split', [\App\Http\Controllers\inventory\LotSplitController::class, 'index'])->name('lotsplit');
     Route::get('/{id}', [\App\Http\Controllers\production\overview::class, 'show'])->name('show');
     Route::post('/media/upload', [\App\Http\Controllers\production\overview::class, 'uploadMedia'])->name('media.upload');
     Route::delete('/media/{id}', [\App\Http\Controllers\production\overview::class, 'deleteMedia'])->name('media.delete');

@@ -134,8 +134,11 @@
 
 @section('content')
     <div class="p-6 bg-[#f8fafc] min-h-screen font-sans">
-        <form id="productForm" method="POST" action="{{ route('inventory.myinventory.store') }}">
+        <form id="productForm" method="POST" action="{{ isset($product) ? route('inventory.myinventory.update') : route('inventory.myinventory.store') }}">
             @csrf
+            @if(isset($product))
+                <input type="hidden" name="product_id" value="{{ $product->idtbl_products }}">
+            @endif
             @if(request()->has('production_sheet_id'))
                 <input type="hidden" name="production_sheet_id" value="{{ (int) request('production_sheet_id') }}">
             @endif
@@ -151,8 +154,12 @@
                     </svg>
                 </a>
                 <div>
-                    <h1 class="text-[17px] font-bold text-blue-700 leading-none mb-1">CPG9</h1>
-                    <div class="text-[11px] font-semibold text-amber-500">Draft</div>
+                    <h1 class="text-[17px] font-bold text-blue-700 leading-none mb-1">
+                        {{ isset($product) ? $product->sku_number : 'New Product' }}
+                    </h1>
+                    <div class="text-[11px] font-semibold text-amber-500">
+                        {{ isset($product) ? ($product->status == 1 ? 'Active' : 'Draft') : 'Draft' }}
+                    </div>
                 </div>
             </div>
             <button type="submit" id="globalSaveBtn"
@@ -384,9 +391,11 @@
                 });
             });
 
-            // Fetch SKU for fullpage
+            // Fetch SKU for fullpage (ONLY IF CREATING)
             const productTypeInput = document.querySelector('input[name="idtbl_product_types"]');
-            if (productTypeInput && productTypeInput.value) {
+            const productData = @json($product ?? null);
+
+            if (productTypeInput && productTypeInput.value && !productData) {
                 const productTypeId = productTypeInput.value;
                 fetch(`/Inventory/MyInventory/next-sku/${productTypeId}`)
                     .then(res => res.json())
@@ -411,6 +420,47 @@
                         }
                     })
                     .catch(err => console.error("Error fetching SKU:", err));
+            }
+
+            // HYDRATE FORM IF PRODUCT EXISTS
+            if (productData) {
+                const hydrateData = (data, prefix = '') => {
+                    for (const key in data) {
+                        if (data.hasOwnProperty(key) && data[key] !== null) {
+                            if (typeof data[key] === 'object') {
+                                // It's a relationship like pricing, purchasing
+                                hydrateData(data[key], key + '_');
+                                continue;
+                            }
+                            const inputs = document.querySelectorAll(`input[name="${key}"], textarea[name="${key}"]`);
+                            inputs.forEach(input => {
+                                if (input.type === 'radio') {
+                                    if (input.value == data[key]) {
+                                        input.checked = true;
+                                        input.dispatchEvent(new Event('change'));
+                                    }
+                                } else if (input.type === 'checkbox') {
+                                    // Handle checkbox if needed
+                                } else {
+                                    input.value = data[key];
+                                }
+                            });
+
+                            // Handle custom dropdowns
+                            const hiddenInputs = document.querySelectorAll(`.custom-select-wrapper input[type="hidden"][name="${key}"]`);
+                            hiddenInputs.forEach(input => {
+                                const wrapper = input.closest('.custom-select-wrapper');
+                                if (wrapper) {
+                                    const targetItem = wrapper.querySelector(`.dd-item[data-value="${data[key]}"]`);
+                                    if (targetItem) {
+                                        targetItem.click();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                };
+                hydrateData(productData);
             }
             // === CREATE NEW VALUE MODAL ===
             const createNewModal = document.getElementById('createNewModal');

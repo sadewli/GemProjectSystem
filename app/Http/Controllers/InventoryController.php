@@ -114,7 +114,15 @@ class InventoryController extends Controller
 		$certificateLabs = \App\Models\CertificateLab::where('status', 1)->orderBy('lab_name')->get();
 
 		$auditLogs = [];
+		$product = null;
 		if ($id) {
+			$product = \App\Models\Inventory\Product::where('idtbl_products', $id)->first();
+			if ($product) {
+				$product->pricing = \DB::table('tbl_product_pricing')->where('idtbl_products', $id)->first();
+				$product->purchasing = \DB::table('tbl_product_purchasing')->where('idtbl_products', $id)->first();
+				$product->advance = \DB::table('tbl_product_advance_details')->where('idtbl_products', $id)->first();
+			}
+
 			$auditLogs = \DB::table('tbl_audit_logs')
 				->leftJoin('tbl_user', 'tbl_audit_logs.user_id', '=', 'tbl_user.idtbl_user')
 				->where('tbl_audit_logs.entity_type', 'tbl_products')
@@ -148,7 +156,8 @@ class InventoryController extends Controller
 			'ownershipTypes',
 			'auditLogs',
 			'partners',
-			'certificateLabs'
+			'certificateLabs',
+			'product'
 		));
 	}
 
@@ -193,6 +202,7 @@ class InventoryController extends Controller
 
 		$product = \App\Models\Inventory\Product::findOrFail($productId);
 		$product->update([
+			'inventory_type' => $request->inventory_type === 'lot' ? 'lot' : 'individual',
 			'idtbl_product_types' => $this->intVal($request->idtbl_product_types) ?: $product->idtbl_product_types,
 			'idtbl_sub_categories' => $this->intVal($request->idtbl_sub_categories),
 			'idtbl_varieties' => $this->intVal($request->idtbl_varieties),
@@ -244,7 +254,7 @@ class InventoryController extends Controller
 			}
 		}
 
-		\App\Models\Inventory\ProductPurchasing::updateOrCreate(
+		$productPurchasing = \App\Models\Inventory\ProductPurchasing::updateOrCreate(
 			['idtbl_products' => $productId],
 			[
 				'idtbl_suppliers' => $this->intVal($request->idtbl_suppliers),
@@ -254,6 +264,97 @@ class InventoryController extends Controller
 				'status' => 1,
 			]
 		);
+
+		// Always save partners master/details
+		$partnerIds = $request->input('partner_ids', []);
+		$ownerships = $request->input('ownership_percentages', []);
+		$profits = $request->input('profit_percentages', []);
+		$myCompanyId = $this->intVal($request->input('my_company_id')) ?: 1;
+		$myOwnership = $this->floatVal($request->input('my_ownership_percentage')) ?? 100.0;
+		$myProfit = $this->floatVal($request->input('my_profit_share_percentage')) ?? 100.0;
+
+		$sumOtherOwnership = 0.0;
+		$sumOtherProfits = 0.0;
+		foreach ($ownerships as $o) {
+			$sumOtherOwnership += $this->floatVal($o) ?? 0.0;
+		}
+		foreach ($profits as $p) {
+			$sumOtherProfits += $this->floatVal($p) ?? 0.0;
+		}
+
+		$totalOwnership = $myOwnership + $sumOtherOwnership;
+		$totalProfit = $myProfit + $sumOtherProfits;
+
+		if (abs($totalOwnership - 100.0) > 0.01 || abs($totalProfit - 100.0) > 0.01) {
+			if ($request->ajax() || $request->wantsJson()) {
+				return response()->json(['success' => false, 'message' => 'Ownership and profit totals must equal 100%'], 422);
+			}
+			return redirect()->back()->withInput()->with('error', 'Ownership and profit totals must equal 100%');
+		}
+
+		$partnerDetails = [];
+		for ($i = 0; $i < count($partnerIds); $i++) {
+			$pid = $partnerIds[$i] ?? null;
+			if (is_null($pid) || $pid === '') {
+				continue;
+			}
+			$own = isset($ownerships[$i]) ? $this->floatVal($ownerships[$i]) : 0.0;
+			$prof = isset($profits[$i]) ? $this->floatVal($profits[$i]) : 0.0;
+			$partnerDetails[] = [
+				'input_partner' => $pid,
+				'ownership_percentage' => $own,
+				'profit_share_percentage' => $prof,
+			];
+		}
+
+		\Illuminate\Support\Facades\DB::transaction(function () use ($productPurchasing, $myCompanyId, $myOwnership, $myProfit, $partnerDetails) {
+			// First, remove existing master and details to rebuild them (simplest approach for update)
+			$existingMaster = \Illuminate\Support\Facades\DB::table('tbl_partners_master')
+				->where('idtbl_product_purchasing', $productPurchasing->idtbl_product_purchasing ?? $productPurchasing->id)
+				->first();
+			
+			if ($existingMaster) {
+				\Illuminate\Support\Facades\DB::table('tbl_partners_details')
+					->where('idtbl_partners_master', $existingMaster->idtbl_partners_master)
+					->delete();
+				\Illuminate\Support\Facades\DB::table('tbl_partners_master')
+					->where('idtbl_partners_master', $existingMaster->idtbl_partners_master)
+					->delete();
+			}
+
+			$masterId = \Illuminate\Support\Facades\DB::table('tbl_partners_master')->insertGetId([
+				'idtbl_product_purchasing' => $productPurchasing->idtbl_product_purchasing ?? $productPurchasing->id,
+				'idtbl_partners' => $myCompanyId,
+				'ownership_percentage' => $myOwnership,
+				'profit_share_percentage' => $myProfit,
+				'status' => 1,
+			]);
+
+			foreach ($partnerDetails as $detail) {
+				$pid = $detail['input_partner'];
+				if (!is_numeric($pid)) {
+					// Look up by name or create!
+					$existingPartner = \Illuminate\Support\Facades\DB::table('tbl_partners')->where('partner_name', $pid)->first();
+					if ($existingPartner) {
+						$pid = $existingPartner->idtbl_partners;
+					} else {
+						$pid = \Illuminate\Support\Facades\DB::table('tbl_partners')->insertGetId([
+							'partner_name' => $pid,
+							'status' => 1,
+							'insertdatetime' => now(),
+						]);
+					}
+				}
+
+				\Illuminate\Support\Facades\DB::table('tbl_partners_details')->insert([
+					'idtbl_partners_master' => $masterId,
+					'idtbl_partners' => $pid,
+					'ownership_percentage' => $detail['ownership_percentage'],
+					'profit_share_percentage' => $detail['profit_share_percentage'],
+					'status' => 1,
+				]);
+			}
+		});
 
 		$sellingUnit = ($request->pricing_unit === 'Quantity') ? 2 : 1;
 		\App\Models\Inventory\ProductPricing::updateOrCreate(
@@ -292,6 +393,13 @@ class InventoryController extends Controller
 				'insertdatetime' => now(),
 			]);
 		} catch (\Exception $e) {}
+
+		if ($request->ajax() || $request->wantsJson()) {
+			return response()->json([
+				'success' => true,
+				'message' => 'Product updated successfully'
+			]);
+		}
 
 		return redirect()->route('inventory.myinventory.index')->with('success', 'Product updated successfully');
 	}
@@ -427,6 +535,7 @@ class InventoryController extends Controller
 			'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
 			'idtbl_skus' => $this->intVal($request->idtbl_skus) ?: 1,
 			'sku_number' => $skuNumber,
+			'inventory_type' => $request->inventory_type === 'lot' ? 'lot' : 'individual',
 			'length_mm' => $this->floatVal($request->length_mm),
 			'width_mm' => $this->floatVal($request->width_mm),
 			'height_mm' => $this->floatVal($request->height_mm),
@@ -456,95 +565,92 @@ class InventoryController extends Controller
 			// Silently skip if there's any database audit log constraint issue
 		}
 
-		$productPurchasing = null;
-		$hasPartners = !empty(array_filter($request->input('partner_ids', [])));
-		if ($request->idtbl_suppliers || $request->supplier_stone_ref || $dateOfPurchase || $request->idtbl_ownership_type || $hasPartners) {
-			$productPurchasing = \App\Models\Inventory\ProductPurchasing::create([
-				'idtbl_products' => $product->idtbl_products,
-				'idtbl_suppliers' => $this->intVal($request->idtbl_suppliers),
-				'supplier_stone_ref' => $request->supplier_stone_ref,
-				'date_of_purchase' => $dateOfPurchase,
-				'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
+		$productPurchasing = \App\Models\Inventory\ProductPurchasing::create([
+			'idtbl_products' => $product->idtbl_products,
+			'idtbl_suppliers' => $this->intVal($request->idtbl_suppliers),
+			'supplier_stone_ref' => $request->supplier_stone_ref,
+			'date_of_purchase' => $dateOfPurchase,
+			'idtbl_ownership_type' => $this->intVal($request->idtbl_ownership_type),
+			'status' => 1,
+		]);
+
+		// Always save partners master/details
+		$ownershipType = $this->intVal($request->idtbl_ownership_type);
+		$partnerIds = $request->input('partner_ids', []);
+		$ownerships = $request->input('ownership_percentages', []);
+		$profits = $request->input('profit_percentages', []);
+		$myCompanyId = $this->intVal($request->input('my_company_id')) ?: 1;
+		$myOwnership = $this->floatVal($request->input('my_ownership_percentage')) ?? 100.0;
+		$myProfit = $this->floatVal($request->input('my_profit_share_percentage')) ?? 100.0;
+
+		$sumOtherOwnership = 0.0;
+		$sumOtherProfits = 0.0;
+		foreach ($ownerships as $o) {
+			$sumOtherOwnership += $this->floatVal($o) ?? 0.0;
+		}
+		foreach ($profits as $p) {
+			$sumOtherProfits += $this->floatVal($p) ?? 0.0;
+		}
+
+		$totalOwnership = $myOwnership + $sumOtherOwnership;
+		$totalProfit = $myProfit + $sumOtherProfits;
+
+		if (abs($totalOwnership - 100.0) > 0.01 || abs($totalProfit - 100.0) > 0.01) {
+			if ($request->ajax() || $request->wantsJson()) {
+				return response()->json(['success' => false, 'message' => 'Ownership and profit totals must equal 100%'], 422);
+			}
+			return redirect()->back()->withInput()->with('error', 'Ownership and profit totals must equal 100%');
+		}
+
+		$partnerDetails = [];
+		for ($i = 0; $i < count($partnerIds); $i++) {
+			$pid = $partnerIds[$i] ?? null;
+			if (is_null($pid) || $pid === '') {
+				continue;
+			}
+			$own = isset($ownerships[$i]) ? $this->floatVal($ownerships[$i]) : 0.0;
+			$prof = isset($profits[$i]) ? $this->floatVal($profits[$i]) : 0.0;
+			$partnerDetails[] = [
+				'input_partner' => $pid,
+				'ownership_percentage' => $own,
+				'profit_share_percentage' => $prof,
+			];
+		}
+
+		DB::transaction(function () use ($productPurchasing, $myCompanyId, $myOwnership, $myProfit, $partnerDetails) {
+			$masterId = DB::table('tbl_partners_master')->insertGetId([
+				'idtbl_product_purchasing' => $productPurchasing->idtbl_product_purchasing ?? $productPurchasing->id,
+				'idtbl_partners' => $myCompanyId,
+				'ownership_percentage' => $myOwnership,
+				'profit_share_percentage' => $myProfit,
 				'status' => 1,
 			]);
 
-			// If ownership type is Partner (3) or empty/not set, save partners master/details
-			$ownershipType = $this->intVal($request->idtbl_ownership_type);
-			if ($ownershipType === 3 || is_null($ownershipType)) {
-				$partnerIds = $request->input('partner_ids', []);
-				$ownerships = $request->input('ownership_percentages', []);
-				$profits = $request->input('profit_percentages', []);
-				$myCompanyId = $this->intVal($request->input('my_company_id')) ?: 1;
-				$myOwnership = $this->floatVal($request->input('my_ownership_percentage')) ?? 100.0;
-				$myProfit = $this->floatVal($request->input('my_profit_share_percentage')) ?? 100.0;
-
-				$sumOtherOwnership = 0.0;
-				$sumOtherProfits = 0.0;
-				foreach ($ownerships as $o) {
-					$sumOtherOwnership += $this->floatVal($o) ?? 0.0;
-				}
-				foreach ($profits as $p) {
-					$sumOtherProfits += $this->floatVal($p) ?? 0.0;
-				}
-
-				$totalOwnership = $myOwnership + $sumOtherOwnership;
-				$totalProfit = $myProfit + $sumOtherProfits;
-
-				if (abs($totalOwnership - 100.0) > 0.01 || abs($totalProfit - 100.0) > 0.01) {
-					return redirect()->back()->withInput()->with('error', 'Ownership and profit totals must equal 100%');
-				}
-
-				$partnerDetails = [];
-				for ($i = 0; $i < count($partnerIds); $i++) {
-					$pid = $partnerIds[$i] ?? null;
-					if (is_null($pid) || $pid === '') {
-						continue;
-					}
-					$own = isset($ownerships[$i]) ? $this->floatVal($ownerships[$i]) : 0.0;
-					$prof = isset($profits[$i]) ? $this->floatVal($profits[$i]) : 0.0;
-					$partnerDetails[] = [
-						'input_partner' => $pid,
-						'ownership_percentage' => $own,
-						'profit_share_percentage' => $prof,
-					];
-				}
-
-				DB::transaction(function () use ($productPurchasing, $myCompanyId, $myOwnership, $myProfit, $partnerDetails) {
-					$masterId = DB::table('tbl_partners_master')->insertGetId([
-						'idtbl_product_purchasing' => $productPurchasing->idtbl_product_purchasing ?? $productPurchasing->id,
-						'idtbl_partners' => $myCompanyId,
-						'ownership_percentage' => $myOwnership,
-						'profit_share_percentage' => $myProfit,
-						'status' => 1,
-					]);
-
-					foreach ($partnerDetails as $detail) {
-						$pid = $detail['input_partner'];
-						if (!is_numeric($pid)) {
-							// Look up by name or create!
-							$existingPartner = DB::table('tbl_partners')->where('partner_name', $pid)->first();
-							if ($existingPartner) {
-								$pid = $existingPartner->idtbl_partners;
-							} else {
-								$pid = DB::table('tbl_partners')->insertGetId([
-									'partner_name' => $pid,
-									'status' => 1,
-									'insertdatetime' => now(),
-								]);
-							}
-						}
-
-						DB::table('tbl_partners_details')->insert([
-							'idtbl_partners_master' => $masterId,
-							'idtbl_partners' => $pid,
-							'ownership_percentage' => $detail['ownership_percentage'],
-							'profit_share_percentage' => $detail['profit_share_percentage'],
+			foreach ($partnerDetails as $detail) {
+				$pid = $detail['input_partner'];
+				if (!is_numeric($pid)) {
+					// Look up by name or create!
+					$existingPartner = DB::table('tbl_partners')->where('partner_name', $pid)->first();
+					if ($existingPartner) {
+						$pid = $existingPartner->idtbl_partners;
+					} else {
+						$pid = DB::table('tbl_partners')->insertGetId([
+							'partner_name' => $pid,
 							'status' => 1,
+							'insertdatetime' => now(),
 						]);
 					}
-				});
+				}
+
+				DB::table('tbl_partners_details')->insert([
+					'idtbl_partners_master' => $masterId,
+					'idtbl_partners' => $pid,
+					'ownership_percentage' => $detail['ownership_percentage'],
+					'profit_share_percentage' => $detail['profit_share_percentage'],
+					'status' => 1,
+				]);
 			}
-		}
+		});
 
 		if ($request->weight || $request->quantity || $request->cost_per_unit) {
 			$sellingUnit = ($request->pricing_unit === 'Quantity') ? 2 : 1;
@@ -650,6 +756,14 @@ class InventoryController extends Controller
 			}
 		}
 
+		if ($request->ajax() || $request->wantsJson()) {
+			return response()->json([
+				'success' => true,
+				'message' => 'Product saved successfully!',
+				'product' => $product
+			]);
+		}
+
 		return redirect()->route('inventory.myinventory.show', ['id' => $product->idtbl_products])->with('success', 'Product saved successfully!');
 	}
 
@@ -700,6 +814,21 @@ class InventoryController extends Controller
 			]);
 
 		return response()->json(['success' => true, 'message' => 'Log updated successfully']);
+	}
+
+	public function destroy($id)
+	{
+		$product = \App\Models\Inventory\Product::findOrFail($id);
+		$product->status = 0; // soft delete
+		$product->save();
+
+		\App\Models\Inventory\ProductPricing::where('idtbl_products', $id)->update(['status' => 0]);
+		\App\Models\Inventory\ProductPurchasing::where('idtbl_products', $id)->update(['status' => 0]);
+		\App\Models\Inventory\ProductAdvanceDetails::where('idtbl_products', $id)->update(['status' => 0]);
+		\DB::table('tbl_partners_master')->where('idtbl_products', $id)->update(['status' => 0]);
+
+		// Redirect back with success message
+		return redirect()->back()->with('success', 'Product deleted successfully.');
 	}
 
 	public function deleteAuditLog(Request $request)

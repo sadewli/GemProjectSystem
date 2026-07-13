@@ -27,6 +27,14 @@
                 <p class="text-[13px] text-slate-800 mt-1 font-bold">Last updated: <span
                         class="font-normal text-slate-600">2026-04-22 15:55:38 (3 weeks ago)</span></p>
             </div>
+            <div class="flex gap-3">
+                <a href="{{ route('inventory.lotsplit.index') }}" class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-scissors"></i> Lot Split
+                </a>
+                <a href="{{ route('inventory.myinventory.create') }}" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add New
+                </a>
+            </div>
         </div>
 
         <!-- Filter Card -->
@@ -223,78 +231,64 @@
                                 <input type="checkbox"
                                     class="w-3.5 h-3.5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 bg-white align-middle">
                             </th>
-                            <th class="px-4 py-3 font-bold">
-                                Ref id
-                                <span
-                                    class="text-slate-300 ml-1 inline-flex flex-col text-[8px] leading-[6px] align-middle">
-                                    <svg class="w-2 h-2" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8h256c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-                                    </svg>
-                                    <svg class="w-2 h-2 mt-[1px]" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                                    </svg>
-                                </span>
-                            </th>
-                            <th class="px-4 py-3 font-bold">
-                                Issue date
-                                <span class="text-blue-500 ml-1 inline-flex flex-col text-[8px] leading-[6px] align-middle">
-                                    <svg class="w-2 h-2 mt-[1px]" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                                    </svg>
-                                </span>
-                            </th>
-                            <th class="px-4 py-3 font-bold">List type</th>
-                            <th class="px-4 py-3 font-bold">List reason</th>
-                            <th class="px-4 py-3 font-bold">Receiver type</th>
-                            <th class="px-4 py-3 font-bold">Receiver</th>
-                            <th class="px-4 py-3 font-bold">
-                                Quantity
-                                <span
-                                    class="text-slate-300 ml-1 inline-flex flex-col text-[8px] leading-[6px] align-middle">
-                                    <svg class="w-2 h-2" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8h256c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-                                    </svg>
-                                    <svg class="w-2 h-2 mt-[1px]" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                                    </svg>
-                                </span>
-                            </th>
-                            <th class="px-4 py-3 font-bold">
-                                Weight
-                                <span
-                                    class="text-slate-300 ml-1 inline-flex flex-col text-[8px] leading-[6px] align-middle">
-                                    <svg class="w-2 h-2" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8h256c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-                                    </svg>
-                                    <svg class="w-2 h-2 mt-[1px]" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                                    </svg>
-                                </span>
-                            </th>
-                            <th class="px-4 py-3 font-bold">Amount</th>
-                            <th class="px-4 py-3 font-bold">
-                                Link expiry date
-                                <span
-                                    class="text-slate-300 ml-1 inline-flex flex-col text-[8px] leading-[6px] align-middle">
-                                    <svg class="w-2 h-2" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8h256c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-                                    </svg>
-                                    <svg class="w-2 h-2 mt-[1px]" fill="currentColor" viewBox="0 0 320 512">
-                                        <path
-                                            d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                                    </svg>
-                                </span>
-                            </th>
+                            <th class="px-4 py-3 font-bold">SKU</th>
+                            <th class="px-4 py-3 font-bold">Type</th>
+                            <th class="px-4 py-3 font-bold">Variety</th>
+                            <th class="px-4 py-3 font-bold">Shape</th>
+                            <th class="px-4 py-3 font-bold">Color</th>
+                            <th class="px-4 py-3 font-bold">Weight</th>
+                            <th class="px-4 py-3 font-bold">Quantity</th>
+                            <th class="px-4 py-3 font-bold">Cost</th>
+                            <th class="px-4 py-3 font-bold">Wholesale Price</th>
+                            <th class="px-4 py-3 font-bold">Retail Price</th>
+                            <th class="px-4 py-3 font-bold">Supplier</th>
+                            <th class="px-4 py-3 font-bold">Purchase Date</th>
+                            <th class="px-4 py-3 font-bold text-center">Action</th>
                         </tr>
                     </thead>
+                    <tbody class="text-sm">
+                        @forelse($products ?? [] as $product)
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-3">
+                                    <input type="checkbox"
+                                        class="w-3.5 h-3.5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 bg-white align-middle">
+                                </td>
+                                <td class="px-4 py-3 font-medium text-blue-600">{{ $product->sku_number }}</td>
+                                <td class="px-4 py-3">{{ $product->type_name ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->variety_name ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->shape_name ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->color_name ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->weight }} {{ $product->weight_unit }}</td>
+                                <td class="px-4 py-3">{{ $product->pricing_quantity ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->cost_per_unit ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->wholesale_price_per_unit ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->retail_price_per_unit ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->supplier_name ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $product->date_of_purchase ?? '-' }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a href="{{ url('Inventory/MyInventory/' . $product->idtbl_products) }}" class="text-blue-500 hover:text-blue-700" title="View">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url('Inventory/MyInventory/' . $product->idtbl_products) }}" class="text-amber-500 hover:text-amber-700" title="Edit">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <button type="button" class="text-red-500 hover:text-red-700" title="Delete" onclick="if(confirm('Are you sure you want to delete this item?')) { document.getElementById('delete-form-{{ $product->idtbl_products }}').submit(); }">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $product->idtbl_products }}" action="{{ url('Inventory/MyInventory/' . $product->idtbl_products) }}" method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="14" class="px-4 py-8 text-center text-slate-500">No inventory data found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                 </table>
             </div>
 
