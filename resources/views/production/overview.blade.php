@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title', 'Production Overview')
 @section('content')
     <script src="https://cdn.tailwindcss.com"></script>
@@ -148,8 +148,7 @@
                         <button id="btn-supplier" type="button"
                             class="w-full flex items-center justify-between pl-3 pr-8 py-2.5 text-sm bg-slate-100 border border-slate-200 rounded-md hover:border-blue-400 transition-colors">
                             <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" 
-                                viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
@@ -158,8 +157,7 @@
                         </button>
                         <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                d="M19 9l-7 7-7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </div>
                         <div id="panel-supplier"
@@ -1335,1558 +1333,1566 @@
                 loadTable(getFilters());
             });
 
-                // —— Date guard ———————————————————————————————————————————————————
-                const df = document.getElementById('date-from');
-                const dt = document.getElementById('date-to');
-                df.addEventListener('change', () => { if (dt.value && df.value > dt.value) dt.value = df.value; });
-                dt.addEventListener('change', () => { if (df.value && dt.value < df.value) df.value = dt.value; });
+            // —— Date guard ———————————————————————————————————————————————————
+            const df = document.getElementById('date-from');
+            const dt = document.getElementById('date-to');
+            df.addEventListener('change', () => { if (dt.value && df.value > dt.value) dt.value = df.value; });
+            dt.addEventListener('change', () => { if (df.value && dt.value < df.value) df.value = dt.value; });
 
-                // —— Status tabs ——————————————————————————————————————————————————
-                document.querySelectorAll('.status-tab').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        document.querySelectorAll('.status-tab').forEach(b => b.classList.remove('bg-slate-50'));
-                        this.classList.add('bg-slate-50');
-                    });
+            // —— Status tabs ——————————————————————————————————————————————————
+            document.querySelectorAll('.status-tab').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.status-tab').forEach(b => b.classList.remove('bg-slate-50'));
+                    this.classList.add('bg-slate-50');
+                });
+            });
+
+            // —— Placeholder actions ——————————————————————————————————————————
+            ['btn-excel', 'btn-manage-cols'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', () => alert(id + ' — coming soon.'));
+            });
+
+            // —— Create Modal Open/Close ——————————————————————————————————————
+            var modal = document.getElementById('create-modal');
+            var btnOpen = document.getElementById('btn-create');
+            var _skuSelect2Inited = false;
+
+            function _initSkuSelect2() {
+                if (_skuSelect2Inited || !window.jQuery) return;
+                var $sel = $('#item-select-product');
+                if (!$sel.length) return;
+                _skuSelect2Inited = true;
+
+                $sel.select2({
+                    placeholder: 'Search by SKU or name…',
+                    allowClear: true,
+                    minimumInputLength: 1,
+                    dropdownParent: $('#create-modal'),
+                    ajax: {
+                        url: '/production/product-search',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return { q: params.term, page: params.page || 1 };
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
+                            return {
+                                results: data.results,
+                                pagination: { more: !!(data.pagination && data.pagination.more) }
+                            };
+                        },
+                        cache: true
+                    }
                 });
 
-                // —— Placeholder actions ——————————————————————————————————————————
-                ['btn-excel', 'btn-manage-cols'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.addEventListener('click', () => alert(id + ' — coming soon.'));
-                });
+                $sel.on('select2:select', function (e) {
+                    var d = e.params.data;
+                    var val = d.id || '';
+                    if (val.indexOf(':::') !== -1) {
+                        var parts = val.split(':::');
+                        $('#item-input-sku').val(parts[1]);
+                        $('#item-input-product-id').val(parts[0]);
+                    } else {
+                        $('#item-input-sku').val(d.sku || '');
+                        $('#item-input-product-id').val(d.id || '');
+                    }
 
-                // —— Create Modal Open/Close ——————————————————————————————————————
-                var modal = document.getElementById('create-modal');
-                var btnOpen = document.getElementById('btn-create');
-                var _skuSelect2Inited = false;
+                    var descEl = document.getElementById('item-input-desc');
+                    if (descEl && !descEl.value && d.description) descEl.value = d.description;
 
-                function _initSkuSelect2() {
-                    if (_skuSelect2Inited || !window.jQuery) return;
-                    var $sel = $('#item-select-product');
-                    if (!$sel.length) return;
-                    _skuSelect2Inited = true;
+                    // Autofill form inputs (Items tab)
+                    var qtyEl = document.getElementById('item-input-qty');
+                    var wtEl = document.getElementById('item-input-weight');
+                    var costEl = document.getElementById('item-input-cost');
 
-                    $sel.select2({
-                        placeholder: 'Search by SKU or name…',
-                        allowClear: true,
-                        minimumInputLength: 1,
-                        dropdownParent: $('#create-modal'),
-                        ajax: {
-                            url: '/production/product-search',
-                            dataType: 'json',
-                            delay: 250,
-                            data: function (params) { return { q: params.term }; },
-                            processResults: function (data) { return { results: data.results }; },
-                            cache: true
-                        }
-                    });
+                    if (qtyEl) qtyEl.value = d.stock_qty != null ? d.stock_qty : '';
+                    if (wtEl) wtEl.value = d.stock_weight != null ? d.stock_weight : '';
+                    if (costEl) costEl.value = d.stock_cost != null ? d.stock_cost : '';
 
-                    $sel.on('select2:select', function (e) {
-                        var d = e.params.data;
-                        var val = d.id || '';
-                        if (val.indexOf(':::') !== -1) {
-                            var parts = val.split(':::');
-                            $('#item-input-sku').val(parts[1]);
-                            $('#item-input-product-id').val(parts[0]);
-                        } else {
-                            $('#item-input-sku').val(d.sku || '');
-                            $('#item-input-product-id').val(d.id || '');
-                        }
-
-                        var descEl = document.getElementById('item-input-desc');
-                        if (descEl && !descEl.value && d.description) descEl.value = d.description;
-
-                        // Autofill form inputs (Items tab)
-                        var qtyEl = document.getElementById('item-input-qty');
-                        var wtEl = document.getElementById('item-input-weight');
-                        var costEl = document.getElementById('item-input-cost');
-
-                        if (qtyEl) qtyEl.value = d.stock_qty != null ? d.stock_qty : '';
-                        if (wtEl) wtEl.value = d.stock_weight != null ? d.stock_weight : '';
-                        if (costEl) costEl.value = d.stock_cost != null ? d.stock_cost : '';
-
-                        // Autofill Details tab fields (Supplier)
-                        if (d.supplier_id) {
-                            var supHidden = document.getElementById('ddMcSupplierHidden');
-                            var supLabel = document.getElementById('ddMcSupplierLabel');
-                            if (supHidden) supHidden.value = d.supplier_id;
-                            if (supLabel) {
-                                supLabel.textContent = d.supplier_name || 'Select supplier';
-                                supLabel.classList.remove('text-slate-400');
-                                supLabel.classList.add('text-slate-600');
-                            }
-                        }
-
-                        // Autofill Production Category dropdown based on product type name
-                        if (d.product_type_name) {
-                            var typeLower = d.product_type_name.toLowerCase();
-                            var catValue = '';
-                            var catLabel = '';
-                            if (typeLower.indexOf('diamond') !== -1) {
-                                catValue = 'diamond';
-                                catLabel = 'Diamond';
-                            } else if (typeLower.indexOf('rough') !== -1 || typeLower.indexOf('specimen') !== -1) {
-                                catValue = 'rough_gemstone';
-                                catLabel = 'Rough Gemstone';
-                            } else if (typeLower.indexOf('preform') !== -1) {
-                                catValue = 'preform';
-                                catLabel = 'Preform';
-                            } else if (typeLower.indexOf('gem') !== -1 || typeLower.indexOf('stone') !== -1) {
-                                catValue = 'gemstone';
-                                catLabel = 'Gemstone';
-                            }
-                            if (catValue) {
-                                var catHidden = document.getElementById('ddMcCatHidden');
-                                var catLabel2 = document.getElementById('ddMcCatLabel');
-                                if (catHidden) catHidden.value = catValue;
-                                if (catLabel2) {
-                                    catLabel2.textContent = catLabel;
-                                    catLabel2.className = 'truncate text-slate-800';
-                                }
-                                if (typeof updateBadge === 'function') updateBadge();
-                            }
-                        }
-
-                        // Autofill Costs tab fields
-                        var costUnitEl = document.getElementById('mc-cost-unit');
-                        var costTotalEl = document.getElementById('mc-cost-total');
-                        var myCostUnitEl = document.getElementById('mc-my-cost-unit');
-                        var myCostTotalEl = document.getElementById('mc-my-cost-total');
-
-                        if (costUnitEl) costUnitEl.value = d.cost_per_unit != null ? d.cost_per_unit : '';
-                        if (costTotalEl) costTotalEl.value = d.stock_cost != null ? d.stock_cost : '';
-                        if (myCostUnitEl) myCostUnitEl.value = d.my_cost_per_unit != null ? d.my_cost_per_unit : '';
-                        if (myCostTotalEl) myCostTotalEl.value = d.my_total_cost != null ? d.my_total_cost : '';
-
-                        // Autofill weight unit custom dropdown
-                        if (d.stock_unit) {
-                            var unitHidden = document.getElementById('ddMcItemUnitHidden');
-                            var unitLabel = document.getElementById('ddMcItemUnitLabel');
-                            if (unitHidden) unitHidden.value = d.stock_unit;
-                            if (unitLabel) unitLabel.textContent = d.stock_unit;
-                        }
-
-                        // Store available stock from API response for soft warning
-                        var stockQtyEl = document.getElementById('item-stock-qty');
-                        var stockWtEl = document.getElementById('item-stock-weight');
-                        var stockUnitEl = document.getElementById('item-stock-unit');
-                        if (stockQtyEl) stockQtyEl.value = d.stock_qty != null ? d.stock_qty : '';
-                        if (stockWtEl) stockWtEl.value = d.stock_weight != null ? d.stock_weight : '';
-                        if (stockUnitEl) stockUnitEl.value = d.stock_unit != null ? d.stock_unit : 'ct';
-
-                        // Clear any previous warning
-                        var warnEl = document.getElementById('item-stock-warning');
-                        if (warnEl) warnEl.classList.add('hidden');
-                    });
-
-                    $sel.on('select2:clear', function () {
-                        $('#item-input-sku').val('');
-                        $('#item-input-product-id').val('');
-
-                        var qtyEl = document.getElementById('item-input-qty');
-                        var wtEl = document.getElementById('item-input-weight');
-                        var costEl = document.getElementById('item-input-cost');
-                        if (qtyEl) qtyEl.value = '';
-                        if (wtEl) wtEl.value = '';
-                        if (costEl) costEl.value = '';
-
-                        // Reset Details tab Supplier dropdown
+                    // Autofill Details tab fields (Supplier)
+                    if (d.supplier_id) {
                         var supHidden = document.getElementById('ddMcSupplierHidden');
                         var supLabel = document.getElementById('ddMcSupplierLabel');
-                        if (supHidden) supHidden.value = '';
+                        if (supHidden) supHidden.value = d.supplier_id;
                         if (supLabel) {
-                            supLabel.textContent = 'Select supplier';
-                            supLabel.className = 'truncate text-slate-400';
+                            supLabel.textContent = d.supplier_name || 'Select supplier';
+                            supLabel.classList.remove('text-slate-400');
+                            supLabel.classList.add('text-slate-600');
                         }
+                    }
 
-                        // Reset Details tab Production Category dropdown
-                        var catHidden = document.getElementById('ddMcCatHidden');
-                        var catLabel2 = document.getElementById('ddMcCatLabel');
-                        if (catHidden) catHidden.value = '';
-                        if (catLabel2) {
-                            catLabel2.textContent = 'Select category';
-                            catLabel2.className = 'truncate text-slate-400';
+                    // Autofill Production Category dropdown based on product type name
+                    if (d.product_type_name) {
+                        var typeLower = d.product_type_name.toLowerCase();
+                        var catValue = '';
+                        var catLabel = '';
+                        if (typeLower.indexOf('diamond') !== -1) {
+                            catValue = 'diamond';
+                            catLabel = 'Diamond';
+                        } else if (typeLower.indexOf('rough') !== -1 || typeLower.indexOf('specimen') !== -1) {
+                            catValue = 'rough_gemstone';
+                            catLabel = 'Rough Gemstone';
+                        } else if (typeLower.indexOf('preform') !== -1) {
+                            catValue = 'preform';
+                            catLabel = 'Preform';
+                        } else if (typeLower.indexOf('gem') !== -1 || typeLower.indexOf('stone') !== -1) {
+                            catValue = 'gemstone';
+                            catLabel = 'Gemstone';
                         }
-                        if (typeof updateBadge === 'function') updateBadge();
+                        if (catValue) {
+                            var catHidden = document.getElementById('ddMcCatHidden');
+                            var catLabel2 = document.getElementById('ddMcCatLabel');
+                            if (catHidden) catHidden.value = catValue;
+                            if (catLabel2) {
+                                catLabel2.textContent = catLabel;
+                                catLabel2.className = 'truncate text-slate-800';
+                            }
+                            if (typeof updateBadge === 'function') updateBadge();
+                        }
+                    }
 
-                        // Reset Costs tab fields
-                        var costUnitEl = document.getElementById('mc-cost-unit');
-                        var costTotalEl = document.getElementById('mc-cost-total');
-                        var myCostUnitEl = document.getElementById('mc-my-cost-unit');
-                        var myCostTotalEl = document.getElementById('mc-my-cost-total');
-                        if (costUnitEl) costUnitEl.value = '';
-                        if (costTotalEl) costTotalEl.value = '';
-                        if (myCostUnitEl) myCostUnitEl.value = '';
-                        if (myCostTotalEl) myCostTotalEl.value = '';
+                    // Autofill Costs tab fields
+                    var costUnitEl = document.getElementById('mc-cost-unit');
+                    var costTotalEl = document.getElementById('mc-cost-total');
+                    var myCostUnitEl = document.getElementById('mc-my-cost-unit');
+                    var myCostTotalEl = document.getElementById('mc-my-cost-total');
 
-                        // Reset weight unit dropdown
+                    if (costUnitEl) costUnitEl.value = d.cost_per_unit != null ? d.cost_per_unit : '';
+                    if (costTotalEl) costTotalEl.value = d.stock_cost != null ? d.stock_cost : '';
+                    if (myCostUnitEl) myCostUnitEl.value = d.my_cost_per_unit != null ? d.my_cost_per_unit : '';
+                    if (myCostTotalEl) myCostTotalEl.value = d.my_total_cost != null ? d.my_total_cost : '';
+
+                    // Autofill weight unit custom dropdown
+                    if (d.stock_unit) {
                         var unitHidden = document.getElementById('ddMcItemUnitHidden');
                         var unitLabel = document.getElementById('ddMcItemUnitLabel');
-                        if (unitHidden) unitHidden.value = 'ct';
-                        if (unitLabel) unitLabel.textContent = 'ct';
+                        if (unitHidden) unitHidden.value = d.stock_unit;
+                        if (unitLabel) unitLabel.textContent = d.stock_unit;
+                    }
 
-                        var stockQtyEl = document.getElementById('item-stock-qty');
-                        var stockWtEl = document.getElementById('item-stock-weight');
-                        var stockUnitEl = document.getElementById('item-stock-unit');
-                        if (stockQtyEl) stockQtyEl.value = '';
-                        if (stockWtEl) stockWtEl.value = '';
-                        if (stockUnitEl) stockUnitEl.value = '';
+                    // Store available stock from API response for soft warning
+                    var stockQtyEl = document.getElementById('item-stock-qty');
+                    var stockWtEl = document.getElementById('item-stock-weight');
+                    var stockUnitEl = document.getElementById('item-stock-unit');
+                    if (stockQtyEl) stockQtyEl.value = d.stock_qty != null ? d.stock_qty : '';
+                    if (stockWtEl) stockWtEl.value = d.stock_weight != null ? d.stock_weight : '';
+                    if (stockUnitEl) stockUnitEl.value = d.stock_unit != null ? d.stock_unit : 'ct';
 
-                        var warnEl = document.getElementById('item-stock-warning');
-                        if (warnEl) warnEl.classList.add('hidden');
-                    });
-                }
-
-                function openModal() {
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                    document.body.style.overflow = 'hidden';
-                    // Initialize Select2 lazily — after modal is visible
-                    setTimeout(_initSkuSelect2, 50);
-                }
-
-                function closeModal() {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    document.body.style.overflow = '';
-                    resetModal();
-                }
-
-                function resetModal() {
-                    var resets = [
-                        ['ddMcTypeLabel', 'Select type', 'ddMcTypeHidden', ''],
-                        ['ddMcCatLabel', 'Select category', 'ddMcCatHidden', ''],
-                        ['ddMcSupplierLabel', 'Select supplier', 'ddMcSupplierHidden', ''],
-                        ['ddMcDiscLabel', 'Select reason', 'ddMcDiscHidden', ''],
-                    ];
-                    resets.forEach(function (r) {
-                        var lbl = document.getElementById(r[0]);
-                        var hid = document.getElementById(r[2]);
-                        if (lbl) { lbl.textContent = r[1]; lbl.className = 'truncate text-slate-400'; }
-                        if (hid) hid.value = r[3];
-                    });
-
-                    // Reset badge
-                    var badge = document.getElementById('mc-badge-type');
-                    if (badge) { badge.classList.add('hidden'); badge.textContent = ''; }
-
-                    // Reset the HTML form fields
-                    var form = document.getElementById('createProductionForm');
-                    if (form) form.reset();
-
-                    // Reset Costs tab calculated fields
-                    ['mc-cost-total', 'mc-my-cost-total', 'mc-loss-pct', 'mc-loss-wt'].forEach(function (id) {
-                        var el = document.getElementById(id);
-                        if (el) el.value = '';
-                    });
-
-                    // Reset items list (defined later in ITEMS section)
-                    if (typeof window._resetItemsList === 'function') window._resetItemsList();
-
-                    // Reset media queues (defined later in MEDIA section)
-                    if (typeof window._resetMediaQueues === 'function') window._resetMediaQueues();
-
-                    // Go back to Details tab
-                    activateTab('mc-tab-details');
-                }
-
-                if (btnOpen) btnOpen.addEventListener('click', openModal);
-                document.getElementById('create-close').addEventListener('click', closeModal);
-                document.getElementById('create-cancel').addEventListener('click', closeModal);
-                modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
-
-                // —— Create Modal Tab Navigation —————————————————————————————————
-                function activateTab(targetId) {
-                    document.querySelectorAll('.mc-tab-btn').forEach(function (b) {
-                        b.classList.remove('active');
-                        b.classList.add('text-slate-500');
-                    });
-                    document.querySelectorAll('.mc-tab-content').forEach(function (c) {
-                        c.classList.add('hidden');
-                        c.classList.remove('block');
-                    });
-                    var target = document.getElementById(targetId);
-                    if (target) { target.classList.remove('hidden'); target.classList.add('block'); }
-                    var btn = document.querySelector('.mc-tab-btn[data-target="' + targetId + '"]');
-                    if (btn) { btn.classList.add('active'); btn.classList.remove('text-slate-500'); }
-                }
-
-                document.querySelectorAll('.mc-tab-btn').forEach(function (btn) {
-                    btn.addEventListener('click', function () { activateTab(btn.dataset.target); });
+                    // Clear any previous warning
+                    var warnEl = document.getElementById('item-stock-warning');
+                    if (warnEl) warnEl.classList.add('hidden');
                 });
 
-                // —— Create Modal Custom Searchable Dropdowns —————————————————————
-                function closeAllDropdowns() {
-                    document.querySelectorAll('.searchable-dropdown [id$="Panel"]').forEach(function (p) {
-                        p.classList.add('hidden');
-                    });
-                }
+                $sel.on('select2:clear', function () {
+                    $('#item-input-sku').val('');
+                    $('#item-input-product-id').val('');
 
-                function updateBadge() {
-                    var type = document.getElementById('ddMcTypeLabel') ? document.getElementById('ddMcTypeLabel').textContent : '';
-                    var cat = document.getElementById('ddMcCatLabel') ? document.getElementById('ddMcCatLabel').textContent : '';
-                    var badge = document.getElementById('mc-badge-type');
-                    var parts = [];
-                    if (type && type !== 'Select type') parts.push(type);
-                    if (cat && cat !== 'Select category') parts.push(cat);
-                    if (parts.length) {
-                        badge.textContent = parts.join(' · ');
-                        badge.classList.remove('hidden');
-                    } else {
-                        badge.classList.add('hidden');
+                    var qtyEl = document.getElementById('item-input-qty');
+                    var wtEl = document.getElementById('item-input-weight');
+                    var costEl = document.getElementById('item-input-cost');
+                    if (qtyEl) qtyEl.value = '';
+                    if (wtEl) wtEl.value = '';
+                    if (costEl) costEl.value = '';
+
+                    // Reset Details tab Supplier dropdown
+                    var supHidden = document.getElementById('ddMcSupplierHidden');
+                    var supLabel = document.getElementById('ddMcSupplierLabel');
+                    if (supHidden) supHidden.value = '';
+                    if (supLabel) {
+                        supLabel.textContent = 'Select supplier';
+                        supLabel.className = 'truncate text-slate-400';
                     }
+
+                    // Reset Details tab Production Category dropdown
+                    var catHidden = document.getElementById('ddMcCatHidden');
+                    var catLabel2 = document.getElementById('ddMcCatLabel');
+                    if (catHidden) catHidden.value = '';
+                    if (catLabel2) {
+                        catLabel2.textContent = 'Select category';
+                        catLabel2.className = 'truncate text-slate-400';
+                    }
+                    if (typeof updateBadge === 'function') updateBadge();
+
+                    // Reset Costs tab fields
+                    var costUnitEl = document.getElementById('mc-cost-unit');
+                    var costTotalEl = document.getElementById('mc-cost-total');
+                    var myCostUnitEl = document.getElementById('mc-my-cost-unit');
+                    var myCostTotalEl = document.getElementById('mc-my-cost-total');
+                    if (costUnitEl) costUnitEl.value = '';
+                    if (costTotalEl) costTotalEl.value = '';
+                    if (myCostUnitEl) myCostUnitEl.value = '';
+                    if (myCostTotalEl) myCostTotalEl.value = '';
+
+                    // Reset weight unit dropdown
+                    var unitHidden = document.getElementById('ddMcItemUnitHidden');
+                    var unitLabel = document.getElementById('ddMcItemUnitLabel');
+                    if (unitHidden) unitHidden.value = 'ct';
+                    if (unitLabel) unitLabel.textContent = 'ct';
+
+                    var stockQtyEl = document.getElementById('item-stock-qty');
+                    var stockWtEl = document.getElementById('item-stock-weight');
+                    var stockUnitEl = document.getElementById('item-stock-unit');
+                    if (stockQtyEl) stockQtyEl.value = '';
+                    if (stockWtEl) stockWtEl.value = '';
+                    if (stockUnitEl) stockUnitEl.value = '';
+
+                    var warnEl = document.getElementById('item-stock-warning');
+                    if (warnEl) warnEl.classList.add('hidden');
+                });
+            }
+
+            function openModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                // Initialize Select2 lazily — after modal is visible
+                setTimeout(_initSkuSelect2, 50);
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                resetModal();
+            }
+
+            function resetModal() {
+                var resets = [
+                    ['ddMcTypeLabel', 'Select type', 'ddMcTypeHidden', ''],
+                    ['ddMcCatLabel', 'Select category', 'ddMcCatHidden', ''],
+                    ['ddMcSupplierLabel', 'Select supplier', 'ddMcSupplierHidden', ''],
+                    ['ddMcDiscLabel', 'Select reason', 'ddMcDiscHidden', ''],
+                ];
+                resets.forEach(function (r) {
+                    var lbl = document.getElementById(r[0]);
+                    var hid = document.getElementById(r[2]);
+                    if (lbl) { lbl.textContent = r[1]; lbl.className = 'truncate text-slate-400'; }
+                    if (hid) hid.value = r[3];
+                });
+
+                // Reset badge
+                var badge = document.getElementById('mc-badge-type');
+                if (badge) { badge.classList.add('hidden'); badge.textContent = ''; }
+
+                // Reset the HTML form fields
+                var form = document.getElementById('createProductionForm');
+                if (form) form.reset();
+
+                // Reset Costs tab calculated fields
+                ['mc-cost-total', 'mc-my-cost-total', 'mc-loss-pct', 'mc-loss-wt'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+
+                // Reset items list (defined later in ITEMS section)
+                if (typeof window._resetItemsList === 'function') window._resetItemsList();
+
+                // Reset media queues (defined later in MEDIA section)
+                if (typeof window._resetMediaQueues === 'function') window._resetMediaQueues();
+
+                // Go back to Details tab
+                activateTab('mc-tab-details');
+            }
+
+            if (btnOpen) btnOpen.addEventListener('click', openModal);
+            document.getElementById('create-close').addEventListener('click', closeModal);
+            document.getElementById('create-cancel').addEventListener('click', closeModal);
+            modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+            // —— Create Modal Tab Navigation —————————————————————————————————
+            function activateTab(targetId) {
+                document.querySelectorAll('.mc-tab-btn').forEach(function (b) {
+                    b.classList.remove('active');
+                    b.classList.add('text-slate-500');
+                });
+                document.querySelectorAll('.mc-tab-content').forEach(function (c) {
+                    c.classList.add('hidden');
+                    c.classList.remove('block');
+                });
+                var target = document.getElementById(targetId);
+                if (target) { target.classList.remove('hidden'); target.classList.add('block'); }
+                var btn = document.querySelector('.mc-tab-btn[data-target="' + targetId + '"]');
+                if (btn) { btn.classList.add('active'); btn.classList.remove('text-slate-500'); }
+            }
+
+            document.querySelectorAll('.mc-tab-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () { activateTab(btn.dataset.target); });
+            });
+
+            // —— Create Modal Custom Searchable Dropdowns —————————————————————
+            function closeAllDropdowns() {
+                document.querySelectorAll('.searchable-dropdown [id$="Panel"]').forEach(function (p) {
+                    p.classList.add('hidden');
+                });
+            }
+
+            function updateBadge() {
+                var type = document.getElementById('ddMcTypeLabel') ? document.getElementById('ddMcTypeLabel').textContent : '';
+                var cat = document.getElementById('ddMcCatLabel') ? document.getElementById('ddMcCatLabel').textContent : '';
+                var badge = document.getElementById('mc-badge-type');
+                var parts = [];
+                if (type && type !== 'Select type') parts.push(type);
+                if (cat && cat !== 'Select category') parts.push(cat);
+                if (parts.length) {
+                    badge.textContent = parts.join(' · ');
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            function setupDropdown(wrapperId) {
+                var wrapper = document.getElementById(wrapperId);
+                if (!wrapper) return;
+
+                var btn = wrapper.querySelector('button');
+                var panel = wrapper.querySelector('[id$="Panel"]');
+                var hidden = wrapper.querySelector('input[type="hidden"]');
+                var label = wrapper.querySelector('.truncate');
+                var search = wrapper.querySelector('input[type="text"]');
+
+                if (!btn || !panel) return;
+
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var wasHidden = panel.classList.contains('hidden');
+                    closeAllDropdowns();
+                    if (wasHidden) {
+                        panel.classList.remove('hidden');
+                        if (search) setTimeout(function () { search.focus(); }, 50);
+                    }
+                });
+
+                if (search) {
+                    search.addEventListener('click', function (e) { e.stopPropagation(); });
+                    search.addEventListener('input', function () {
+                        var q = this.value.toLowerCase();
+                        wrapper.querySelectorAll('.dd-option').forEach(function (o) {
+                            o.style.display = (o.dataset.label || '').toLowerCase().includes(q) ? '' : 'none';
+                        });
+                    });
                 }
 
-                function setupDropdown(wrapperId) {
-                    var wrapper = document.getElementById(wrapperId);
-                    if (!wrapper) return;
+                wrapper.addEventListener('click', function (e) {
+                    var opt = e.target.closest('.dd-option');
+                    if (!opt) return;
 
-                    var btn = wrapper.querySelector('button');
-                    var panel = wrapper.querySelector('[id$="Panel"]');
-                    var hidden = wrapper.querySelector('input[type="hidden"]');
-                    var label = wrapper.querySelector('.truncate');
-                    var search = wrapper.querySelector('input[type="text"]');
+                    if (hidden) hidden.value = opt.dataset.value || '';
+                    if (label) { label.textContent = opt.dataset.label || opt.textContent.trim(); label.className = 'truncate text-slate-800'; }
 
-                    if (!btn || !panel) return;
-
-                    btn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        var wasHidden = panel.classList.contains('hidden');
-                        closeAllDropdowns();
-                        if (wasHidden) {
-                            panel.classList.remove('hidden');
-                            if (search) setTimeout(function () { search.focus(); }, 50);
-                        }
+                    wrapper.querySelectorAll('.dd-option').forEach(function (o) {
+                        o.classList.remove('bg-slate-100', 'text-slate-800', 'font-semibold');
+                        o.classList.add('text-slate-600');
                     });
+                    opt.classList.add('bg-slate-100', 'text-slate-800', 'font-semibold');
+                    opt.classList.remove('text-slate-600');
 
                     if (search) {
-                        search.addEventListener('click', function (e) { e.stopPropagation(); });
-                        search.addEventListener('input', function () {
-                            var q = this.value.toLowerCase();
-                            wrapper.querySelectorAll('.dd-option').forEach(function (o) {
-                                o.style.display = (o.dataset.label || '').toLowerCase().includes(q) ? '' : 'none';
-                            });
-                        });
+                        search.value = '';
+                        wrapper.querySelectorAll('.dd-option').forEach(function (o) { o.style.display = ''; });
                     }
+                    panel.classList.add('hidden');
 
-                    wrapper.addEventListener('click', function (e) {
-                        var opt = e.target.closest('.dd-option');
-                        if (!opt) return;
+                    if (wrapperId === 'ddMcTypeWrapper' || wrapperId === 'ddMcCatWrapper') updateBadge();
+                });
 
-                        if (hidden) hidden.value = opt.dataset.value || '';
-                        if (label) { label.textContent = opt.dataset.label || opt.textContent.trim(); label.className = 'truncate text-slate-800'; }
+                document.addEventListener('click', function (e) {
+                    if (!wrapper.contains(e.target)) panel.classList.add('hidden');
+                });
+            }
 
-                        wrapper.querySelectorAll('.dd-option').forEach(function (o) {
-                            o.classList.remove('bg-slate-100', 'text-slate-800', 'font-semibold');
-                            o.classList.add('text-slate-600');
-                        });
-                        opt.classList.add('bg-slate-100', 'text-slate-800', 'font-semibold');
-                        opt.classList.remove('text-slate-600');
+            [
+                'ddMcTypeWrapper', 'ddMcCatWrapper', 'ddMcSupplierWrapper',
+                'ddMcWeightUnitWrapper', 'ddMcCurrencyWrapper', 'ddMcDiscWrapper',
+                'ddMcItemUnitWrapper', 'ddMcOutUnitWrapper'
+            ].forEach(setupDropdown);
 
-                        if (search) {
-                            search.value = '';
-                            wrapper.querySelectorAll('.dd-option').forEach(function (o) { o.style.display = ''; });
-                        }
-                        panel.classList.add('hidden');
+            // —— AJAX Form Submission (handles media upload after sheet creation) ——
+            function submitProductionForm(statusOverride) {
+                var type = document.getElementById('ddMcTypeHidden') ? document.getElementById('ddMcTypeHidden').value : '';
+                var cat = document.getElementById('ddMcCatHidden') ? document.getElementById('ddMcCatHidden').value : '';
+                var typeBtn = document.getElementById('ddMcTypeBtn');
+                var catBtn = document.getElementById('ddMcCatBtn');
+                var valid = true;
 
-                        if (wrapperId === 'ddMcTypeWrapper' || wrapperId === 'ddMcCatWrapper') updateBadge();
-                    });
-
-                    document.addEventListener('click', function (e) {
-                        if (!wrapper.contains(e.target)) panel.classList.add('hidden');
-                    });
+                if (!type) {
+                    if (typeBtn) { typeBtn.classList.add('ring-2', 'ring-red-400'); setTimeout(function () { typeBtn.classList.remove('ring-2', 'ring-red-400'); }, 3000); }
+                    valid = false;
+                }
+                if (!cat) {
+                    if (catBtn) { catBtn.classList.add('ring-2', 'ring-red-400'); setTimeout(function () { catBtn.classList.remove('ring-2', 'ring-red-400'); }, 3000); }
+                    valid = false;
+                }
+                if (!valid) {
+                    // Switch to Details tab to show the error fields
+                    activateTab('mc-tab-details');
+                    return;
                 }
 
-                [
-                    'ddMcTypeWrapper', 'ddMcCatWrapper', 'ddMcSupplierWrapper',
-                    'ddMcWeightUnitWrapper', 'ddMcCurrencyWrapper', 'ddMcDiscWrapper',
-                    'ddMcItemUnitWrapper', 'ddMcOutUnitWrapper'
-                ].forEach(setupDropdown);
+                var form = document.getElementById('createProductionForm');
+                var formData = new FormData(form);
 
-                // —— AJAX Form Submission (handles media upload after sheet creation) ——
-                function submitProductionForm(statusOverride) {
-                    var type = document.getElementById('ddMcTypeHidden') ? document.getElementById('ddMcTypeHidden').value : '';
-                    var cat = document.getElementById('ddMcCatHidden') ? document.getElementById('ddMcCatHidden').value : '';
-                    var typeBtn = document.getElementById('ddMcTypeBtn');
-                    var catBtn = document.getElementById('ddMcCatBtn');
-                    var valid = true;
+                if (statusOverride) {
+                    formData.set('status', statusOverride);
+                }
 
-                    if (!type) {
-                        if (typeBtn) { typeBtn.classList.add('ring-2', 'ring-red-400'); setTimeout(function () { typeBtn.classList.remove('ring-2', 'ring-red-400'); }, 3000); }
-                        valid = false;
-                    }
-                    if (!cat) {
-                        if (catBtn) { catBtn.classList.add('ring-2', 'ring-red-400'); setTimeout(function () { catBtn.classList.remove('ring-2', 'ring-red-400'); }, 3000); }
-                        valid = false;
-                    }
-                    if (!valid) {
-                        // Switch to Details tab to show the error fields
-                        activateTab('mc-tab-details');
-                        return;
-                    }
+                // Disable buttons & show spinner
+                var btnSubmit = document.getElementById('btn-create-submit');
+                var btnDraft = document.getElementById('create-save-draft');
+                if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.textContent = 'Creating…'; }
+                if (btnDraft) { btnDraft.disabled = true; }
 
-                    var form = document.getElementById('createProductionForm');
-                    var formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    },
+                    body: formData,
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (json) {
+                        if (!json.success) {
+                            alert('Failed to create sheet: ' + (json.message || 'Unknown error'));
+                            if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Create'; }
+                            if (btnDraft) { btnDraft.disabled = false; }
+                            return;
+                        }
 
-                    if (statusOverride) {
-                        formData.set('status', statusOverride);
-                    }
+                        var sheetId = json.sheet_id;
+                        var sheetNum = json.sheet_number;
+                        var allQueued = mediaQueued.photos.concat(mediaQueued.documents);
 
-                    // Disable buttons & show spinner
-                    var btnSubmit = document.getElementById('btn-create-submit');
-                    var btnDraft = document.getElementById('create-save-draft');
-                    if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.textContent = 'Creating…'; }
-                    if (btnDraft) { btnDraft.disabled = true; }
+                        function onAllDone() {
+                            // Close modal and reset
+                            closeModal();
+                            // Refresh table and counts without full page reload
+                            currentPage = 1;
+                            loadTable(getFilters());
+                            refreshCounts();
+                            // Show success toast
+                            showToast(sheetNum + ' created successfully!', 'success');
+                        }
 
-                    fetch(form.action, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                        },
-                        body: formData,
-                    })
-                        .then(function (r) { return r.json(); })
-                        .then(function (json) {
-                            if (!json.success) {
-                                alert('Failed to create sheet: ' + (json.message || 'Unknown error'));
-                                if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Create'; }
-                                if (btnDraft) { btnDraft.disabled = false; }
-                                return;
-                            }
+                        if (allQueued.length === 0) {
+                            onAllDone();
+                            return;
+                        }
 
-                            var sheetId = json.sheet_id;
-                            var sheetNum = json.sheet_number;
-                            var allQueued = mediaQueued.photos.concat(mediaQueued.documents);
-
-                            function onAllDone() {
-                                // Close modal and reset
-                                closeModal();
-                                // Refresh table and counts without full page reload
-                                currentPage = 1;
-                                loadTable(getFilters());
-                                refreshCounts();
-                                // Show success toast
-                                showToast(sheetNum + ' created successfully!', 'success');
-                            }
-
-                            if (allQueued.length === 0) {
+                        // Upload files sequentially, then refresh
+                        function uploadNext(index) {
+                            if (index >= allQueued.length) {
                                 onAllDone();
                                 return;
                             }
+                            var item = allQueued[index];
+                            var fd = new FormData();
+                            fd.append('sheet_id', sheetId);
+                            fd.append('file_type', item.type);
+                            fd.append('file', item.file);
 
-                            // Upload files sequentially, then refresh
-                            function uploadNext(index) {
-                                if (index >= allQueued.length) {
-                                    onAllDone();
-                                    return;
-                                }
-                                var item = allQueued[index];
-                                var fd = new FormData();
-                                fd.append('sheet_id', sheetId);
-                                fd.append('file_type', item.type);
-                                fd.append('file', item.file);
+                            // Update status in table
+                            var statusCell = document.getElementById('media-status-' + item.uid);
+                            if (statusCell) statusCell.innerHTML = '<span class="text-blue-500 font-medium">Uploading…</span>';
 
-                                // Update status in table
-                                var statusCell = document.getElementById('media-status-' + item.uid);
-                                if (statusCell) statusCell.innerHTML = '<span class="text-blue-500 font-medium">Uploading…</span>';
-
-                                fetch('{{ route("production.media.upload") }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                        'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                                    },
-                                    body: fd,
-                                })
-                                    .then(function (r) { return r.json(); })
-                                    .then(function (res) {
-                                        if (statusCell) {
-                                            statusCell.innerHTML = res.success
-                                                ? '<span class="text-green-600 font-medium">✓ Uploaded</span>'
-                                                : '<span class="text-red-500 font-medium">✗ Failed</span>';
-                                        }
-                                    })
-                                    .catch(function () {
-                                        if (statusCell) statusCell.innerHTML = '<span class="text-red-500 font-medium">✗ Error</span>';
-                                    })
-                                    .finally(function () {
-                                        uploadNext(index + 1);
-                                    });
-                            }
-
-                            uploadNext(0);
-                        })
-                        .catch(function () {
-                            alert('Network error. Please try again.');
-                            if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Create'; }
-                            if (btnDraft) { btnDraft.disabled = false; }
-                        });
-                }
-
-                document.getElementById('btn-create-submit').addEventListener('click', function () {
-                    submitProductionForm(null);
-                });
-
-                document.getElementById('create-save-draft').addEventListener('click', function () {
-                    submitProductionForm('draft');
-                });
-
-                // ══════════════════════════════════════════════════════════════════
-                // AJAX TABLE LOADING
-                // ══════════════════════════════════════════════════════════════════
-
-                var currentStatus = 'all';
-                var currentPage = 1;
-
-                // ── Helpers ──────────────────────────────────────────────────────
-                function statusBadge(status) {
-                    var map = {
-                        'draft': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">Draft</span>',
-                        'in_production': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-800">In production</span>',
-                        'completed': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-100 text-green-800">Completed</span>',
-                        'deleted': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-800">Canceled</span>',
-                    };
-                    return map[status] || '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">' + status + '</span>';
-                }
-
-                function getFilters() {
-                    // Read selected prodtype — send data-value (type_value) to match controller filter
-                    var selectedTypeValue = '';
-                    var activeOpt = document.querySelector('#w-prodtype .opt-prodtype.text-slate-800');
-                    if (activeOpt) {
-                        selectedTypeValue = activeOpt.dataset.value || '';
-                    }
-                    var filterSupId = document.getElementById('filter-supplier-id');
-                    return {
-                        status: currentStatus,
-                        production_type: selectedTypeValue,
-                        date_from: document.getElementById('date-from').value,
-                        date_to: document.getElementById('date-to').value,
-                        supplier: filterSupId ? filterSupId.value : 'all',
-                        search: document.getElementById('prod-search').value,
-                        per_page: document.getElementById('prod-per-page').value,
-                        page: currentPage,
-                    };
-                }
-
-                // ── Pre-select production type from URL ?type= param ──────────────
-                function preSelectTypeFromUrl() {
-                    var urlParams = new URLSearchParams(window.location.search);
-                    var typeParam = urlParams.get('type'); // e.g. 're-assortment'
-                    if (!typeParam) return;
-
-                    var opts = document.querySelectorAll('#w-prodtype .opt-prodtype');
-                    var matched = null;
-                    opts.forEach(function (opt) {
-                        var val = (opt.dataset.value || '').toLowerCase();
-                        if (val === typeParam.toLowerCase()) matched = opt;
-                    });
-
-                    if (matched) {
-                        // Deselect all
-                        opts.forEach(function (o) {
-                            o.classList.remove('text-slate-800', 'bg-slate-100', 'font-semibold');
-                            o.classList.add('text-slate-700');
-                        });
-                        // Highlight matched
-                        matched.classList.add('text-slate-800', 'bg-slate-100', 'font-semibold');
-                        matched.classList.remove('text-slate-700');
-                        // Update label
-                        var lbl = document.getElementById('lbl-prodtype');
-                        if (lbl) {
-                            lbl.textContent = matched.dataset.label || matched.textContent.trim();
-                            lbl.classList.remove('text-slate-500');
-                            lbl.classList.add('text-slate-800');
-                        }
-                    }
-                }
-
-                function loadTable(params) {
-                    var tbody = document.getElementById('prod-table-body');
-                    var countEl = document.getElementById('prod-result-count');
-                    var pageEl = document.getElementById('prod-page-info');
-                    var btnPrev = document.getElementById('btn-prev');
-                    var btnNext = document.getElementById('btn-next');
-
-                    // Loading indicator
-                    tbody.innerHTML = '<tr><td colspan="12" class="px-4 py-12 text-center text-slate-400 text-sm">' +
-                        '<svg class="animate-spin w-5 h-5 mx-auto text-blue-400" fill="none" viewBox="0 0 24 24">' +
-                        '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
-                        '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg></td></tr>';
-
-                    var qs = Object.keys(params).map(function (k) {
-                        return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] || '');
-                    }).join('&');
-
-                    fetch('{{ route("production.data") }}?' + qs, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
-                    })
-                        .then(function (r) { return r.json(); })
-                        .then(function (json) {
-                            var rows = json.data;
-                            currentPage = json.current_page;
-
-                            if (!rows || rows.length === 0) {
-                                tbody.innerHTML = '<tr><td colspan="12" class="px-4 py-12 text-center text-slate-400 text-sm">No records found</td></tr>';
-                            } else {
-                                tbody.innerHTML = rows.map(function (r) {
-                                    var completeUrl = '{{ url("Inventory/MyInventory/new") }}?production_sheet_id=' + r.id;
-                                    var viewBtn = '<button type="button" '
-                                        + 'title="View Details" '
-                                        + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors" '
-                                        + 'onclick="openViewModal(' + r.id + ')">'
-                                        + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>'
-                                        + '</button>';
-
-                                    var actions = '<div class="flex items-center gap-1.5">' + viewBtn;
-
-                                    if (r.status === 'deleted' || r.status === 'completed') {
-                                        actions += '<button type="button" disabled title="Completed" class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed">'
-                                            + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
-                                            + '</button>'
-                                            + '<button type="button" disabled title="Canceled" class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed">'
-                                            + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
-                                            + '</button>';
-                                    } else {
-                                        actions +=
-                                            '<a href="' + completeUrl + '" '
-                                            + 'title="Complete & Add to Inventory" '
-                                            + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-green-600 bg-green-50 border border-green-200 hover:bg-green-100 transition-colors js-complete-link">'
-                                            + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
-                                            + '</a>'
-                                            + '<button type="button" '
-                                            + 'title="Cancel" '
-                                            + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors js-cancel-btn" '
-                                            + 'onclick="confirmDeleteSheet(' + r.id + ', \'' + r.sheet_number + '\')" >'
-                                            + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
-                                            + '</button>';
+                            fetch('{{ route("production.media.upload") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                                },
+                                body: fd,
+                            })
+                                .then(function (r) { return r.json(); })
+                                .then(function (res) {
+                                    if (statusCell) {
+                                        statusCell.innerHTML = res.success
+                                            ? '<span class="text-green-600 font-medium">✓ Uploaded</span>'
+                                            : '<span class="text-red-500 font-medium">✗ Failed</span>';
                                     }
-                                    actions += '</div>';
-                                    return '<tr class="hover:bg-slate-50 transition-colors" data-sheet-id="' + r.id + '">' +
-                                        '<td class="px-4 py-3 font-medium">' +
-                                        '<span class="font-semibold text-slate-700">' + r.sheet_number + '</span>' +
-                                        '</td>' +
-                                        '<td class="px-4 py-3">' + r.production_type + '</td>' +
-                                        '<td class="px-4 py-3">' + r.reference + '</td>' +
-                                        '<td class="px-4 py-3 js-status-cell">' + statusBadge(r.status) + '</td>' +
-                                        '<td class="px-4 py-3">' + r.creation_date + '</td>' +
-                                        '<td class="px-4 py-3">' + r.due_date + '</td>' +
-                                        '<td class="px-4 py-3">' + r.closed_date + '</td>' +
-                                        '<td class="px-4 py-3">' + r.original_quantity + '</td>' +
-                                        '<td class="px-4 py-3">' + r.original_weight + '</td>' +
-                                        '<td class="px-4 py-3">' + r.original_total_cost + '</td>' +
-                                        '<td class="px-4 py-3">' + (r.discrepancy_reason !== '—' ? r.discrepancy_reason : '—') + '</td>' +
-                                        '<td class="px-4 py-3 js-actions-cell">' + actions + '</td>' +
-                                        '</tr>';
-                                }).join('');
-                            }
+                                })
+                                .catch(function () {
+                                    if (statusCell) statusCell.innerHTML = '<span class="text-red-500 font-medium">✗ Error</span>';
+                                })
+                                .finally(function () {
+                                    uploadNext(index + 1);
+                                });
+                        }
 
-                            // Update count label
-                            if (countEl) countEl.textContent = 'Showing ' + json.total + ' result' + (json.total !== 1 ? 's' : '');
-                            if (pageEl) pageEl.textContent = json.current_page + ' / ' + json.last_page;
-
-                            // Prev/Next buttons
-                            if (btnPrev) {
-                                if (json.current_page <= 1) {
-                                    btnPrev.classList.add('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
-                                    btnPrev.classList.remove('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
-                                    btnPrev.onclick = null;
-                                } else {
-                                    btnPrev.classList.remove('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
-                                    btnPrev.classList.add('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
-                                    btnPrev.onclick = function () { currentPage--; loadTable(getFilters()); };
-                                }
-                            }
-                            if (btnNext) {
-                                if (json.current_page >= json.last_page) {
-                                    btnNext.classList.add('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
-                                    btnNext.classList.remove('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
-                                    btnNext.onclick = null;
-                                } else {
-                                    btnNext.classList.remove('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
-                                    btnNext.classList.add('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
-                                    btnNext.onclick = function () { currentPage++; loadTable(getFilters()); };
-                                }
-                            }
-                        })
-                        .catch(function () {
-                            tbody.innerHTML = '<tr><td colspan="11" class="px-4 py-12 text-center text-red-400 text-sm">Failed to load data. Please try again.</td></tr>';
-                        });
-                }
-
-                function refreshCounts() {
-                    var params = getFilters();
-                    var qs = Object.keys(params).map(function (k) {
-                        return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] || '');
-                    }).join('&');
-
-                    fetch('{{ route("production.counts") }}?' + qs, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        uploadNext(0);
                     })
-                        .then(function (r) { return r.json(); })
-                        .then(function (json) {
-                            ['all', 'in_production', 'completed', 'deleted'].forEach(function (key) {
-                                var cEl = document.getElementById('cnt-' + key);
-                                var tEl = document.getElementById('tot-' + key);
-                                if (cEl) cEl.textContent = json.counts[key];
-                                if (tEl) tEl.textContent = json.totals[key];
-                            });
-                        });
-                }
-
-                // ── Status tab wiring ────────────────────────────────────────────
-                document.querySelectorAll('.status-tab').forEach(function (btn) {
-                    btn.addEventListener('click', function () {
-                        currentStatus = this.dataset.tab;
-                        currentPage = 1;
-                        loadTable(getFilters());
+                    .catch(function () {
+                        alert('Network error. Please try again.');
+                        if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Create'; }
+                        if (btnDraft) { btnDraft.disabled = false; }
                     });
+            }
+
+            document.getElementById('btn-create-submit').addEventListener('click', function () {
+                submitProductionForm(null);
+            });
+
+            document.getElementById('create-save-draft').addEventListener('click', function () {
+                submitProductionForm('draft');
+            });
+
+            // ══════════════════════════════════════════════════════════════════
+            // AJAX TABLE LOADING
+            // ══════════════════════════════════════════════════════════════════
+
+            var currentStatus = 'all';
+            var currentPage = 1;
+
+            // ── Helpers ──────────────────────────────────────────────────────
+            function statusBadge(status) {
+                var map = {
+                    'draft': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">Draft</span>',
+                    'in_production': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-800">In production</span>',
+                    'completed': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-100 text-green-800">Completed</span>',
+                    'deleted': '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-800">Canceled</span>',
+                };
+                return map[status] || '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">' + status + '</span>';
+            }
+
+            function getFilters() {
+                // Read selected prodtype — send data-value (type_value) to match controller filter
+                var selectedTypeValue = '';
+                var activeOpt = document.querySelector('#w-prodtype .opt-prodtype.text-slate-800');
+                if (activeOpt) {
+                    selectedTypeValue = activeOpt.dataset.value || '';
+                }
+                var filterSupId = document.getElementById('filter-supplier-id');
+                return {
+                    status: currentStatus,
+                    production_type: selectedTypeValue,
+                    date_from: document.getElementById('date-from').value,
+                    date_to: document.getElementById('date-to').value,
+                    supplier: filterSupId ? filterSupId.value : 'all',
+                    search: document.getElementById('prod-search').value,
+                    per_page: document.getElementById('prod-per-page').value,
+                    page: currentPage,
+                };
+            }
+
+            // ── Pre-select production type from URL ?type= param ──────────────
+            function preSelectTypeFromUrl() {
+                var urlParams = new URLSearchParams(window.location.search);
+                var typeParam = urlParams.get('type'); // e.g. 're-assortment'
+                if (!typeParam) return;
+
+                var opts = document.querySelectorAll('#w-prodtype .opt-prodtype');
+                var matched = null;
+                opts.forEach(function (opt) {
+                    var val = (opt.dataset.value || '').toLowerCase();
+                    if (val === typeParam.toLowerCase()) matched = opt;
                 });
 
-                // ── Apply filter ─────────────────────────────────────────────────
-                document.getElementById('btn-apply').addEventListener('click', function () {
-                    currentPage = 1;
-                    var filters = getFilters();
-                    loadTable(filters);
-                    refreshCounts();
-                });
-
-                // ── Search (enter key) ────────────────────────────────────────────
-                document.getElementById('prod-search').addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        currentPage = 1;
-                        var filters = getFilters();
-                        loadTable(filters);
-                        refreshCounts();
+                if (matched) {
+                    // Deselect all
+                    opts.forEach(function (o) {
+                        o.classList.remove('text-slate-800', 'bg-slate-100', 'font-semibold');
+                        o.classList.add('text-slate-700');
+                    });
+                    // Highlight matched
+                    matched.classList.add('text-slate-800', 'bg-slate-100', 'font-semibold');
+                    matched.classList.remove('text-slate-700');
+                    // Update label
+                    var lbl = document.getElementById('lbl-prodtype');
+                    if (lbl) {
+                        lbl.textContent = matched.dataset.label || matched.textContent.trim();
+                        lbl.classList.remove('text-slate-500');
+                        lbl.classList.add('text-slate-800');
                     }
-                });
-                document.querySelector('#prod-search + button').addEventListener('click', function () {
-                    currentPage = 1;
-                    var filters = getFilters();
-                    loadTable(filters);
-                    refreshCounts();
-                });
+                }
+            }
 
-                // ── Per-page change ───────────────────────────────────────────────
-                document.getElementById('prod-per-page').addEventListener('change', function () {
-                    currentPage = 1;
-                    var filters = getFilters();
-                    loadTable(filters);
-                    refreshCounts();
-                });
+            function loadTable(params) {
+                var tbody = document.getElementById('prod-table-body');
+                var countEl = document.getElementById('prod-result-count');
+                var pageEl = document.getElementById('prod-page-info');
+                var btnPrev = document.getElementById('btn-prev');
+                var btnNext = document.getElementById('btn-next');
 
-                // ── Initial load on page ready (with optional URL type pre-select) ──
-                preSelectTypeFromUrl();
-                loadTable(getFilters());
+                // Loading indicator
+                tbody.innerHTML = '<tr><td colspan="12" class="px-4 py-12 text-center text-slate-400 text-sm">' +
+                    '<svg class="animate-spin w-5 h-5 mx-auto text-blue-400" fill="none" viewBox="0 0 24 24">' +
+                    '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
+                    '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg></td></tr>';
+
+                var qs = Object.keys(params).map(function (k) {
+                    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] || '');
+                }).join('&');
+
+                fetch('{{ route("production.data") }}?' + qs, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (json) {
+                        var rows = json.data;
+                        currentPage = json.current_page;
+
+                        if (!rows || rows.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="12" class="px-4 py-12 text-center text-slate-400 text-sm">No records found</td></tr>';
+                        } else {
+                            tbody.innerHTML = rows.map(function (r) {
+                                var completeUrl = '{{ url("Inventory/MyInventory/new") }}?production_sheet_id=' + r.id;
+                                var viewBtn = '<button type="button" '
+                                    + 'title="View Details" '
+                                    + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors" '
+                                    + 'onclick="openViewModal(' + r.id + ')">'
+                                    + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>'
+                                    + '</button>';
+
+                                var actions = '<div class="flex items-center gap-1.5">' + viewBtn;
+
+                                if (r.status === 'deleted' || r.status === 'completed') {
+                                    actions += '<button type="button" disabled title="Completed" class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed">'
+                                        + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
+                                        + '</button>'
+                                        + '<button type="button" disabled title="Canceled" class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed">'
+                                        + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                                        + '</button>';
+                                } else {
+                                    actions +=
+                                        '<a href="' + completeUrl + '" '
+                                        + 'title="Complete & Add to Inventory" '
+                                        + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-green-600 bg-green-50 border border-green-200 hover:bg-green-100 transition-colors js-complete-link">'
+                                        + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
+                                        + '</a>'
+                                        + '<button type="button" '
+                                        + 'title="Cancel" '
+                                        + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors js-cancel-btn" '
+                                        + 'onclick="confirmDeleteSheet(' + r.id + ', \'' + r.sheet_number + '\')" >'
+                                        + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                                        + '</button>';
+                                }
+                                actions += '</div>';
+                                return '<tr class="hover:bg-slate-50 transition-colors" data-sheet-id="' + r.id + '">' +
+                                    '<td class="px-4 py-3 font-medium">' +
+                                    '<span class="font-semibold text-slate-700">' + r.sheet_number + '</span>' +
+                                    '</td>' +
+                                    '<td class="px-4 py-3">' + r.production_type + '</td>' +
+                                    '<td class="px-4 py-3">' + r.reference + '</td>' +
+                                    '<td class="px-4 py-3 js-status-cell">' + statusBadge(r.status) + '</td>' +
+                                    '<td class="px-4 py-3">' + r.creation_date + '</td>' +
+                                    '<td class="px-4 py-3">' + r.due_date + '</td>' +
+                                    '<td class="px-4 py-3">' + r.closed_date + '</td>' +
+                                    '<td class="px-4 py-3">' + r.original_quantity + '</td>' +
+                                    '<td class="px-4 py-3">' + r.original_weight + '</td>' +
+                                    '<td class="px-4 py-3">' + r.original_total_cost + '</td>' +
+                                    '<td class="px-4 py-3">' + (r.discrepancy_reason !== '—' ? r.discrepancy_reason : '—') + '</td>' +
+                                    '<td class="px-4 py-3 js-actions-cell">' + actions + '</td>' +
+                                    '</tr>';
+                            }).join('');
+                        }
+
+                        // Update count label
+                        if (countEl) countEl.textContent = 'Showing ' + json.total + ' result' + (json.total !== 1 ? 's' : '');
+                        if (pageEl) pageEl.textContent = json.current_page + ' / ' + json.last_page;
+
+                        // Prev/Next buttons
+                        if (btnPrev) {
+                            if (json.current_page <= 1) {
+                                btnPrev.classList.add('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
+                                btnPrev.classList.remove('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
+                                btnPrev.onclick = null;
+                            } else {
+                                btnPrev.classList.remove('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
+                                btnPrev.classList.add('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
+                                btnPrev.onclick = function () { currentPage--; loadTable(getFilters()); };
+                            }
+                        }
+                        if (btnNext) {
+                            if (json.current_page >= json.last_page) {
+                                btnNext.classList.add('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
+                                btnNext.classList.remove('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
+                                btnNext.onclick = null;
+                            } else {
+                                btnNext.classList.remove('cursor-not-allowed', 'text-slate-400', 'bg-slate-50');
+                                btnNext.classList.add('cursor-pointer', 'text-slate-700', 'bg-white', 'hover:bg-slate-50');
+                                btnNext.onclick = function () { currentPage++; loadTable(getFilters()); };
+                            }
+                        }
+                    })
+                    .catch(function () {
+                        tbody.innerHTML = '<tr><td colspan="11" class="px-4 py-12 text-center text-red-400 text-sm">Failed to load data. Please try again.</td></tr>';
+                    });
+            }
+
+            function refreshCounts() {
+                var params = getFilters();
+                var qs = Object.keys(params).map(function (k) {
+                    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] || '');
+                }).join('&');
+
+                fetch('{{ route("production.counts") }}?' + qs, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (json) {
+                        ['all', 'in_production', 'completed', 'deleted'].forEach(function (key) {
+                            var cEl = document.getElementById('cnt-' + key);
+                            var tEl = document.getElementById('tot-' + key);
+                            if (cEl) cEl.textContent = json.counts[key];
+                            if (tEl) tEl.textContent = json.totals[key];
+                        });
+                    });
+            }
+
+            // ── Status tab wiring ────────────────────────────────────────────
+            document.querySelectorAll('.status-tab').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    currentStatus = this.dataset.tab;
+                    currentPage = 1;
+                    loadTable(getFilters());
+                });
+            });
+
+            // ── Apply filter ─────────────────────────────────────────────────
+            document.getElementById('btn-apply').addEventListener('click', function () {
+                currentPage = 1;
+                var filters = getFilters();
+                loadTable(filters);
                 refreshCounts();
+            });
 
-                // ══════════════════════════════════════════════════════════════════
-                // ITEMS TAB — fully functional add/remove/totals/serialize
-                // ══════════════════════════════════════════════════════════════════
-                var itemsList = [];   // in-memory array of added items
-                var itemIndex = 0;    // ever-incrementing row key
+            // ── Search (enter key) ────────────────────────────────────────────
+            document.getElementById('prod-search').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    currentPage = 1;
+                    var filters = getFilters();
+                    loadTable(filters);
+                    refreshCounts();
+                }
+            });
+            document.querySelector('#prod-search + button').addEventListener('click', function () {
+                currentPage = 1;
+                var filters = getFilters();
+                loadTable(filters);
+                refreshCounts();
+            });
 
-                function renderItems() {
-                    var tbody = document.getElementById('items-table-body');
-                    var tfoot = document.getElementById('items-table-foot');
-                    var emptyRow = document.getElementById('items-empty-row');
-                    var badge = document.getElementById('item-count-badge');
-                    var clearBtn = document.getElementById('btn-clear-items');
-                    var hidden = document.getElementById('items-hidden-container');
+            // ── Per-page change ───────────────────────────────────────────────
+            document.getElementById('prod-per-page').addEventListener('change', function () {
+                currentPage = 1;
+                var filters = getFilters();
+                loadTable(filters);
+                refreshCounts();
+            });
 
-                    // Badge
-                    badge.textContent = itemsList.length;
+            // ── Initial load on page ready (with optional URL type pre-select) ──
+            preSelectTypeFromUrl();
+            loadTable(getFilters());
+            refreshCounts();
 
-                    // Clear button visibility
-                    if (clearBtn) {
-                        if (itemsList.length > 0) clearBtn.classList.remove('hidden');
-                        else clearBtn.classList.add('hidden');
-                    }
+            // ══════════════════════════════════════════════════════════════════
+            // ITEMS TAB — fully functional add/remove/totals/serialize
+            // ══════════════════════════════════════════════════════════════════
+            var itemsList = [];   // in-memory array of added items
+            var itemIndex = 0;    // ever-incrementing row key
 
-                    // Empty-row toggle
-                    if (itemsList.length === 0) {
-                        if (!emptyRow) {
-                            tbody.innerHTML = '<tr id="items-empty-row"><td colspan="7" class="px-4 py-10 text-center text-slate-400 text-[13px]">No items added yet</td></tr>';
-                        }
-                        if (tfoot) tfoot.classList.add('hidden');
+            function renderItems() {
+                var tbody = document.getElementById('items-table-body');
+                var tfoot = document.getElementById('items-table-foot');
+                var emptyRow = document.getElementById('items-empty-row');
+                var badge = document.getElementById('item-count-badge');
+                var clearBtn = document.getElementById('btn-clear-items');
+                var hidden = document.getElementById('items-hidden-container');
 
-                        // If no items left, clear the synced details fields too
-                        var origQtyInp = document.querySelector('[name="original_quantity"]');
-                        var origWtInp = document.querySelector('[name="original_weight"]');
-                        var origCostInp = document.querySelector('[name="original_total_cost"]');
-                        if (origQtyInp) { origQtyInp.value = ''; origQtyInp.dispatchEvent(new Event('input')); }
-                        if (origWtInp) { origWtInp.value = ''; origWtInp.dispatchEvent(new Event('input')); }
-                        if (origCostInp) { origCostInp.value = ''; origCostInp.dispatchEvent(new Event('input')); }
-                    } else {
-                        if (tfoot) tfoot.classList.remove('hidden');
-                        // Rebuild tbody rows (only the data rows — NOT emptyRow)
-                        var rowsHtml = itemsList.map(function (item, idx) {
-                            return '<tr class="hover:bg-slate-50 transition-colors">' +
-                                '<td class="px-4 py-3 text-slate-400 text-[12px]">' + (idx + 1) + '</td>' +
-                                '<td class="px-4 py-3 font-medium text-slate-800">' + (item.sku || '<span class="text-slate-400">—</span>') + '</td>' +
-                                '<td class="px-4 py-3 text-slate-600">' + (item.desc || '<span class="text-slate-400">—</span>') + '</td>' +
-                                '<td class="px-4 py-3 text-right">' + (item.qty !== '' ? item.qty : '—') + '</td>' +
-                                '<td class="px-4 py-3 text-right">' + (item.weight !== '' ? item.weight + ' ' + item.unit : '—') + '</td>' +
-                                '<td class="px-4 py-3 text-right">' + (item.cost !== '' ? item.cost : '—') + '</td>' +
-                                '<td class="px-4 py-3 text-center">' +
-                                '<button type="button" data-key="' + item.key + '" class="btn-remove-item text-slate-300 hover:text-red-500 transition-colors">' +
-                                '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
-                                '</button>' +
-                                '</td>' +
-                                '</tr>';
-                        }).join('');
-                        tbody.innerHTML = rowsHtml;
+                // Badge
+                badge.textContent = itemsList.length;
 
-                        // Bind remove buttons
-                        tbody.querySelectorAll('.btn-remove-item').forEach(function (btn) {
-                            btn.addEventListener('click', function () {
-                                var key = parseInt(this.dataset.key);
-                                itemsList = itemsList.filter(function (i) { return i.key !== key; });
-                                renderItems();
-                                serializeItems();
-                            });
-                        });
-
-                        // Update totals footer
-                        var totalQty = 0;
-                        var totalWeight = 0;
-                        var totalCost = 0;
-                        var hasWeight = false;
-                        var hasCost = false;
-                        var lastUnit = 'ct';
-
-                        itemsList.forEach(function (item) {
-                            if (item.qty !== '') totalQty += parseFloat(item.qty) || 0;
-                            if (item.weight !== '') {
-                                totalWeight += parseFloat(item.weight) || 0;
-                                hasWeight = true;
-                                lastUnit = item.unit;
-                            }
-                            if (item.cost !== '') { totalCost += parseFloat(item.cost) || 0; hasCost = true; }
-                        });
-
-                        var qtyEl = document.getElementById('items-total-qty');
-                        var weightEl = document.getElementById('items-total-weight');
-                        var costEl = document.getElementById('items-total-cost');
-
-                        if (qtyEl) qtyEl.textContent = totalQty > 0 ? totalQty : '—';
-                        if (weightEl) weightEl.textContent = hasWeight ? totalWeight.toFixed(4) : '—';
-                        if (costEl) costEl.textContent = hasCost ? totalCost.toFixed(2) : '—';
-
-                        // ── Sync with Details Tab fields ─────────────────────────────
-                        var origQtyInp = document.querySelector('[name="original_quantity"]');
-                        var origWtInp = document.querySelector('[name="original_weight"]');
-                        var origCostInp = document.querySelector('[name="original_total_cost"]');
-
-                        if (origQtyInp) {
-                            origQtyInp.value = totalQty > 0 ? totalQty : '';
-                            origQtyInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
-                        }
-                        if (origWtInp) {
-                            origWtInp.value = hasWeight ? totalWeight.toFixed(4) : '';
-                            origWtInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
-                        }
-                        if (origCostInp) {
-                            origCostInp.value = hasCost ? totalCost.toFixed(2) : '';
-                            origCostInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
-                        }
-
-                        // Sync Weight Unit
-                        if (hasWeight) {
-                            var unitHidden = document.getElementById('ddMcWeightUnitHidden');
-                            var unitLabel = document.getElementById('ddMcWeightUnitLabel');
-                            if (unitHidden) unitHidden.value = lastUnit;
-                            if (unitLabel) unitLabel.textContent = lastUnit;
-                        }
-                    }
-
-                    // Always rebuild hidden inputs for form submission
-                    serializeItems();
+                // Clear button visibility
+                if (clearBtn) {
+                    if (itemsList.length > 0) clearBtn.classList.remove('hidden');
+                    else clearBtn.classList.add('hidden');
                 }
 
-                function serializeItems() {
-                    var container = document.getElementById('items-hidden-container');
-                    if (!container) return;
-                    container.innerHTML = '';
-                    itemsList.forEach(function (item, idx) {
-                        var fields = { sku: item.sku, product_id: item.product_id, description: item.desc, quantity: item.qty, weight: item.weight, weight_unit: item.unit, cost: item.cost };
-                        Object.keys(fields).forEach(function (key) {
-                            var inp = document.createElement('input');
-                            inp.type = 'hidden';
-                            inp.name = 'items[' + idx + '][' + key + ']';
-                            inp.value = fields[key] || '';
-                            container.appendChild(inp);
+                // Empty-row toggle
+                if (itemsList.length === 0) {
+                    if (!emptyRow) {
+                        tbody.innerHTML = '<tr id="items-empty-row"><td colspan="7" class="px-4 py-10 text-center text-slate-400 text-[13px]">No items added yet</td></tr>';
+                    }
+                    if (tfoot) tfoot.classList.add('hidden');
+
+                    // If no items left, clear the synced details fields too
+                    var origQtyInp = document.querySelector('[name="original_quantity"]');
+                    var origWtInp = document.querySelector('[name="original_weight"]');
+                    var origCostInp = document.querySelector('[name="original_total_cost"]');
+                    if (origQtyInp) { origQtyInp.value = ''; origQtyInp.dispatchEvent(new Event('input')); }
+                    if (origWtInp) { origWtInp.value = ''; origWtInp.dispatchEvent(new Event('input')); }
+                    if (origCostInp) { origCostInp.value = ''; origCostInp.dispatchEvent(new Event('input')); }
+                } else {
+                    if (tfoot) tfoot.classList.remove('hidden');
+                    // Rebuild tbody rows (only the data rows — NOT emptyRow)
+                    var rowsHtml = itemsList.map(function (item, idx) {
+                        return '<tr class="hover:bg-slate-50 transition-colors">' +
+                            '<td class="px-4 py-3 text-slate-400 text-[12px]">' + (idx + 1) + '</td>' +
+                            '<td class="px-4 py-3 font-medium text-slate-800">' + (item.sku || '<span class="text-slate-400">—</span>') + '</td>' +
+                            '<td class="px-4 py-3 text-slate-600">' + (item.desc || '<span class="text-slate-400">—</span>') + '</td>' +
+                            '<td class="px-4 py-3 text-right">' + (item.qty !== '' ? item.qty : '—') + '</td>' +
+                            '<td class="px-4 py-3 text-right">' + (item.weight !== '' ? item.weight + ' ' + item.unit : '—') + '</td>' +
+                            '<td class="px-4 py-3 text-right">' + (item.cost !== '' ? item.cost : '—') + '</td>' +
+                            '<td class="px-4 py-3 text-center">' +
+                            '<button type="button" data-key="' + item.key + '" class="btn-remove-item text-slate-300 hover:text-red-500 transition-colors">' +
+                            '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
+                            '</button>' +
+                            '</td>' +
+                            '</tr>';
+                    }).join('');
+                    tbody.innerHTML = rowsHtml;
+
+                    // Bind remove buttons
+                    tbody.querySelectorAll('.btn-remove-item').forEach(function (btn) {
+                        btn.addEventListener('click', function () {
+                            var key = parseInt(this.dataset.key);
+                            itemsList = itemsList.filter(function (i) { return i.key !== key; });
+                            renderItems();
+                            serializeItems();
                         });
                     });
-                }
 
-                // ── Add Item button ──────────────────────────────────────────────
-                var btnAddItem = document.getElementById('btn-add-item');
-                if (btnAddItem) {
-                    btnAddItem.addEventListener('click', function () {
-                        // Try to get SKU and Product ID directly from Select2 first (failsafe)
-                        var sku = '';
-                        var productId = '';
-                        if (window.jQuery && $('#item-select-product').length && $('#item-select-product').val()) {
-                            var selectedVal = $('#item-select-product').val();
-                            if (selectedVal && selectedVal.indexOf(':::') !== -1) {
-                                var parts = selectedVal.split(':::');
-                                productId = parts[0];
-                                sku = parts[1];
-                            }
+                    // Update totals footer
+                    var totalQty = 0;
+                    var totalWeight = 0;
+                    var totalCost = 0;
+                    var hasWeight = false;
+                    var hasCost = false;
+                    var lastUnit = 'ct';
+
+                    itemsList.forEach(function (item) {
+                        if (item.qty !== '') totalQty += parseFloat(item.qty) || 0;
+                        if (item.weight !== '') {
+                            totalWeight += parseFloat(item.weight) || 0;
+                            hasWeight = true;
+                            lastUnit = item.unit;
                         }
-
-                        // Fallback to hidden inputs if Select2 query returned nothing
-                        if (!sku) {
-                            sku = (document.getElementById('item-input-sku') || {}).value || '';
-                        }
-                        if (!productId) {
-                            productId = (document.getElementById('item-input-product-id') || {}).value || '';
-                        }
-
-                        var desc = (document.getElementById('item-input-desc') || {}).value || '';
-                        var qty = (document.getElementById('item-input-qty') || {}).value || '';
-                        var weight = (document.getElementById('item-input-weight') || {}).value || '';
-                        var unit = (document.getElementById('ddMcItemUnitHidden') || {}).value || 'ct';
-                        var cost = (document.getElementById('item-input-cost') || {}).value || '';
-                        var errEl = document.getElementById('item-add-error');
-
-                        if (!sku.trim() && !desc.trim()) {
-                            if (errEl) errEl.classList.remove('hidden');
-                            return;
-                        }
-                        if (errEl) errEl.classList.add('hidden');
-
-                        // ── Soft stock warning check ──────────────────────────────
-                        var warnEl = document.getElementById('item-stock-warning');
-                        var warnTextEl = document.getElementById('item-stock-warning-text');
-                        var stockQty = parseFloat((document.getElementById('item-stock-qty') || {}).value || '');
-                        var stockWt = parseFloat((document.getElementById('item-stock-weight') || {}).value || '');
-                        var stockUnit = (document.getElementById('item-stock-unit') || {}).value || 'ct';
-                        var requestedQty = parseFloat(qty) || 0;
-                        var requestedWt = parseFloat(weight) || 0;
-                        var warnings = [];
-
-                        if (!isNaN(stockQty) && stockQty >= 0 && requestedQty > 0 && requestedQty > stockQty) {
-                            warnings.push('Quantity requested (' + requestedQty + ') exceeds available stock (' + stockQty + ').');
-                        }
-                        if (!isNaN(stockWt) && stockWt >= 0 && requestedWt > 0 && requestedWt > stockWt) {
-                            warnings.push('Weight requested (' + requestedWt + ' ' + unit + ') exceeds available stock (' + stockWt.toFixed(4) + ' ' + stockUnit + ').');
-                        }
-
-                        if (warnings.length > 0 && warnEl && warnTextEl) {
-                            warnTextEl.innerHTML = '<strong>Stock error for ' + sku.trim() + ':</strong> ' + warnings.join(' ');
-                            warnEl.classList.remove('hidden');
-                            return; // Block adding the item
-                        } else if (warnEl) {
-                            warnEl.classList.add('hidden');
-                        }
-
-                        itemsList.push({ key: itemIndex++, sku: sku.trim(), product_id: productId, desc: desc.trim(), qty: qty, weight: weight, unit: unit, cost: cost });
-
-                        // Clear input fields
-                        ['item-input-sku', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost', 'item-input-product-id'].forEach(function (id) {
-                            var el = document.getElementById(id);
-                            if (el) el.value = '';
-                        });
-                        // Also reset the Select2 visual dropdown
-                        if (window.jQuery && $('#item-select-product').length) {
-                            $('#item-select-product').val(null).trigger('change');
-                        }
-
-                        renderItems();
+                        if (item.cost !== '') { totalCost += parseFloat(item.cost) || 0; hasCost = true; }
                     });
+
+                    var qtyEl = document.getElementById('items-total-qty');
+                    var weightEl = document.getElementById('items-total-weight');
+                    var costEl = document.getElementById('items-total-cost');
+
+                    if (qtyEl) qtyEl.textContent = totalQty > 0 ? totalQty : '—';
+                    if (weightEl) weightEl.textContent = hasWeight ? totalWeight.toFixed(4) : '—';
+                    if (costEl) costEl.textContent = hasCost ? totalCost.toFixed(2) : '—';
+
+                    // ── Sync with Details Tab fields ─────────────────────────────
+                    var origQtyInp = document.querySelector('[name="original_quantity"]');
+                    var origWtInp = document.querySelector('[name="original_weight"]');
+                    var origCostInp = document.querySelector('[name="original_total_cost"]');
+
+                    if (origQtyInp) {
+                        origQtyInp.value = totalQty > 0 ? totalQty : '';
+                        origQtyInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
+                    }
+                    if (origWtInp) {
+                        origWtInp.value = hasWeight ? totalWeight.toFixed(4) : '';
+                        origWtInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
+                    }
+                    if (origCostInp) {
+                        origCostInp.value = hasCost ? totalCost.toFixed(2) : '';
+                        origCostInp.dispatchEvent(new Event('input')); // trigger Costs tab recalculation
+                    }
+
+                    // Sync Weight Unit
+                    if (hasWeight) {
+                        var unitHidden = document.getElementById('ddMcWeightUnitHidden');
+                        var unitLabel = document.getElementById('ddMcWeightUnitLabel');
+                        if (unitHidden) unitHidden.value = lastUnit;
+                        if (unitLabel) unitLabel.textContent = lastUnit;
+                    }
                 }
 
-                // ── Enter key in item inputs triggers Add ────────────────────────
-                ['item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
-                    var el = document.getElementById(id);
-                    if (el) {
-                        el.addEventListener('keydown', function (e) {
-                            if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-item').click(); }
-                        });
-                    }
+                // Always rebuild hidden inputs for form submission
+                serializeItems();
+            }
+
+            function serializeItems() {
+                var container = document.getElementById('items-hidden-container');
+                if (!container) return;
+                container.innerHTML = '';
+                itemsList.forEach(function (item, idx) {
+                    var fields = { sku: item.sku, product_id: item.product_id, description: item.desc, quantity: item.qty, weight: item.weight, weight_unit: item.unit, cost: item.cost };
+                    Object.keys(fields).forEach(function (key) {
+                        var inp = document.createElement('input');
+                        inp.type = 'hidden';
+                        inp.name = 'items[' + idx + '][' + key + ']';
+                        inp.value = fields[key] || '';
+                        container.appendChild(inp);
+                    });
                 });
+            }
 
-                // ── Clear all items ──────────────────────────────────────────────
-                var btnClear = document.getElementById('btn-clear-items');
-                if (btnClear) {
-                    btnClear.addEventListener('click', function () {
-                        if (itemsList.length === 0) return;
-                        if (!confirm('Remove all ' + itemsList.length + ' item(s)?')) return;
-                        itemsList = [];
-                        renderItems();
-                    });
-                }
+            // ── Add Item button ──────────────────────────────────────────────
+            var btnAddItem = document.getElementById('btn-add-item');
+            if (btnAddItem) {
+                btnAddItem.addEventListener('click', function () {
+                    // Try to get SKU and Product ID directly from Select2 first (failsafe)
+                    var sku = '';
+                    var productId = '';
+                    if (window.jQuery && $('#item-select-product').length && $('#item-select-product').val()) {
+                        var selectedVal = $('#item-select-product').val();
+                        if (selectedVal && selectedVal.indexOf(':::') !== -1) {
+                            var parts = selectedVal.split(':::');
+                            productId = parts[0];
+                            sku = parts[1];
+                        }
+                    }
 
-                // ── Also reset items on modal reset ──────────────────────────────
-                var origResetModal = window._resetModal || function () { };
-                window._resetItemsList = function () {
-                    itemsList = [];
-                    itemIndex = 0;
-                    renderItems();
-                    ['item-input-sku', 'item-input-product-id', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
+                    // Fallback to hidden inputs if Select2 query returned nothing
+                    if (!sku) {
+                        sku = (document.getElementById('item-input-sku') || {}).value || '';
+                    }
+                    if (!productId) {
+                        productId = (document.getElementById('item-input-product-id') || {}).value || '';
+                    }
+
+                    var desc = (document.getElementById('item-input-desc') || {}).value || '';
+                    var qty = (document.getElementById('item-input-qty') || {}).value || '';
+                    var weight = (document.getElementById('item-input-weight') || {}).value || '';
+                    var unit = (document.getElementById('ddMcItemUnitHidden') || {}).value || 'ct';
+                    var cost = (document.getElementById('item-input-cost') || {}).value || '';
+                    var errEl = document.getElementById('item-add-error');
+
+                    if (!sku.trim() && !desc.trim()) {
+                        if (errEl) errEl.classList.remove('hidden');
+                        return;
+                    }
+                    if (errEl) errEl.classList.add('hidden');
+
+                    // ── Soft stock warning check ──────────────────────────────
+                    var warnEl = document.getElementById('item-stock-warning');
+                    var warnTextEl = document.getElementById('item-stock-warning-text');
+                    var stockQty = parseFloat((document.getElementById('item-stock-qty') || {}).value || '');
+                    var stockWt = parseFloat((document.getElementById('item-stock-weight') || {}).value || '');
+                    var stockUnit = (document.getElementById('item-stock-unit') || {}).value || 'ct';
+                    var requestedQty = parseFloat(qty) || 0;
+                    var requestedWt = parseFloat(weight) || 0;
+                    var warnings = [];
+
+                    if (!isNaN(stockQty) && stockQty >= 0 && requestedQty > 0 && requestedQty > stockQty) {
+                        warnings.push('Quantity requested (' + requestedQty + ') exceeds available stock (' + stockQty + ').');
+                    }
+                    if (!isNaN(stockWt) && stockWt >= 0 && requestedWt > 0 && requestedWt > stockWt) {
+                        warnings.push('Weight requested (' + requestedWt + ' ' + unit + ') exceeds available stock (' + stockWt.toFixed(4) + ' ' + stockUnit + ').');
+                    }
+
+                    if (warnings.length > 0 && warnEl && warnTextEl) {
+                        warnTextEl.innerHTML = '<strong>Stock error for ' + sku.trim() + ':</strong> ' + warnings.join(' ');
+                        warnEl.classList.remove('hidden');
+                        return; // Block adding the item
+                    } else if (warnEl) {
+                        warnEl.classList.add('hidden');
+                    }
+
+                    itemsList.push({ key: itemIndex++, sku: sku.trim(), product_id: productId, desc: desc.trim(), qty: qty, weight: weight, unit: unit, cost: cost });
+
+                    // Clear input fields
+                    ['item-input-sku', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost', 'item-input-product-id'].forEach(function (id) {
                         var el = document.getElementById(id);
                         if (el) el.value = '';
                     });
-                    // Reset Select2 visual state
+                    // Also reset the Select2 visual dropdown
                     if (window.jQuery && $('#item-select-product').length) {
                         $('#item-select-product').val(null).trigger('change');
                     }
-                    var errEl = document.getElementById('item-add-error');
-                    if (errEl) errEl.classList.add('hidden');
-                };
 
-                // Hook into existing closeModal to also reset items
-                var origClose = document.getElementById('create-close');
-                var origCancel = document.getElementById('create-cancel');
-                [origClose, origCancel].forEach(function (btn) {
-                    if (btn) {
-                        btn.addEventListener('click', function () { window._resetItemsList(); });
-                    }
+                    renderItems();
                 });
+            }
 
-                // Initial render (shows empty state)
+            // ── Enter key in item inputs triggers Add ────────────────────────
+            ['item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-item').click(); }
+                    });
+                }
+            });
+
+            // ── Clear all items ──────────────────────────────────────────────
+            var btnClear = document.getElementById('btn-clear-items');
+            if (btnClear) {
+                btnClear.addEventListener('click', function () {
+                    if (itemsList.length === 0) return;
+                    if (!confirm('Remove all ' + itemsList.length + ' item(s)?')) return;
+                    itemsList = [];
+                    renderItems();
+                });
+            }
+
+            // ── Also reset items on modal reset ──────────────────────────────
+            var origResetModal = window._resetModal || function () { };
+            window._resetItemsList = function () {
+                itemsList = [];
+                itemIndex = 0;
                 renderItems();
-
-                // ══════════════════════════════════════════════════════════════════
-                // MEDIA UPLOAD — photos & documents queue (pre-submit)
-                // ══════════════════════════════════════════════════════════════════
-                var mediaQueued = { photos: [], documents: [] };
-                var mediaUidCounter = 0;
-
-                function humanSize(bytes) {
-                    if (bytes < 1024) return bytes + ' B';
-                    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-                    return (bytes / 1048576).toFixed(2) + ' MB';
+                ['item-input-sku', 'item-input-product-id', 'item-input-desc', 'item-input-qty', 'item-input-weight', 'item-input-cost'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                // Reset Select2 visual state
+                if (window.jQuery && $('#item-select-product').length) {
+                    $('#item-select-product').val(null).trigger('change');
                 }
+                var errEl = document.getElementById('item-add-error');
+                if (errEl) errEl.classList.add('hidden');
+            };
 
-                function renderMediaTable(type) {
-                    var list = type === 'photo' ? mediaQueued.photos : mediaQueued.documents;
-                    var tbodyId = type === 'photo' ? 'photo-preview-tbody' : 'doc-preview-tbody';
-                    var wrapId = type === 'photo' ? 'photo-preview-list' : 'doc-preview-list';
-                    var tbody = document.getElementById(tbodyId);
-                    var wrap = document.getElementById(wrapId);
-                    if (!tbody || !wrap) return;
-
-                    if (list.length === 0) {
-                        wrap.classList.add('hidden');
-                        return;
-                    }
-                    wrap.classList.remove('hidden');
-
-                    tbody.innerHTML = list.map(function (item) {
-                        return '<tr>' +
-                            '<td class="px-3 py-2 text-slate-700 truncate max-w-[200px]" title="' + item.name + '">' + item.name + '</td>' +
-                            '<td class="px-3 py-2 text-slate-500">' + humanSize(item.file.size) + '</td>' +
-                            '<td class="px-3 py-2" id="media-status-' + item.uid + '"><span class="text-slate-400">Queued</span></td>' +
-                            '<td class="px-3 py-2 text-center">' +
-                            '<button type="button" data-uid="' + item.uid + '" data-mtype="' + type + '"' +
-                            ' class="media-remove-btn text-slate-300 hover:text-red-500 transition-colors">' +
-                            '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
-                            '</button></td>' +
-                            '</tr>';
-                    }).join('');
-
-                    // Bind remove buttons
-                    tbody.querySelectorAll('.media-remove-btn').forEach(function (btn) {
-                        btn.addEventListener('click', function () {
-                            var uid = parseInt(this.dataset.uid);
-                            var mtype = this.dataset.mtype;
-                            if (mtype === 'photo') {
-                                mediaQueued.photos = mediaQueued.photos.filter(function (i) { return i.uid !== uid; });
-                            } else {
-                                mediaQueued.documents = mediaQueued.documents.filter(function (i) { return i.uid !== uid; });
-                            }
-                            renderMediaTable(mtype);
-                        });
-                    });
+            // Hook into existing closeModal to also reset items
+            var origClose = document.getElementById('create-close');
+            var origCancel = document.getElementById('create-cancel');
+            [origClose, origCancel].forEach(function (btn) {
+                if (btn) {
+                    btn.addEventListener('click', function () { window._resetItemsList(); });
                 }
+            });
 
-                function enqueueFiles(files, type) {
-                    Array.from(files).forEach(function (file) {
-                        var item = { uid: mediaUidCounter++, name: file.name, file: file, type: type };
-                        if (type === 'photo') {
-                            mediaQueued.photos.push(item);
+            // Initial render (shows empty state)
+            renderItems();
+
+            // ══════════════════════════════════════════════════════════════════
+            // MEDIA UPLOAD — photos & documents queue (pre-submit)
+            // ══════════════════════════════════════════════════════════════════
+            var mediaQueued = { photos: [], documents: [] };
+            var mediaUidCounter = 0;
+
+            function humanSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / 1048576).toFixed(2) + ' MB';
+            }
+
+            function renderMediaTable(type) {
+                var list = type === 'photo' ? mediaQueued.photos : mediaQueued.documents;
+                var tbodyId = type === 'photo' ? 'photo-preview-tbody' : 'doc-preview-tbody';
+                var wrapId = type === 'photo' ? 'photo-preview-list' : 'doc-preview-list';
+                var tbody = document.getElementById(tbodyId);
+                var wrap = document.getElementById(wrapId);
+                if (!tbody || !wrap) return;
+
+                if (list.length === 0) {
+                    wrap.classList.add('hidden');
+                    return;
+                }
+                wrap.classList.remove('hidden');
+
+                tbody.innerHTML = list.map(function (item) {
+                    return '<tr>' +
+                        '<td class="px-3 py-2 text-slate-700 truncate max-w-[200px]" title="' + item.name + '">' + item.name + '</td>' +
+                        '<td class="px-3 py-2 text-slate-500">' + humanSize(item.file.size) + '</td>' +
+                        '<td class="px-3 py-2" id="media-status-' + item.uid + '"><span class="text-slate-400">Queued</span></td>' +
+                        '<td class="px-3 py-2 text-center">' +
+                        '<button type="button" data-uid="' + item.uid + '" data-mtype="' + type + '"' +
+                        ' class="media-remove-btn text-slate-300 hover:text-red-500 transition-colors">' +
+                        '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
+                        '</button></td>' +
+                        '</tr>';
+                }).join('');
+
+                // Bind remove buttons
+                tbody.querySelectorAll('.media-remove-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var uid = parseInt(this.dataset.uid);
+                        var mtype = this.dataset.mtype;
+                        if (mtype === 'photo') {
+                            mediaQueued.photos = mediaQueued.photos.filter(function (i) { return i.uid !== uid; });
                         } else {
-                            mediaQueued.documents.push(item);
+                            mediaQueued.documents = mediaQueued.documents.filter(function (i) { return i.uid !== uid; });
                         }
+                        renderMediaTable(mtype);
                     });
-                    renderMediaTable(type);
-                }
+                });
+            }
 
-                // ── Bind photo drop area ────────────────────────────────────────
-                (function () {
-                    var dropArea = document.getElementById('photo-drop-area');
-                    var fileInput = document.getElementById('photo-file-input');
-                    if (!dropArea || !fileInput) return;
-
-                    dropArea.addEventListener('click', function () { fileInput.click(); });
-                    fileInput.addEventListener('change', function () {
-                        if (this.files.length) enqueueFiles(this.files, 'photo');
-                        this.value = '';
-                    });
-                    dropArea.addEventListener('dragover', function (e) {
-                        e.preventDefault();
-                        this.classList.add('border-blue-500', 'bg-blue-50');
-                    });
-                    dropArea.addEventListener('dragleave', function () {
-                        this.classList.remove('border-blue-500', 'bg-blue-50');
-                    });
-                    dropArea.addEventListener('drop', function (e) {
-                        e.preventDefault();
-                        this.classList.remove('border-blue-500', 'bg-blue-50');
-                        if (e.dataTransfer.files.length) enqueueFiles(e.dataTransfer.files, 'photo');
-                    });
-                })();
-
-                // ── Bind document drop area ─────────────────────────────────────
-                (function () {
-                    var dropArea = document.getElementById('doc-drop-area');
-                    var fileInput = document.getElementById('doc-file-input');
-                    if (!dropArea || !fileInput) return;
-
-                    dropArea.addEventListener('click', function () { fileInput.click(); });
-                    fileInput.addEventListener('change', function () {
-                        if (this.files.length) enqueueFiles(this.files, 'document');
-                        this.value = '';
-                    });
-                    dropArea.addEventListener('dragover', function (e) {
-                        e.preventDefault();
-                        this.classList.add('border-blue-500', 'bg-blue-50');
-                    });
-                    dropArea.addEventListener('dragleave', function () {
-                        this.classList.remove('border-blue-500', 'bg-blue-50');
-                    });
-                    dropArea.addEventListener('drop', function (e) {
-                        e.preventDefault();
-                        this.classList.remove('border-blue-500', 'bg-blue-50');
-                        if (e.dataTransfer.files.length) enqueueFiles(e.dataTransfer.files, 'document');
-                    });
-                })();
-
-                // ── Reset media queues when modal closes ────────────────────────
-                window._resetMediaQueues = function () {
-                    mediaQueued.photos = [];
-                    mediaQueued.documents = [];
-                    renderMediaTable('photo');
-                    renderMediaTable('document');
-                };
-
-                // ── Also expose for resetModal ─────────────────────────────────
-                var origCloseMedia = document.getElementById('create-close');
-                var origCancelMedia = document.getElementById('create-cancel');
-                [origCloseMedia, origCancelMedia].forEach(function (btn) {
-                    if (btn) {
-                        btn.addEventListener('click', function () {
-                            window._resetMediaQueues();
-                        });
+            function enqueueFiles(files, type) {
+                Array.from(files).forEach(function (file) {
+                    var item = { uid: mediaUidCounter++, name: file.name, file: file, type: type };
+                    if (type === 'photo') {
+                        mediaQueued.photos.push(item);
+                    } else {
+                        mediaQueued.documents.push(item);
                     }
                 });
+                renderMediaTable(type);
+            }
 
-                // ══════════════════════════════════════════════════════════════════
-                // VIEW MODAL (DETAILS, ITEMS, MEDIA)
-                // ══════════════════════════════════════════════════════════════════
-                var viewModal = document.getElementById('view-modal');
+            // ── Bind photo drop area ────────────────────────────────────────
+            (function () {
+                var dropArea = document.getElementById('photo-drop-area');
+                var fileInput = document.getElementById('photo-file-input');
+                if (!dropArea || !fileInput) return;
 
-                window.openViewModal = function (id) {
-                    if (!viewModal) return;
-                    viewModal.classList.remove('hidden');
-                    viewModal.classList.add('flex');
-                    document.body.style.overflow = 'hidden';
+                dropArea.addEventListener('click', function () { fileInput.click(); });
+                fileInput.addEventListener('change', function () {
+                    if (this.files.length) enqueueFiles(this.files, 'photo');
+                    this.value = '';
+                });
+                dropArea.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    this.classList.add('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('dragleave', function () {
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                    if (e.dataTransfer.files.length) enqueueFiles(e.dataTransfer.files, 'photo');
+                });
+            })();
 
-                    // Show loader
-                    document.getElementById('view-modal-loader').classList.remove('hidden');
+            // ── Bind document drop area ─────────────────────────────────────
+            (function () {
+                var dropArea = document.getElementById('doc-drop-area');
+                var fileInput = document.getElementById('doc-file-input');
+                if (!dropArea || !fileInput) return;
 
-                    // Default tab is details
-                    activateViewTab('view-tab-details');
+                dropArea.addEventListener('click', function () { fileInput.click(); });
+                fileInput.addEventListener('change', function () {
+                    if (this.files.length) enqueueFiles(this.files, 'document');
+                    this.value = '';
+                });
+                dropArea.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    this.classList.add('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('dragleave', function () {
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                });
+                dropArea.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    this.classList.remove('border-blue-500', 'bg-blue-50');
+                    if (e.dataTransfer.files.length) enqueueFiles(e.dataTransfer.files, 'document');
+                });
+            })();
 
-                    // Fetch details via AJAX
-                    var url = '{{ route("production.show", ["id" => ":id"]) }}'.replace(':id', id);
-                    fetch(url, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            // ── Reset media queues when modal closes ────────────────────────
+            window._resetMediaQueues = function () {
+                mediaQueued.photos = [];
+                mediaQueued.documents = [];
+                renderMediaTable('photo');
+                renderMediaTable('document');
+            };
+
+            // ── Also expose for resetModal ─────────────────────────────────
+            var origCloseMedia = document.getElementById('create-close');
+            var origCancelMedia = document.getElementById('create-cancel');
+            [origCloseMedia, origCancelMedia].forEach(function (btn) {
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        window._resetMediaQueues();
+                    });
+                }
+            });
+
+            // ══════════════════════════════════════════════════════════════════
+            // VIEW MODAL (DETAILS, ITEMS, MEDIA)
+            // ══════════════════════════════════════════════════════════════════
+            var viewModal = document.getElementById('view-modal');
+
+            window.openViewModal = function (id) {
+                if (!viewModal) return;
+                viewModal.classList.remove('hidden');
+                viewModal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+
+                // Show loader
+                document.getElementById('view-modal-loader').classList.remove('hidden');
+
+                // Default tab is details
+                activateViewTab('view-tab-details');
+
+                // Fetch details via AJAX
+                var url = '{{ route("production.show", ["id" => ":id"]) }}'.replace(':id', id);
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        // Hide loader
+                        document.getElementById('view-modal-loader').classList.add('hidden');
+
+                        if (!res.success) {
+                            alert('Failed to load sheet details.');
+                            closeViewModal();
+                            return;
+                        }
+
+                        var s = res.sheet;
+
+                        // Header data
+                        document.getElementById('view-title-sheet-number').textContent = s.sheet_number;
+                        document.getElementById('view-creator-name').textContent = s.creator;
+                        document.getElementById('view-creation-date').textContent = s.creation_date;
+                        document.getElementById('view-supplier').textContent = s.supplier;
+
+                        // Badges
+                        var typeBadge = document.getElementById('view-badge-type');
+                        typeBadge.textContent = s.production_type;
+
+                        var statusBadge = document.getElementById('view-badge-status');
+                        statusBadge.textContent = s.status === 'in_production' ? 'In production' : s.status.charAt(0).toUpperCase() + s.status.slice(1);
+                        statusBadge.className = 'text-[12px] font-semibold px-2.5 py-0.5 rounded-full ' + (
+                            s.status === 'draft' ? 'bg-amber-100 text-amber-800' :
+                                s.status === 'in_production' ? 'bg-blue-100 text-blue-800' :
+                                    s.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        );
+
+                        // Tab 1: Details
+                        document.getElementById('view-reference').textContent = s.reference;
+                        document.getElementById('view-due-date').textContent = s.due_date;
+                        document.getElementById('view-closed-date').textContent = s.closed_date;
+                        document.getElementById('view-orig-qty').textContent = s.original_quantity;
+                        document.getElementById('view-orig-weight').textContent = s.original_weight;
+                        document.getElementById('view-orig-cost').textContent = s.original_total_cost;
+
+                        var discEl = document.getElementById('view-discrepancy-reason');
+                        discEl.textContent = s.discrepancy_reason !== '—' ? s.discrepancy_reason.replace('_', ' ').charAt(0).toUpperCase() + s.discrepancy_reason.replace('_', ' ').slice(1) : '—';
+
+                        document.getElementById('view-notes').textContent = s.notes || '—';
+
+                        // Tab 2: Items
+                        var itemsTbody = document.getElementById('view-items-tbody');
+                        if (s.items && s.items.length > 0) {
+                            itemsTbody.innerHTML = s.items.map(function (item, idx) {
+                                return '<tr>' +
+                                    '<td class="px-4 py-3 text-slate-400 font-medium">' + (idx + 1) + '</td>' +
+                                    '<td class="px-4 py-3 text-slate-800 font-semibold">' + item.sku + '</td>' +
+                                    '<td class="px-4 py-3 text-slate-600">' + item.description + '</td>' +
+                                    '<td class="px-4 py-3 text-right font-medium">' + item.quantity + '</td>' +
+                                    '<td class="px-4 py-3 text-right font-medium">' + item.weight + '</td>' +
+                                    '<td class="px-4 py-3 text-right font-medium">' + item.cost + '</td>' +
+                                    '</tr>';
+                            }).join('');
+                        } else {
+                            itemsTbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">No items added to this sheet.</td></tr>';
+                        }
+
+                        // Tab 3: Media
+                        // Photos Grid
+                        var photosCont = document.getElementById('view-photos-container');
+                        if (s.photos && s.photos.length > 0) {
+                            photosCont.innerHTML = s.photos.map(function (photo) {
+                                return '<a href="' + photo.url + '" target="_blank" class="group block relative border border-slate-200 rounded-md overflow-hidden hover:shadow-md transition-shadow bg-slate-50">' +
+                                    '<div class="aspect-square w-full overflow-hidden">' +
+                                    '<img src="' + photo.url + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">' +
+                                    '</div>' +
+                                    '<div class="p-2 bg-white border-t border-slate-100 text-[11px] text-slate-600 truncate" title="' + photo.original_name + '">' +
+                                    photo.original_name +
+                                    '</div>' +
+                                    '</a>';
+                            }).join('');
+                        } else {
+                            photosCont.innerHTML = '<p class="text-slate-400 text-sm col-span-3">No photos uploaded.</p>';
+                        }
+
+                        // Documents List
+                        var docsCont = document.getElementById('view-docs-container');
+                        if (s.documents && s.documents.length > 0) {
+                            docsCont.innerHTML = s.documents.map(function (doc) {
+                                return '<a href="' + doc.url + '" target="_blank" class="flex items-center justify-between p-3 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shadow-xs">' +
+                                    '<div class="flex items-center gap-3 overflow-hidden">' +
+                                    '<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' +
+                                    '<span class="text-xs font-semibold text-slate-700 truncate" title="' + doc.original_name + '">' + doc.original_name + '</span>' +
+                                    '</div>' +
+                                    '<span class="text-[11px] font-medium text-slate-400 flex-shrink-0 bg-slate-100 rounded px-1.5 py-0.5">' + doc.file_size + '</span>' +
+                                    '</a>';
+                            }).join('');
+                        } else {
+                            docsCont.innerHTML = '<p class="text-slate-400 text-sm">No documents uploaded.</p>';
+                        }
+                    })
+                    .catch(function () {
+                        document.getElementById('view-modal-loader').classList.add('hidden');
+                        alert('Network error. Failed to retrieve details.');
+                        closeViewModal();
+                    });
+            };
+
+            function closeViewModal() {
+                if (!viewModal) return;
+                viewModal.classList.add('hidden');
+                viewModal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            document.getElementById('view-close').addEventListener('click', closeViewModal);
+            document.getElementById('view-close-btn').addEventListener('click', closeViewModal);
+            viewModal.addEventListener('click', function (e) { if (e.target === viewModal) closeViewModal(); });
+
+            // Tab switching
+            function activateViewTab(targetId) {
+                document.querySelectorAll('.view-tab-btn').forEach(function (b) {
+                    b.classList.remove('active', 'border-blue-600', 'text-blue-600');
+                    b.classList.add('text-slate-500', 'border-transparent');
+                });
+                document.querySelectorAll('.view-tab-content').forEach(function (c) {
+                    c.classList.add('hidden');
+                    c.classList.remove('block');
+                });
+                var target = document.getElementById(targetId);
+                if (target) { target.classList.remove('hidden'); target.classList.add('block'); }
+                var btn = document.querySelector('.view-tab-btn[data-target="' + targetId + '"]');
+                if (btn) {
+                    btn.classList.add('active', 'border-blue-600', 'text-blue-600');
+                    btn.classList.remove('text-slate-500', 'border-transparent');
+                }
+            }
+
+            document.querySelectorAll('.view-tab-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () { activateViewTab(btn.dataset.target); });
+            });
+
+            // ══════════════════════════════════════════════════════════════════
+            // COSTS TAB — Auto-calculate totals, loss % and loss weight
+            // ══════════════════════════════════════════════════════════════════
+            (function () {
+                var costUnit = document.getElementById('mc-cost-unit');
+                var costTotal = document.getElementById('mc-cost-total');
+                var myCostUnit = document.getElementById('mc-my-cost-unit');
+                var myCostTotal = document.getElementById('mc-my-cost-total');
+                var origWtInp = document.querySelector('[name="original_weight"]');
+                var outWtInp = document.querySelector('[name="expected_output_weight"]');
+                var origQtyInp = document.querySelector('[name="original_quantity"]');
+                var outQtyInp = document.querySelector('[name="expected_output_quantity"]');
+                var lossPctEl = document.getElementById('mc-loss-pct');
+                var lossWtEl = document.getElementById('mc-loss-wt');
+
+                function recalcCosts() {
+                    // Qty-based total cost
+                    var cpuVal = parseFloat((costUnit && costUnit.value) || 0);
+                    var qty = parseFloat((origQtyInp && origQtyInp.value) || 0);
+                    if (costTotal) {
+                        costTotal.value = (cpuVal && qty) ? (cpuVal * qty).toFixed(2) : '';
+                    }
+
+                    // My total cost
+                    var mcpuVal = parseFloat((myCostUnit && myCostUnit.value) || 0);
+                    if (myCostTotal) {
+                        myCostTotal.value = (mcpuVal && qty) ? (mcpuVal * qty).toFixed(2) : '';
+                    }
+
+                    // Loss % and loss weight (weight-based)
+                    var inWt = parseFloat((origWtInp && origWtInp.value) || 0);
+                    var outWt = parseFloat((outWtInp && outWtInp.value) || 0);
+                    if (lossPctEl) {
+                        if (inWt > 0 && outWt >= 0 && outWt <= inWt) {
+                            lossPctEl.value = (((inWt - outWt) / inWt) * 100).toFixed(2) + ' %';
+                        } else {
+                            lossPctEl.value = '';
+                        }
+                    }
+                    if (lossWtEl) {
+                        if (inWt > 0 && outWt >= 0 && outWt <= inWt) {
+                            lossWtEl.value = (inWt - outWt).toFixed(4);
+                        } else {
+                            lossWtEl.value = '';
+                        }
+                    }
+                }
+
+                // Bind to all relevant inputs
+                [costUnit, myCostUnit, origWtInp, outWtInp, origQtyInp, outQtyInp].forEach(function (el) {
+                    if (el) el.addEventListener('input', recalcCosts);
+                });
+            })();
+
+            // ══════════════════════════════════════════════════════════════════
+            // FORM VALIDATION — inline highlight required fields
+            // ══════════════════════════════════════════════════════════════════
+            function highlightRequired(elementId, valid) {
+                var el = document.getElementById(elementId);
+                if (!el) return;
+                if (valid) {
+                    el.classList.remove('ring-2', 'ring-red-400');
+                } else {
+                    el.classList.add('ring-2', 'ring-red-400');
+                    setTimeout(function () { el.classList.remove('ring-2', 'ring-red-400'); }, 3000);
+                }
+            }
+
+            // ── Delete Sheet Event Wire-up inside DOMContentLoaded ──────────────────
+            var _deleteSheetId = null;
+
+            window.confirmDeleteSheet = function (id, sheetNumber) {
+                _deleteSheetId = id;
+                var modal = document.getElementById('delete-sheet-modal');
+                var label = document.getElementById('delete-sheet-label');
+                if (label) label.textContent = sheetNumber;
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            };
+
+            var cancelBtn = document.getElementById('btn-delete-sheet-cancel');
+            var confirmBtn = document.getElementById('btn-delete-sheet-confirm');
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function () {
+                    var modal = document.getElementById('delete-sheet-modal');
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    _deleteSheetId = null;
+                });
+            }
+
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function () {
+                    if (!_deleteSheetId) return;
+                    var btn = this;
+                    btn.disabled = true;
+                    btn.textContent = 'Canceling…';
+
+                    fetch('{{ url("production") }}/' + _deleteSheetId + '/delete', {
+                        method: 'DELETE',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
                     })
                         .then(function (r) { return r.json(); })
-                        .then(function (res) {
-                            // Hide loader
-                            document.getElementById('view-modal-loader').classList.add('hidden');
+                        .then(function (json) {
+                            btn.disabled = false;
+                            btn.textContent = 'Yes, Cancel';
+                            var modal = document.getElementById('delete-sheet-modal');
+                            modal.classList.add('hidden');
+                            modal.classList.remove('flex');
+                            _deleteSheetId = null;
 
-                            if (!res.success) {
-                                alert('Failed to load sheet details.');
-                                closeViewModal();
-                                return;
-                            }
+                            if (json.success) {
+                                showToast('Production sheet canceled and inventory restored.', 'success');
 
-                            var s = res.sheet;
+                                // Fade and disable Complete & Cancel buttons in-place
+                                var cancelledRow = document.querySelector('tr[data-sheet-id="' + _deleteSheetId + '"]');
+                                if (cancelledRow) {
+                                    var cancelBtn = cancelledRow.querySelector('.js-cancel-btn');
+                                    var completeLink = cancelledRow.querySelector('.js-complete-link');
+                                    var statusCell = cancelledRow.querySelector('.js-status-cell');
 
-                            // Header data
-                            document.getElementById('view-title-sheet-number').textContent = s.sheet_number;
-                            document.getElementById('view-creator-name').textContent = s.creator;
-                            document.getElementById('view-creation-date').textContent = s.creation_date;
-                            document.getElementById('view-supplier').textContent = s.supplier;
+                                    // Update status badge
+                                    if (statusCell) {
+                                        statusCell.innerHTML = statusBadge('deleted');
+                                    }
 
-                            // Badges
-                            var typeBadge = document.getElementById('view-badge-type');
-                            typeBadge.textContent = s.production_type;
+                                    // Fade and disable Complete button in-place
+                                    if (completeLink) {
+                                        var disabledComplete = document.createElement('button');
+                                        disabledComplete.type = 'button';
+                                        disabledComplete.disabled = true;
+                                        disabledComplete.title = 'Completed';
+                                        disabledComplete.className = 'inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed';
+                                        disabledComplete.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+                                        completeLink.parentNode.replaceChild(disabledComplete, completeLink);
+                                    }
 
-                            var statusBadge = document.getElementById('view-badge-status');
-                            statusBadge.textContent = s.status === 'in_production' ? 'In production' : s.status.charAt(0).toUpperCase() + s.status.slice(1);
-                            statusBadge.className = 'text-[12px] font-semibold px-2.5 py-0.5 rounded-full ' + (
-                                s.status === 'draft' ? 'bg-amber-100 text-amber-800' :
-                                    s.status === 'in_production' ? 'bg-blue-100 text-blue-800' :
-                                        s.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                            );
+                                    // Fade and disable Cancel button in-place
+                                    if (cancelBtn) {
+                                        cancelBtn.style.transition = 'all 0.35s ease';
+                                        cancelBtn.classList.remove('text-red-600', 'bg-red-50', 'border-red-200', 'hover:bg-red-100');
+                                        cancelBtn.classList.add('text-slate-400', 'bg-slate-50', 'border-slate-200', 'opacity-50', 'cursor-not-allowed');
+                                        cancelBtn.disabled = true;
+                                        cancelBtn.onclick = null;
+                                        cancelBtn.setAttribute('title', 'Canceled');
+                                    }
+                                }
 
-                            // Tab 1: Details
-                            document.getElementById('view-reference').textContent = s.reference;
-                            document.getElementById('view-due-date').textContent = s.due_date;
-                            document.getElementById('view-closed-date').textContent = s.closed_date;
-                            document.getElementById('view-orig-qty').textContent = s.original_quantity;
-                            document.getElementById('view-orig-weight').textContent = s.original_weight;
-                            document.getElementById('view-orig-cost').textContent = s.original_total_cost;
-
-                            var discEl = document.getElementById('view-discrepancy-reason');
-                            discEl.textContent = s.discrepancy_reason !== '—' ? s.discrepancy_reason.replace('_', ' ').charAt(0).toUpperCase() + s.discrepancy_reason.replace('_', ' ').slice(1) : '—';
-
-                            document.getElementById('view-notes').textContent = s.notes || '—';
-
-                            // Tab 2: Items
-                            var itemsTbody = document.getElementById('view-items-tbody');
-                            if (s.items && s.items.length > 0) {
-                                itemsTbody.innerHTML = s.items.map(function (item, idx) {
-                                    return '<tr>' +
-                                        '<td class="px-4 py-3 text-slate-400 font-medium">' + (idx + 1) + '</td>' +
-                                        '<td class="px-4 py-3 text-slate-800 font-semibold">' + item.sku + '</td>' +
-                                        '<td class="px-4 py-3 text-slate-600">' + item.description + '</td>' +
-                                        '<td class="px-4 py-3 text-right font-medium">' + item.quantity + '</td>' +
-                                        '<td class="px-4 py-3 text-right font-medium">' + item.weight + '</td>' +
-                                        '<td class="px-4 py-3 text-right font-medium">' + item.cost + '</td>' +
-                                        '</tr>';
-                                }).join('');
+                                refreshCounts();
                             } else {
-                                itemsTbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">No items added to this sheet.</td></tr>';
-                            }
-
-                            // Tab 3: Media
-                            // Photos Grid
-                            var photosCont = document.getElementById('view-photos-container');
-                            if (s.photos && s.photos.length > 0) {
-                                photosCont.innerHTML = s.photos.map(function (photo) {
-                                    return '<a href="' + photo.url + '" target="_blank" class="group block relative border border-slate-200 rounded-md overflow-hidden hover:shadow-md transition-shadow bg-slate-50">' +
-                                        '<div class="aspect-square w-full overflow-hidden">' +
-                                        '<img src="' + photo.url + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">' +
-                                        '</div>' +
-                                        '<div class="p-2 bg-white border-t border-slate-100 text-[11px] text-slate-600 truncate" title="' + photo.original_name + '">' +
-                                        photo.original_name +
-                                        '</div>' +
-                                        '</a>';
-                                }).join('');
-                            } else {
-                                photosCont.innerHTML = '<p class="text-slate-400 text-sm col-span-3">No photos uploaded.</p>';
-                            }
-
-                            // Documents List
-                            var docsCont = document.getElementById('view-docs-container');
-                            if (s.documents && s.documents.length > 0) {
-                                docsCont.innerHTML = s.documents.map(function (doc) {
-                                    return '<a href="' + doc.url + '" target="_blank" class="flex items-center justify-between p-3 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shadow-xs">' +
-                                        '<div class="flex items-center gap-3 overflow-hidden">' +
-                                        '<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' +
-                                        '<span class="text-xs font-semibold text-slate-700 truncate" title="' + doc.original_name + '">' + doc.original_name + '</span>' +
-                                        '</div>' +
-                                        '<span class="text-[11px] font-medium text-slate-400 flex-shrink-0 bg-slate-100 rounded px-1.5 py-0.5">' + doc.file_size + '</span>' +
-                                        '</a>';
-                                }).join('');
-                            } else {
-                                docsCont.innerHTML = '<p class="text-slate-400 text-sm">No documents uploaded.</p>';
+                                showToast(json.message || 'Cancel failed.', 'error');
                             }
                         })
                         .catch(function () {
-                            document.getElementById('view-modal-loader').classList.add('hidden');
-                            alert('Network error. Failed to retrieve details.');
-                            closeViewModal();
+                            btn.disabled = false;
+                            btn.textContent = 'Yes, Cancel';
+                            showToast('An error occurred. Please try again.', 'error');
                         });
-                };
-
-                function closeViewModal() {
-                    if (!viewModal) return;
-                    viewModal.classList.add('hidden');
-                    viewModal.classList.remove('flex');
-                    document.body.style.overflow = '';
-                }
-
-                document.getElementById('view-close').addEventListener('click', closeViewModal);
-                document.getElementById('view-close-btn').addEventListener('click', closeViewModal);
-                viewModal.addEventListener('click', function (e) { if (e.target === viewModal) closeViewModal(); });
-
-                // Tab switching
-                function activateViewTab(targetId) {
-                    document.querySelectorAll('.view-tab-btn').forEach(function (b) {
-                        b.classList.remove('active', 'border-blue-600', 'text-blue-600');
-                        b.classList.add('text-slate-500', 'border-transparent');
-                    });
-                    document.querySelectorAll('.view-tab-content').forEach(function (c) {
-                        c.classList.add('hidden');
-                        c.classList.remove('block');
-                    });
-                    var target = document.getElementById(targetId);
-                    if (target) { target.classList.remove('hidden'); target.classList.add('block'); }
-                    var btn = document.querySelector('.view-tab-btn[data-target="' + targetId + '"]');
-                    if (btn) {
-                        btn.classList.add('active', 'border-blue-600', 'text-blue-600');
-                        btn.classList.remove('text-slate-500', 'border-transparent');
-                    }
-                }
-
-                document.querySelectorAll('.view-tab-btn').forEach(function (btn) {
-                    btn.addEventListener('click', function () { activateViewTab(btn.dataset.target); });
                 });
+            }
 
-                // ══════════════════════════════════════════════════════════════════
-                // COSTS TAB — Auto-calculate totals, loss % and loss weight
-                // ══════════════════════════════════════════════════════════════════
-                (function () {
-                    var costUnit = document.getElementById('mc-cost-unit');
-                    var costTotal = document.getElementById('mc-cost-total');
-                    var myCostUnit = document.getElementById('mc-my-cost-unit');
-                    var myCostTotal = document.getElementById('mc-my-cost-total');
-                    var origWtInp = document.querySelector('[name="original_weight"]');
-                    var outWtInp = document.querySelector('[name="expected_output_weight"]');
-                    var origQtyInp = document.querySelector('[name="original_quantity"]');
-                    var outQtyInp = document.querySelector('[name="expected_output_quantity"]');
-                    var lossPctEl = document.getElementById('mc-loss-pct');
-                    var lossWtEl = document.getElementById('mc-loss-wt');
+        });
 
-                    function recalcCosts() {
-                        // Qty-based total cost
-                        var cpuVal = parseFloat((costUnit && costUnit.value) || 0);
-                        var qty = parseFloat((origQtyInp && origQtyInp.value) || 0);
-                        if (costTotal) {
-                            costTotal.value = (cpuVal && qty) ? (cpuVal * qty).toFixed(2) : '';
-                        }
+        // ── Global Toast Helper ───────────────────────────────────────────────
+        // Usage: showToast('Message', 'success' | 'error' | 'info')
+        function showToast(message, type) {
+            var existing = document.getElementById('prod-toast');
+            if (existing) existing.remove();
 
-                        // My total cost
-                        var mcpuVal = parseFloat((myCostUnit && myCostUnit.value) || 0);
-                        if (myCostTotal) {
-                            myCostTotal.value = (mcpuVal && qty) ? (mcpuVal * qty).toFixed(2) : '';
-                        }
+            var colors = {
+                success: 'bg-green-600',
+                error: 'bg-red-600',
+                info: 'bg-blue-600',
+            };
+            var color = colors[type] || colors.info;
 
-                        // Loss % and loss weight (weight-based)
-                        var inWt = parseFloat((origWtInp && origWtInp.value) || 0);
-                        var outWt = parseFloat((outWtInp && outWtInp.value) || 0);
-                        if (lossPctEl) {
-                            if (inWt > 0 && outWt >= 0 && outWt <= inWt) {
-                                lossPctEl.value = (((inWt - outWt) / inWt) * 100).toFixed(2) + ' %';
-                            } else {
-                                lossPctEl.value = '';
-                            }
-                        }
-                        if (lossWtEl) {
-                            if (inWt > 0 && outWt >= 0 && outWt <= inWt) {
-                                lossWtEl.value = (inWt - outWt).toFixed(4);
-                            } else {
-                                lossWtEl.value = '';
-                            }
-                        }
-                    }
+            var toast = document.createElement('div');
+            toast.id = 'prod-toast';
+            toast.className = 'fixed bottom-6 right-6 z-[99999] flex items-center gap-3 px-5 py-3.5 rounded-lg shadow-2xl text-white text-[14px] font-semibold transition-all duration-300 opacity-0 translate-y-4 ' + color;
+            toast.innerHTML =
+                '<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>' +
+                '</svg>' +
+                '<span>' + message + '</span>';
 
-                    // Bind to all relevant inputs
-                    [costUnit, myCostUnit, origWtInp, outWtInp, origQtyInp, outQtyInp].forEach(function (el) {
-                        if (el) el.addEventListener('input', recalcCosts);
-                    });
-                })();
+            document.body.appendChild(toast);
 
-                // ══════════════════════════════════════════════════════════════════
-                // FORM VALIDATION — inline highlight required fields
-                // ══════════════════════════════════════════════════════════════════
-                function highlightRequired(elementId, valid) {
-                    var el = document.getElementById(elementId);
-                    if (!el) return;
-                    if (valid) {
-                        el.classList.remove('ring-2', 'ring-red-400');
-                    } else {
-                        el.classList.add('ring-2', 'ring-red-400');
-                        setTimeout(function () { el.classList.remove('ring-2', 'ring-red-400'); }, 3000);
-                    }
-                }
-
-                // ── Delete Sheet Event Wire-up inside DOMContentLoaded ──────────────────
-                var _deleteSheetId = null;
-
-                window.confirmDeleteSheet = function (id, sheetNumber) {
-                    _deleteSheetId = id;
-                    var modal = document.getElementById('delete-sheet-modal');
-                    var label = document.getElementById('delete-sheet-label');
-                    if (label) label.textContent = sheetNumber;
-                    if (modal) {
-                        modal.classList.remove('hidden');
-                        modal.classList.add('flex');
-                    }
-                };
-
-                var cancelBtn = document.getElementById('btn-delete-sheet-cancel');
-                var confirmBtn = document.getElementById('btn-delete-sheet-confirm');
-
-                if (cancelBtn) {
-                    cancelBtn.addEventListener('click', function () {
-                        var modal = document.getElementById('delete-sheet-modal');
-                        modal.classList.add('hidden');
-                        modal.classList.remove('flex');
-                        _deleteSheetId = null;
-                    });
-                }
-
-                if (confirmBtn) {
-                    confirmBtn.addEventListener('click', function () {
-                        if (!_deleteSheetId) return;
-                        var btn = this;
-                        btn.disabled = true;
-                        btn.textContent = 'Canceling…';
-
-                        fetch('{{ url("production") }}/' + _deleteSheetId + '/delete', {
-                            method: 'DELETE',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            },
-                        })
-                            .then(function (r) { return r.json(); })
-                            .then(function (json) {
-                                btn.disabled = false;
-                                btn.textContent = 'Yes, Cancel';
-                                var modal = document.getElementById('delete-sheet-modal');
-                                modal.classList.add('hidden');
-                                modal.classList.remove('flex');
-                                _deleteSheetId = null;
-
-                                                                 if (json.success) {
-                                     showToast('Production sheet canceled and inventory restored.', 'success');
-                                     
-                                     // Fade and disable Complete & Cancel buttons in-place
-                                     var cancelledRow = document.querySelector('tr[data-sheet-id="' + _deleteSheetId + '"]');
-                                     if (cancelledRow) {
-                                         var cancelBtn = cancelledRow.querySelector('.js-cancel-btn');
-                                         var completeLink = cancelledRow.querySelector('.js-complete-link');
-                                         var statusCell  = cancelledRow.querySelector('.js-status-cell');
-                                         
-                                         // Update status badge
-                                         if (statusCell) {
-                                             statusCell.innerHTML = statusBadge('deleted');
-                                         }
-
-                                         // Fade and disable Complete button in-place
-                                         if (completeLink) {
-                                             var disabledComplete = document.createElement('button');
-                                             disabledComplete.type = 'button';
-                                             disabledComplete.disabled = true;
-                                             disabledComplete.title = 'Completed';
-                                             disabledComplete.className = 'inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed';
-                                             disabledComplete.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
-                                             completeLink.parentNode.replaceChild(disabledComplete, completeLink);
-                                         }
-
-                                         // Fade and disable Cancel button in-place
-                                         if (cancelBtn) {
-                                             cancelBtn.style.transition = 'all 0.35s ease';
-                                             cancelBtn.classList.remove('text-red-600', 'bg-red-50', 'border-red-200', 'hover:bg-red-100');
-                                             cancelBtn.classList.add('text-slate-400', 'bg-slate-50', 'border-slate-200', 'opacity-50', 'cursor-not-allowed');
-                                             cancelBtn.disabled = true;
-                                             cancelBtn.onclick = null;
-                                             cancelBtn.setAttribute('title', 'Canceled');
-                                         }
-                                     }
-                                     
-                                     refreshCounts();
-                                 } else {
-                                    showToast(json.message || 'Cancel failed.', 'error');
-                                }
-                            })
-                            .catch(function () {
-                                btn.disabled = false;
-                                btn.textContent = 'Yes, Cancel';
-                                showToast('An error occurred. Please try again.', 'error');
-                            });
-                    });
-                }
-
+            // Animate in
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    toast.classList.remove('opacity-0', 'translate-y-4');
+                    toast.classList.add('opacity-100', 'translate-y-0');
+                });
             });
 
-            // ── Global Toast Helper ───────────────────────────────────────────────
-            // Usage: showToast('Message', 'success' | 'error' | 'info')
-            function showToast(message, type) {
-                var existing = document.getElementById('prod-toast');
-                if (existing) existing.remove();
+            // Auto-dismiss after 3.5s
+            setTimeout(function () {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(function () { toast.remove(); }, 350);
+            }, 3500);
+        }
+    </script>
 
-                var colors = {
-                    success: 'bg-green-600',
-                    error: 'bg-red-600',
-                    info: 'bg-blue-600',
-                };
-                var color = colors[type] || colors.info;
-
-                var toast = document.createElement('div');
-                toast.id = 'prod-toast';
-                toast.className = 'fixed bottom-6 right-6 z-[99999] flex items-center gap-3 px-5 py-3.5 rounded-lg shadow-2xl text-white text-[14px] font-semibold transition-all duration-300 opacity-0 translate-y-4 ' + color;
-                toast.innerHTML =
-                    '<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>' +
-                    '</svg>' +
-                    '<span>' + message + '</span>';
-
-                document.body.appendChild(toast);
-
-                // Animate in
-                requestAnimationFrame(function () {
-                    requestAnimationFrame(function () {
-                        toast.classList.remove('opacity-0', 'translate-y-4');
-                        toast.classList.add('opacity-100', 'translate-y-0');
-                    });
-                });
-
-                // Auto-dismiss after 3.5s
-                setTimeout(function () {
-                    toast.classList.add('opacity-0', 'translate-y-4');
-                    setTimeout(function () { toast.remove(); }, 350);
-                }, 3500);
-            }
-        </script>
-
-        {{-- ===== CANCEL SHEET CONFIRMATION MODAL ===== --}}
-        <div id="delete-sheet-modal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4"
-            style="background:rgba(0,0,0,0.5);">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-slate-800">Cancel Production Sheet</h3>
-                        <p class="text-sm text-slate-500">This action cannot be undone.</p>
-                    </div>
+    {{-- ===== CANCEL SHEET CONFIRMATION MODAL ===== --}}
+    <div id="delete-sheet-modal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4"
+        style="background:rgba(0,0,0,0.5);">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
                 </div>
-                <p class="text-sm text-slate-600 mb-6">
-                    Are you sure you want to cancel sheet <span class="font-semibold text-slate-800"
-                        id="delete-sheet-label"></span>?
-                    All linked items will have their inventory status restored to <span
-                        class="font-semibold text-green-600">In</span>.
-                </p>
-                <div class="flex items-center justify-end gap-3">
-                    <button id="btn-delete-sheet-cancel"
-                        class="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                        Cancel
-                    </button>
-                    <button id="btn-delete-sheet-confirm"
-                        class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
-                        Yes, Cancel
-                    </button>
+                <div>
+                    <h3 class="text-base font-bold text-slate-800">Cancel Production Sheet</h3>
+                    <p class="text-sm text-slate-500">This action cannot be undone.</p>
                 </div>
             </div>
+            <p class="text-sm text-slate-600 mb-6">
+                Are you sure you want to cancel sheet <span class="font-semibold text-slate-800"
+                    id="delete-sheet-label"></span>?
+                All linked items will have their inventory status restored to <span
+                    class="font-semibold text-green-600">In</span>.
+            </p>
+            <div class="flex items-center justify-end gap-3">
+                <button id="btn-delete-sheet-cancel"
+                    class="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="btn-delete-sheet-confirm"
+                    class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+                    Yes, Cancel
+                </button>
+            </div>
         </div>
+    </div>
 @endsection

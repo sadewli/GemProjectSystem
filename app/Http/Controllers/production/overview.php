@@ -31,18 +31,19 @@ class overview extends Controller
             ])
             ->toArray();
 
-        // ── Suppliers from DB (all active suppliers) ──────────────────────────────
-        $suppliersList = \App\Models\Supplier::where('status', 1)
-            ->orderBy('supplier_name')
-            ->get(['idtbl_suppliers', 'supplier_name']);
+        // ── Suppliers from CRM (tbl_create_company, company_type = 'supplier') ────
+        $suppliersList = \App\Models\Crm\CreateCompany::where('company_type', 'supplier')
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get(['idtbl_create_company', 'name']);
 
         $suppliers = [];
         $suppliers[] = ['value' => 'all', 'label' => 'All'];
 
         foreach ($suppliersList as $s) {
             $suppliers[] = [
-                'value' => $s->idtbl_suppliers,
-                'label' => $s->supplier_name,
+                'value' => $s->idtbl_create_company,
+                'label' => $s->name,
             ];
         }
 
@@ -553,8 +554,13 @@ class overview extends Controller
             return response()->json(['results' => []]);
         }
 
+        // Select2 infinite-scroll pagination params
+        $page = max(1, (int) $request->query('page', 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
         // Join tbl_product_pricing, tbl_product_purchasing, tbl_suppliers, and tbl_product_types
-        $rows = DB::table('tbl_products as p')
+        $query = DB::table('tbl_products as p')
             ->leftJoin('tbl_product_pricing as pr', 'pr.idtbl_products', '=', 'p.idtbl_products')
             ->leftJoin('tbl_weight_units as wu', 'wu.idtbl_weight_units', '=', 'pr.idtbl_weight_units')
             ->leftJoin('tbl_product_purchasing as pp', 'pp.idtbl_products', '=', 'p.idtbl_products')
@@ -562,10 +568,15 @@ class overview extends Controller
             ->leftJoin('tbl_product_types as pt', 'pt.idtbl_product_types', '=', 'p.idtbl_product_types')
             ->where('p.status', 1)
             ->where('p.inventorystatus', 1)
-            ->where(function ($query) use ($q) {
-                $query->where('p.sku_number', 'like', '%' . $q . '%')
+            ->where(function ($sub) use ($q) {
+                $sub->where('p.sku_number', 'like', '%' . $q . '%')
                     ->orWhere('p.product_title', 'like', '%' . $q . '%');
-            })
+            });
+
+        // Total matching count (before pagination) — tells us if there's a next page
+        $total = (clone $query)->count();
+
+        $rows = $query
             ->select(
                 'p.idtbl_products as id',
                 'p.sku_number as sku',
@@ -582,7 +593,8 @@ class overview extends Controller
                 'pt.name as product_type_name'
             )
             ->orderBy('p.sku_number')
-            ->limit(30)
+            ->offset($offset)
+            ->limit($perPage)
             ->get();
 
         // Format for Select2: { id, text, sku, description, stock_qty, stock_weight, stock_unit, stock_cost, etc. }
@@ -603,7 +615,12 @@ class overview extends Controller
             'product_type_name' => $r->product_type_name ?? '',
         ]);
 
-        return response()->json(['results' => $results]);
+        return response()->json([
+            'results' => $results,
+            'pagination' => [
+                'more' => ($offset + $perPage) < $total,
+            ],
+        ]);
     }
 
     // ────────────────────────────────────────────────────────────────────────────
@@ -665,4 +682,3 @@ class overview extends Controller
         }
     }
 }
-

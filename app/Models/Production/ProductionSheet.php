@@ -8,9 +8,9 @@ use App\Models\Supplier;
 
 class ProductionSheet extends Model
 {
-    protected $table      = 'tbl_production_sheets';
+    protected $table = 'tbl_production_sheets';
     protected $primaryKey = 'idtbl_production_sheets';
-    public $timestamps    = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'sheet_number',
@@ -45,10 +45,10 @@ class ProductionSheet extends Model
     ];
 
     protected $casts = [
-        'due_date'      => 'date',
-        'closed_date'   => 'date',
-        'insertdatetime'=> 'datetime',
-        'updatedatetime'=> 'datetime',
+        'due_date' => 'date',
+        'closed_date' => 'date',
+        'insertdatetime' => 'datetime',
+        'updatedatetime' => 'datetime',
     ];
 
     // ── Relationships ──────────────────────────────────────────────────────────
