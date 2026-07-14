@@ -1943,32 +1943,35 @@
 
                                     var actions = '<div class="flex items-center gap-1.5">' + viewBtn;
 
-                                    if (r.status === 'deleted') {
-                                        actions += '<span class="text-xs text-slate-400 italic">Canceled</span>';
-                                    } else if (r.status === 'completed') {
-                                        actions += '<span class="text-xs text-slate-400 italic">Completed</span>';
+                                    if (r.status === 'deleted' || r.status === 'completed') {
+                                        actions += '<button type="button" disabled title="Completed" class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed">'
+                                            + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
+                                            + '</button>'
+                                            + '<button type="button" disabled title="Canceled" class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed">'
+                                            + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                                            + '</button>';
                                     } else {
                                         actions +=
                                             '<a href="' + completeUrl + '" '
                                             + 'title="Complete & Add to Inventory" '
-                                            + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-green-600 bg-green-50 border border-green-200 hover:bg-green-100 transition-colors">'
+                                            + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-green-600 bg-green-50 border border-green-200 hover:bg-green-100 transition-colors js-complete-link">'
                                             + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
                                             + '</a>'
                                             + '<button type="button" '
                                             + 'title="Cancel" '
-                                            + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors" '
+                                            + 'class="inline-flex items-center justify-center w-7 h-7 rounded text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors js-cancel-btn" '
                                             + 'onclick="confirmDeleteSheet(' + r.id + ', \'' + r.sheet_number + '\')" >'
                                             + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
                                             + '</button>';
                                     }
                                     actions += '</div>';
-                                    return '<tr class="hover:bg-slate-50 transition-colors">' +
+                                    return '<tr class="hover:bg-slate-50 transition-colors" data-sheet-id="' + r.id + '">' +
                                         '<td class="px-4 py-3 font-medium">' +
                                         '<span class="font-semibold text-slate-700">' + r.sheet_number + '</span>' +
                                         '</td>' +
                                         '<td class="px-4 py-3">' + r.production_type + '</td>' +
                                         '<td class="px-4 py-3">' + r.reference + '</td>' +
-                                        '<td class="px-4 py-3">' + statusBadge(r.status) + '</td>' +
+                                        '<td class="px-4 py-3 js-status-cell">' + statusBadge(r.status) + '</td>' +
                                         '<td class="px-4 py-3">' + r.creation_date + '</td>' +
                                         '<td class="px-4 py-3">' + r.due_date + '</td>' +
                                         '<td class="px-4 py-3">' + r.closed_date + '</td>' +
@@ -1976,7 +1979,7 @@
                                         '<td class="px-4 py-3">' + r.original_weight + '</td>' +
                                         '<td class="px-4 py-3">' + r.original_total_cost + '</td>' +
                                         '<td class="px-4 py-3">' + (r.discrepancy_reason !== '—' ? r.discrepancy_reason : '—') + '</td>' +
-                                        '<td class="px-4 py-3">' + actions + '</td>' +
+                                        '<td class="px-4 py-3 js-actions-cell">' + actions + '</td>' +
                                         '</tr>';
                                 }).join('');
                             }
@@ -2760,11 +2763,45 @@
                                 modal.classList.remove('flex');
                                 _deleteSheetId = null;
 
-                                if (json.success) {
-                                    showToast('Production sheet canceled and inventory restored.', 'success');
-                                    loadTable(getFilters());
-                                    refreshCounts();
-                                } else {
+                                                                 if (json.success) {
+                                     showToast('Production sheet canceled and inventory restored.', 'success');
+                                     
+                                     // Fade and disable Complete & Cancel buttons in-place
+                                     var cancelledRow = document.querySelector('tr[data-sheet-id="' + _deleteSheetId + '"]');
+                                     if (cancelledRow) {
+                                         var cancelBtn = cancelledRow.querySelector('.js-cancel-btn');
+                                         var completeLink = cancelledRow.querySelector('.js-complete-link');
+                                         var statusCell  = cancelledRow.querySelector('.js-status-cell');
+                                         
+                                         // Update status badge
+                                         if (statusCell) {
+                                             statusCell.innerHTML = statusBadge('deleted');
+                                         }
+
+                                         // Fade and disable Complete button in-place
+                                         if (completeLink) {
+                                             var disabledComplete = document.createElement('button');
+                                             disabledComplete.type = 'button';
+                                             disabledComplete.disabled = true;
+                                             disabledComplete.title = 'Completed';
+                                             disabledComplete.className = 'inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed';
+                                             disabledComplete.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+                                             completeLink.parentNode.replaceChild(disabledComplete, completeLink);
+                                         }
+
+                                         // Fade and disable Cancel button in-place
+                                         if (cancelBtn) {
+                                             cancelBtn.style.transition = 'all 0.35s ease';
+                                             cancelBtn.classList.remove('text-red-600', 'bg-red-50', 'border-red-200', 'hover:bg-red-100');
+                                             cancelBtn.classList.add('text-slate-400', 'bg-slate-50', 'border-slate-200', 'opacity-50', 'cursor-not-allowed');
+                                             cancelBtn.disabled = true;
+                                             cancelBtn.onclick = null;
+                                             cancelBtn.setAttribute('title', 'Canceled');
+                                         }
+                                     }
+                                     
+                                     refreshCounts();
+                                 } else {
                                     showToast(json.message || 'Cancel failed.', 'error');
                                 }
                             })
