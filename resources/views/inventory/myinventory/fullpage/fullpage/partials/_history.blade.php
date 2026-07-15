@@ -9,6 +9,19 @@
             </div>
         </div>
 
+        @if(isset($product) && !empty($product->photos))
+        <div class="mb-8">
+            <h2 class="text-[14px] font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2 mb-4">Media Gallery</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                @foreach($product->photos as $photo)
+                    <div class="aspect-square rounded-lg border border-slate-200 overflow-hidden bg-slate-50 shadow-sm hover:shadow-md transition-all">
+                        <img src="{{ $photo }}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform" alt="Product Photo" onclick="window.open('{{ $photo }}', '_blank')">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <div class="flex justify-between items-center mb-6">
             <h2 class="card-title !mb-0">History</h2>
             <div class="relative w-64 custom-select-wrapper">
@@ -123,6 +136,49 @@
                                                     </div>
                                                 @endif
                                             @endforeach
+                                    @endif
+                                    
+                                    {{-- Display Photos and Videos in Activity Details Modal --}}
+                                    @if(isset($product) && (!empty($product->photos) || !empty($product->video) || !empty($product->view360)))
+                                        <div class="mt-6">
+                                            <div class="font-bold text-[14px] text-slate-800 mb-3 border-b pb-2 uppercase tracking-wide">Product Media</div>
+                                            
+                                            {{-- Photos --}}
+                                            @if(!empty($product->photos))
+                                            <div class="mb-4">
+                                                <div class="text-[12px] font-semibold text-slate-500 mb-2">Photos</div>
+                                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                                    @foreach($product->photos as $photo)
+                                                        <div class="aspect-square rounded-lg border border-slate-200 overflow-hidden bg-slate-50 shadow-sm hover:shadow-md transition-all">
+                                                            <img src="{{ $photo }}" class="w-full h-full object-cover cursor-pointer" onclick="window.open('{{ $photo }}', '_blank')">
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            @endif
+
+                                            {{-- Video --}}
+                                            @if(!empty($product->video))
+                                            <div class="mb-4">
+                                                <div class="text-[12px] font-semibold text-slate-500 mb-2">Video</div>
+                                                <div class="aspect-video w-full max-w-sm rounded-lg border border-slate-200 overflow-hidden bg-black shadow-sm">
+                                                    <video src="{{ $product->video }}" controls class="w-full h-full"></video>
+                                                </div>
+                                            </div>
+                                            @endif
+
+                                            {{-- 360 View --}}
+                                            @if(!empty($product->view360))
+                                            <div class="mb-4">
+                                                <div class="text-[12px] font-semibold text-slate-500 mb-2">360° View</div>
+                                                <div class="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg w-fit hover:bg-slate-100 transition-colors">
+                                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                                                    <a href="{{ $product->view360->file_path ?? '#' }}" target="_blank" class="text-[13px] text-blue-600 font-medium hover:underline">
+                                                        {{ $product->view360->file_name ?? 'View 360° File' }}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>

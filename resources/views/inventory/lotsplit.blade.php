@@ -19,19 +19,11 @@
             Select Parent LOT
         </h2>
         
-        <div class="relative mb-6">
+        <div class="mb-6">
             <label class="block text-sm font-medium text-slate-700 mb-1">Search active LOTs by SKU or Name</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-search text-slate-400"></i>
-                </div>
-                <input type="text" id="lotSearch" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g. LT-001 or Sapphire Parcel">
-            </div>
-            
-            <!-- Autocomplete Dropdown -->
-            <div id="searchResults" class="absolute z-10 w-full bg-white mt-1 rounded-md shadow-lg border border-slate-200 hidden max-h-60 overflow-y-auto">
-                <!-- Results go here -->
-            </div>
+            <select id="lotSearch" class="block w-full border border-slate-300 rounded-lg sm:text-sm">
+                <option value="">Select a LOT...</option>
+            </select>
         </div>
 
         <!-- Selected LOT Details -->
@@ -140,56 +132,56 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let parentData = null;
-        const lotSearch = document.getElementById('lotSearch');
-        const searchResults = document.getElementById('searchResults');
+        const lotSearch = $('#lotSearch');
         
-        let searchTimeout = null;
-
-        // Step 1: Search
-        lotSearch.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            const query = this.value.trim();
-            
-            if(query.length < 2) {
-                searchResults.classList.add('hidden');
-                return;
+        lotSearch.select2({
+            placeholder: 'e.g. LT-001 or Sapphire Parcel',
+            allowClear: true,
+            ajax: {
+                url: '/Inventory/LotSplit/search',
+                dataType: 'json',
+                delay: 300,
+                data: function (params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item.id,
+                                text: item.sku_number + ' - ' + (item.product_title || 'No Title'),
+                                itemData: item
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            templateResult: function (item) {
+                if (item.loading) {
+                    return item.text;
+                }
+                var $container = $(
+                    "<div class='p-1'>" +
+                        "<div class='font-semibold text-slate-800'>" + item.itemData.sku_number + " <span class='text-slate-500 text-sm font-normal'>- " + (item.itemData.product_title || 'No Title') + "</span></div>" +
+                        "<div class='text-xs text-slate-500 mt-1'>Qty: " + item.itemData.quantity + " | Wt: " + item.itemData.weight_ct + "ct | Cost: $" + parseFloat(item.itemData.total_cost).toFixed(2) + "</div>" +
+                    "</div>"
+                );
+                return $container;
+            },
+            templateSelection: function (item) {
+                return item.text;
             }
-            
-            searchTimeout = setTimeout(() => {
-                fetch(`/Inventory/LotSplit/search?q=${encodeURIComponent(query)}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        searchResults.innerHTML = '';
-                        if(data.length === 0) {
-                            searchResults.innerHTML = '<div class="p-3 text-slate-500 text-sm">No active LOTs found.</div>';
-                        } else {
-                            data.forEach(item => {
-                                const div = document.createElement('div');
-                                div.className = 'p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0';
-                                div.innerHTML = `
-                                    <div class="font-semibold text-slate-800">${item.sku_number} <span class="text-slate-500 text-sm font-normal">- ${item.product_title || 'No Title'}</span></div>
-                                    <div class="text-xs text-slate-500">Qty: ${item.quantity} | Wt: ${item.weight_ct}ct | Cost: $${parseFloat(item.total_cost).toFixed(2)}</div>
-                                `;
-                                div.addEventListener('click', () => selectLot(item));
-                                searchResults.appendChild(div);
-                            });
-                        }
-                        searchResults.classList.remove('hidden');
-                    });
-            }, 300);
         });
 
-        // Hide search when clicking outside
-        document.addEventListener('click', function(e) {
-            if(!lotSearch.contains(e.target) && !searchResults.contains(e.target)) {
-                searchResults.classList.add('hidden');
-            }
+        lotSearch.on('select2:select', function (e) {
+            selectLot(e.params.data.itemData);
         });
 
         function selectLot(item) {
             parentData = item;
-            lotSearch.value = item.sku_number;
-            searchResults.classList.add('hidden');
             
             document.getElementById('selectedParentId').value = item.id;
             document.getElementById('lblSku').innerText = item.sku_number;

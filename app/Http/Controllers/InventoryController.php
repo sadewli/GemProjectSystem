@@ -115,12 +115,49 @@ class InventoryController extends Controller
 
 		$auditLogs = [];
 		$product = null;
+		$productCustomFields = [];
+		$productTypeId = session('selected_product_type_id') ?: 1;
+
 		if ($id) {
 			$product = \App\Models\Inventory\Product::where('idtbl_products', $id)->first();
 			if ($product) {
+				$productTypeId = $product->idtbl_product_types ?: 1;
 				$product->pricing = \DB::table('tbl_product_pricing')->where('idtbl_products', $id)->first();
 				$product->purchasing = \DB::table('tbl_product_purchasing')->where('idtbl_products', $id)->first();
 				$product->advance = \DB::table('tbl_product_advance_details')->where('idtbl_products', $id)->first();
+
+				// Fetch Media
+				$product->photos = \DB::table('tbl_product_media_details')
+					->join('tbl_product_media_master', 'tbl_product_media_details.idtbl_product_media_master', '=', 'tbl_product_media_master.idtbl_product_media_master')
+					->join('tbl_media_types', 'tbl_product_media_master.idtbl_media_types', '=', 'tbl_media_types.idtbl_media_types')
+					->where('tbl_product_media_master.idtbl_products', $id)
+					->where('tbl_media_types.type_name', 'photo')
+					->where('tbl_product_media_details.status', 1)
+					->pluck('tbl_product_media_details.file_path')
+					->toArray();
+
+				$product->video = \DB::table('tbl_product_media_details')
+					->join('tbl_product_media_master', 'tbl_product_media_details.idtbl_product_media_master', '=', 'tbl_product_media_master.idtbl_product_media_master')
+					->join('tbl_media_types', 'tbl_product_media_master.idtbl_media_types', '=', 'tbl_media_types.idtbl_media_types')
+					->where('tbl_product_media_master.idtbl_products', $id)
+					->where('tbl_media_types.type_name', 'video')
+					->where('tbl_product_media_details.status', 1)
+					->value('tbl_product_media_details.file_path');
+
+				$product->view360 = \DB::table('tbl_product_media_details')
+					->join('tbl_product_media_master', 'tbl_product_media_details.idtbl_product_media_master', '=', 'tbl_product_media_master.idtbl_product_media_master')
+					->join('tbl_media_types', 'tbl_product_media_master.idtbl_media_types', '=', 'tbl_media_types.idtbl_media_types')
+					->where('tbl_product_media_master.idtbl_products', $id)
+					->where('tbl_media_types.type_name', 'view360')
+					->where('tbl_product_media_details.status', 1)
+					->select('tbl_product_media_details.file_path', 'tbl_product_media_details.file_name')
+					->first();
+
+				$productCustomFields = \DB::table('tbl_product_custom_field_values')
+					->where('idtbl_products', $id)
+					->where('status', 1)
+					->pluck('field_value', 'idtbl_custom_fields')
+					->toArray();
 			}
 
 			$auditLogs = \DB::table('tbl_audit_logs')
@@ -135,6 +172,12 @@ class InventoryController extends Controller
 				->orderBy('tbl_audit_logs.insertdatetime', 'desc')
 				->get();
 		}
+
+		$customFields = \DB::table('tbl_custom_fields')
+			->where('idtbl_product_types', $productTypeId)
+			->where('status', 1)
+			->orderBy('sort_order', 'asc')
+			->get();
 
 		return view('inventory.myinventory.fullpage.fullpage.show', compact(
 			'productTypes',
@@ -157,7 +200,9 @@ class InventoryController extends Controller
 			'auditLogs',
 			'partners',
 			'certificateLabs',
-			'product'
+			'product',
+			'customFields',
+			'productCustomFields'
 		));
 	}
 
@@ -222,6 +267,7 @@ class InventoryController extends Controller
 			'height_mm' => $this->floatVal($request->height_mm),
 			'product_title' => $request->product_title,
 			'product_description' => $request->product_description,
+			'inventerysavestatus' => $request->inventerysavestatus,
 			// status is intentionally left alone during update unless explicitly requested
 		]);
 
@@ -394,6 +440,23 @@ class InventoryController extends Controller
 			]);
 		} catch (\Exception $e) {}
 
+		// Save Custom Fields
+		if ($request->has('custom_fields') && is_array($request->custom_fields)) {
+			foreach ($request->custom_fields as $fieldId => $fieldValue) {
+				\DB::table('tbl_product_custom_field_values')->updateOrInsert(
+					[
+						'idtbl_products' => $productId,
+						'idtbl_custom_fields' => $fieldId
+					],
+					[
+						'field_value' => is_array($fieldValue) ? json_encode($fieldValue) : $fieldValue,
+						'status' => 1,
+						'updatedatetime' => now()
+					]
+				);
+			}
+		}
+
 		if ($request->ajax() || $request->wantsJson()) {
 			return response()->json([
 				'success' => true,
@@ -541,6 +604,7 @@ class InventoryController extends Controller
 			'height_mm' => $this->floatVal($request->height_mm),
 			'product_title' => $request->product_title,
 			'product_description' => $request->product_description,
+			'inventerysavestatus' => $request->inventerysavestatus,
 			'status' => 1,
 		]);
 
@@ -754,6 +818,56 @@ class InventoryController extends Controller
 				return redirect()->route('production.overview.index')
 					->with('success', 'Gemstone ' . $product->sku_number . ' added to inventory and production sheet completed successfully!');
 			}
+		}
+
+		// Save Custom Fields
+		if ($request->has('custom_fields') && is_array($request->custom_fields)) {
+			foreach ($request->custom_fields as $fieldId => $fieldValue) {
+				\DB::table('tbl_product_custom_field_values')->updateOrInsert(
+					[
+						'idtbl_products' => $product->idtbl_products,
+						'idtbl_custom_fields' => $fieldId
+					],
+					[
+						'field_value' => is_array($fieldValue) ? json_encode($fieldValue) : $fieldValue,
+						'status' => 1,
+						'updatedatetime' => now()
+					]
+				);
+			}
+		}
+
+		// Map pending media to the newly created product
+		if (\Illuminate\Support\Facades\Session::has('pending_media_masters')) {
+			$masters = \Illuminate\Support\Facades\Session::get('pending_media_masters', []);
+			if (!empty($masters)) {
+				\DB::table('tbl_product_media_master')->whereIn('idtbl_product_media_master', $masters)->update(['idtbl_products' => $product->idtbl_products]);
+			}
+			\Illuminate\Support\Facades\Session::forget('pending_media_masters');
+		}
+
+		if (\Illuminate\Support\Facades\Session::has('pending_certificate_ids')) {
+			$certs = \Illuminate\Support\Facades\Session::get('pending_certificate_ids', []);
+			if (!empty($certs)) {
+				\DB::table('tbl_product_certificates')->whereIn('idtbl_product_certificates', $certs)->update(['idtbl_products' => $product->idtbl_products]);
+			}
+			\Illuminate\Support\Facades\Session::forget('pending_certificate_ids');
+		}
+
+		if (\Illuminate\Support\Facades\Session::has('pending_document_ids')) {
+			$docs = \Illuminate\Support\Facades\Session::get('pending_document_ids', []);
+			if (!empty($docs)) {
+				\DB::table('tbl_product_documents')->whereIn('idtbl_product_documents', $docs)->update(['idtbl_products' => $product->idtbl_products]);
+			}
+			\Illuminate\Support\Facades\Session::forget('pending_document_ids');
+		}
+
+		if (\Illuminate\Support\Facades\Session::has('pending_traceability_ids')) {
+			$traces = \Illuminate\Support\Facades\Session::get('pending_traceability_ids', []);
+			if (!empty($traces)) {
+				\DB::table('tbl_product_traceability_docs')->whereIn('idtbl_product_traceability_docs', $traces)->update(['idtbl_products' => $product->idtbl_products]);
+			}
+			\Illuminate\Support\Facades\Session::forget('pending_traceability_ids');
 		}
 
 		if ($request->ajax() || $request->wantsJson()) {

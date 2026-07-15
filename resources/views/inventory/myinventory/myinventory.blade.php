@@ -157,6 +157,7 @@
             <div class="flex-1 overflow-y-auto custom-scrollbar bg-white relative">
                 <form id="createGemstoneForm" action="{{ route('inventory.myinventory.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="inventerysavestatus" value="01">
                     <input type="hidden" name="product_id" id="edit_product_id" value="">
                     <input type="hidden" name="my_company_id" value="1">
                     <input type="hidden" name="idtbl_product_types" id="ddProductTypeHidden" value="">
@@ -1100,8 +1101,7 @@
                                         <th class="px-4 py-3.5">Time</th>
                                         <th class="px-4 py-3.5">User</th>
                                         <th class="px-4 py-3.5">Action</th>
-                                        <th class="px-4 py-3.5">Old Value</th>
-                                        <th class="px-4 py-3.5">New Value</th>
+                                        <th class="px-4 py-3.5">Product ID</th>
                                         <th class="px-4 py-3.5">Note</th>
                                         <th class="px-4 py-3.5 text-right">Actions</th>
                                     </tr>
@@ -1120,8 +1120,7 @@
                                                     {{ $log->action }}
                                                 </span>
                                             </td>
-                                            <td class="px-4 py-3 text-slate-400">-</td>
-                                            <td class="px-4 py-3 text-slate-400">-</td>
+                                            <td class="px-4 py-3 font-medium text-slate-800">{{ $log->entity_id }}</td>
                                             <td class="px-4 py-3 truncate max-w-[200px]">Product ID: {{ $log->entity_id }}</td>
                                             <td class="px-4 py-3 text-right">
                                                 <div class="flex items-center justify-end gap-2">
@@ -2208,7 +2207,7 @@
                             form.action = "{{ route('inventory.myinventory.update') }}";
 
                             const submitBtn = document.getElementById('saveMediaDocsBtn') || document.querySelector('#createGemstoneForm button[type="submit"]');
-                            if (submitBtn) submitBtn.innerHTML = '<i class="fa-regular fa-save mr-2"></i> Update Product';
+                            if (submitBtn) submitBtn.innerHTML = '<i class="fa-regular fa-save mr-2"></i> Update';
 
                             function setVal(idName, val) {
                                 const el = document.getElementById(idName) || document.querySelector(`[name="${idName}"]`);
@@ -2482,6 +2481,17 @@
                         });
                 }
             };
+
+            // Check for edit_id in URL to auto-open Quick View edit
+            const urlParams = new URLSearchParams(window.location.search);
+            const editId = urlParams.get('edit_id');
+            if (editId) {
+                setTimeout(function() {
+                    if (typeof window.editProduct === 'function') {
+                        window.editProduct(editId);
+                    }
+                }, 500);
+            }
 
         });
     </script>

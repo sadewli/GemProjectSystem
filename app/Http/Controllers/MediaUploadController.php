@@ -12,21 +12,63 @@ class MediaUploadController extends Controller
     private function getProductId(Request $request) {
         $productId = $request->input('product_id');
         if (!$productId || !is_numeric($productId)) {
-            // fallback to checking the referer URL if product_id is not passed
             $referer = $request->headers->get('referer');
             if ($referer) {
                 $parts = explode('/', parse_url($referer, PHP_URL_PATH));
                 $last = end($parts);
                 if (is_numeric($last)) {
-                    $productId = $last;
+                    return $last;
                 }
             }
+            return 0; // 0 indicates it's a new unsaved product
         }
-        return $productId ?: 1; // Default to 1 if not found to avoid DB constraint error
+        return $productId;
     }
 
     private function getUserId() {
         return Session::get('userid') ?: 1;
+    }
+
+    private function getOrCreateMediaMaster($productId, $userId, $typeName) {
+        $mediaType = DB::table('tbl_media_types')->where('type_name', $typeName)->first();
+        if (!$mediaType) {
+            $typeId = DB::table('tbl_media_types')->insertGetId([
+                'type_name' => $typeName,
+                'status' => 1,
+                'insertuser' => $userId,
+                'insertdatetime' => now()
+            ]);
+        } else {
+            $typeId = $mediaType->idtbl_media_types;
+        }
+
+        $masterId = null;
+        if ($productId != 0) {
+            $masterId = DB::table('tbl_product_media_master')
+                ->where('idtbl_products', $productId)
+                ->where('idtbl_media_types', $typeId)
+                ->value('idtbl_product_media_master');
+        }
+        
+        if (!$masterId) {
+            $masterId = DB::table('tbl_product_media_master')->insertGetId([
+                'idtbl_products' => $productId != 0 ? $productId : 1, // Fallback to 1 if FK constraint requires it, will update later
+                'idtbl_media_types' => $typeId,
+                'status' => 1,
+                'insertuser' => $userId,
+                'insertdatetime' => now()
+            ]);
+            
+            if ($productId == 0) {
+                $pending = Session::get('pending_media_masters', []);
+                if (!in_array($masterId, $pending)) {
+                    $pending[] = $masterId;
+                    Session::put('pending_media_masters', $pending);
+                }
+            }
+        }
+        
+        return $masterId;
     }
 
     /**
@@ -36,26 +78,14 @@ class MediaUploadController extends Controller
     {
         try {
             $request->validate([
-                'photos.*' => 'required|image|mimes:jpeg,png,svg|max:5120' // 5MB max
+                'photos.*' => 'required|image|mimes:jpeg,png,svg,webp|max:5120' // 5MB max
             ]);
 
             $uploadedPhotos = [];
             $productId = $this->getProductId($request);
             $userId = $this->getUserId();
 
-            // Ensure media master exists
-            $mediaType = DB::table('tbl_media_types')->where('type_name', 'photo')->first();
-            $masterId = DB::table('tbl_product_media_master')->where('idtbl_products', $productId)->where('idtbl_media_types', $mediaType->idtbl_media_types)->value('idtbl_product_media_master');
-            
-            if (!$masterId) {
-                $masterId = DB::table('tbl_product_media_master')->insertGetId([
-                    'idtbl_products' => $productId,
-                    'idtbl_media_types' => $mediaType->idtbl_media_types,
-                    'status' => 1,
-                    'insertuser' => $userId,
-                    'insertdatetime' => now()
-                ]);
-            }
+            $masterId = $this->getOrCreateMediaMaster($productId, $userId, 'photo');
             
             if ($request->hasFile('photos')) {
                 foreach ($request->file('photos') as $photo) {
@@ -103,19 +133,7 @@ class MediaUploadController extends Controller
             $productId = $this->getProductId($request);
             $userId = $this->getUserId();
             
-            // Ensure media master exists
-            $mediaType = DB::table('tbl_media_types')->where('type_name', 'video')->first();
-            $masterId = DB::table('tbl_product_media_master')->where('idtbl_products', $productId)->where('idtbl_media_types', $mediaType->idtbl_media_types)->value('idtbl_product_media_master');
-            
-            if (!$masterId) {
-                $masterId = DB::table('tbl_product_media_master')->insertGetId([
-                    'idtbl_products' => $productId,
-                    'idtbl_media_types' => $mediaType->idtbl_media_types,
-                    'status' => 1,
-                    'insertuser' => $userId,
-                    'insertdatetime' => now()
-                ]);
-            }
+            $masterId = $this->getOrCreateMediaMaster($productId, $userId, 'video');
 
             if ($request->hasFile('video')) {
                 $videoFile = $request->file('video');
@@ -162,18 +180,7 @@ class MediaUploadController extends Controller
             $productId = $this->getProductId($request);
             $userId = $this->getUserId();
 
-            $mediaType = DB::table('tbl_media_types')->where('type_name', 'view360')->first();
-            $masterId = DB::table('tbl_product_media_master')->where('idtbl_products', $productId)->where('idtbl_media_types', $mediaType->idtbl_media_types)->value('idtbl_product_media_master');
-            
-            if (!$masterId) {
-                $masterId = DB::table('tbl_product_media_master')->insertGetId([
-                    'idtbl_products' => $productId,
-                    'idtbl_media_types' => $mediaType->idtbl_media_types,
-                    'status' => 1,
-                    'insertuser' => $userId,
-                    'insertdatetime' => now()
-                ]);
-            }
+            $masterId = $this->getOrCreateMediaMaster($productId, $userId, 'view360');
 
             if ($request->hasFile('view360')) {
                 $file = $request->file('view360');
@@ -269,6 +276,16 @@ class MediaUploadController extends Controller
         }
     }
 
+    private function trackPendingDoc($type, $id, $productId) {
+        if ($productId == 0) {
+            $pending = Session::get("pending_{$type}_ids", []);
+            if (!in_array($id, $pending)) {
+                $pending[] = $id;
+                Session::put("pending_{$type}_ids", $pending);
+            }
+        }
+    }
+
     /**
      * Upload Certificate
      */
@@ -286,8 +303,8 @@ class MediaUploadController extends Controller
                 $filePath = asset('storage/' . $path);
             }
 
-            DB::table('tbl_product_certificates')->insert([
-                'idtbl_products' => $productId,
+            $id = DB::table('tbl_product_certificates')->insertGetId([
+                'idtbl_products' => $productId != 0 ? $productId : 1,
                 'idtbl_certificate_labs' => $request->input('certificate_lab') ?: 1,
                 'report_number' => $request->input('report_number'),
                 'certificate_url' => $request->input('certificate_url'),
@@ -296,6 +313,8 @@ class MediaUploadController extends Controller
                 'insertuser' => $userId,
                 'insertdatetime' => now()
             ]);
+
+            $this->trackPendingDoc('certificate', $id, $productId);
 
             return response()->json([
                 'success' => true,
@@ -329,8 +348,8 @@ class MediaUploadController extends Controller
                 $filePath = asset('storage/' . $path);
             }
 
-            DB::table('tbl_product_documents')->insert([
-                'idtbl_products' => $productId,
+            $id = DB::table('tbl_product_documents')->insertGetId([
+                'idtbl_products' => $productId != 0 ? $productId : 1,
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
                 'file_path' => $filePath,
@@ -338,6 +357,8 @@ class MediaUploadController extends Controller
                 'insertuser' => $userId,
                 'insertdatetime' => now()
             ]);
+            
+            $this->trackPendingDoc('document', $id, $productId);
 
             return response()->json([
                 'success' => true, 
@@ -370,8 +391,8 @@ class MediaUploadController extends Controller
                 $filePath = asset('storage/' . $path);
             }
 
-            DB::table('tbl_product_traceability_docs')->insert([
-                'idtbl_products' => $productId,
+            $id = DB::table('tbl_product_traceability_docs')->insertGetId([
+                'idtbl_products' => $productId != 0 ? $productId : 1,
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
                 'file_path' => $filePath,
@@ -379,6 +400,8 @@ class MediaUploadController extends Controller
                 'insertuser' => $userId,
                 'insertdatetime' => now()
             ]);
+
+            $this->trackPendingDoc('traceability', $id, $productId);
 
             return response()->json([
                 'success' => true, 

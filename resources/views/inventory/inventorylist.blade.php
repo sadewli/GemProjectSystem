@@ -243,6 +243,7 @@
                             <th class="px-4 py-3 font-bold">Retail Price</th>
                             <th class="px-4 py-3 font-bold">Supplier</th>
                             <th class="px-4 py-3 font-bold">Purchase Date</th>
+                            <th class="px-4 py-3 font-bold">Save Status</th>
                             <th class="px-4 py-3 font-bold text-center">Action</th>
                         </tr>
                     </thead>
@@ -265,14 +266,29 @@
                                 <td class="px-4 py-3">{{ $product->retail_price_per_unit ?? '-' }}</td>
                                 <td class="px-4 py-3">{{ $product->supplier_name ?? '-' }}</td>
                                 <td class="px-4 py-3">{{ $product->date_of_purchase ?? '-' }}</td>
+                                <td class="px-4 py-3">
+                                    @if(($product->inventerysavestatus ?? null) == '01' || ($product->inventerysavestatus ?? null) == '1')
+                                        <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium border border-blue-200">Quick View</span>
+                                    @elseif(($product->inventerysavestatus ?? null) == '2')
+                                        <span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs font-medium border border-purple-200">Overview</span>
+                                    @else
+                                        {{ $product->inventerysavestatus ?? '-' }}
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ url('Inventory/MyInventory/' . $product->idtbl_products) }}" class="text-blue-500 hover:text-blue-700" title="View">
+                                        <button type="button" class="text-blue-500 hover:text-blue-700 view-product-btn" title="View" data-product="{{ json_encode($product) }}">
                                             <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <a href="{{ url('Inventory/MyInventory/' . $product->idtbl_products) }}" class="text-amber-500 hover:text-amber-700" title="Edit">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
+                                        </button>
+                                        @if(($product->inventerysavestatus ?? null) == '01' || ($product->inventerysavestatus ?? null) == '1')
+                                            <a href="{{ url('Inventory/MyInventory') }}?edit_id={{ $product->idtbl_products }}" class="text-amber-500 hover:text-amber-700" title="Edit">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                        @else
+                                            <a href="{{ url('Inventory/MyInventory/' . $product->idtbl_products) }}" class="text-amber-500 hover:text-amber-700" title="Edit">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                        @endif
                                         <button type="button" class="text-red-500 hover:text-red-700" title="Delete" onclick="if(confirm('Are you sure you want to delete this item?')) { document.getElementById('delete-form-{{ $product->idtbl_products }}').submit(); }">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -322,6 +338,25 @@
         </div>
     </div>
 
+    <!-- View Product Modal -->
+    <div id="viewProductModal" class="fixed inset-0 z-[100] hidden bg-slate-900/50 backdrop-blur-sm overflow-y-auto p-4 flex items-center justify-center">
+        <div class="relative w-full max-w-4xl mx-auto transition-all transform scale-95 opacity-0 duration-200" id="modalDialog">
+            <div class="bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-box-open text-blue-600"></i> Product Details
+                    </h3>
+                    <button type="button" class="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-2 transition-colors close-modal-btn">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div id="modalContent" class="flex flex-col min-h-0 overflow-hidden">
+                    <!-- Content will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Dropdown Logic Reusable Function
@@ -364,6 +399,139 @@
             // Add a class to panels to easily close them
             document.getElementById('listTypePanel')?.classList.add('dropdown-panel');
             document.getElementById('creatorTypePanel')?.classList.add('dropdown-panel');
+
+            // View Product Modal Logic
+            const modal = document.getElementById('viewProductModal');
+            const modalDialog = document.getElementById('modalDialog');
+            const modalContent = document.getElementById('modalContent');
+            const closeBtns = document.querySelectorAll('.close-modal-btn');
+            
+            function openModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modalDialog.classList.remove('scale-95', 'opacity-0');
+                    modalDialog.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function closeModal() {
+                modalDialog.classList.remove('scale-100', 'opacity-100');
+                modalDialog.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 200);
+            }
+
+            document.querySelectorAll('.view-product-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const product = JSON.parse(this.getAttribute('data-product') || '{}');
+                    
+                    const formatLabel = (label) => `<span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">${label}</span>`;
+                    const formatValue = (val) => `<span class="block text-sm text-slate-800 font-medium">${val !== null && val !== undefined && val !== '' ? val : '-'}</span>`;
+                    
+                    let allDetails = [];
+                    for (const [key, value] of Object.entries(product)) {
+                        const formattedLabel = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        let displayValue = value;
+                        
+                        if (typeof value === 'object' && value !== null) {
+                            displayValue = JSON.stringify(value);
+                        } else if (typeof value === 'string' && value.trim() !== '') {
+                            const isImage = value.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) || 
+                                            key.toLowerCase().includes('photo') || 
+                                            key.toLowerCase().includes('image');
+                                            
+                            if (isImage && value.length > 3) {
+                                let src = value;
+                                if (!src.startsWith('http') && !src.startsWith('/')) {
+                                    src = '/' + src; 
+                                }
+                                displayValue = `<div class="mt-1"><img src="${src}" class="max-w-[120px] max-h-[120px] object-contain rounded-md border border-slate-200 shadow-sm bg-slate-50" alt="${formattedLabel}" onerror="this.outerHTML='<span class=\\'text-xs text-slate-400\\'>[Image cannot be loaded: ${value}]</span>'"></div>`;
+                            }
+                        }
+                        
+                        allDetails.push({ label: formattedLabel, value: displayValue });
+                    }
+                    
+                    let itemsPerPage = 12; // 6 rows x 2 columns
+                    let totalPages = Math.ceil(allDetails.length / itemsPerPage);
+                    if (totalPages === 0) totalPages = 1;
+                    
+                    let pagesHTML = '<div class="overflow-y-auto p-6 bg-white flex-1 min-h-[300px]">';
+                    for(let i=0; i<totalPages; i++) {
+                        let pageItems = allDetails.slice(i * itemsPerPage, (i + 1) * itemsPerPage);
+                        pagesHTML += `<div class="data-page ${i === 0 ? '' : 'hidden'} grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">`;
+                        pageItems.forEach(item => {
+                            pagesHTML += `<div>${formatLabel(item.label)}${formatValue(item.value)}</div>`;
+                        });
+                        pagesHTML += `</div>`;
+                    }
+                    pagesHTML += '</div>';
+                    
+                    let paginationHTML = `
+                        <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
+                            <span class="text-sm font-bold text-slate-500" id="pageIndicator">Page 1 of ${totalPages}</span>
+                            <div class="flex items-center gap-3">
+                                <button type="button" id="prevPageBtn" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                                <button type="button" id="nextPageBtn" class="px-4 py-2 bg-blue-600 border border-transparent hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+                                <button type="button" class="ml-2 px-4 py-2 bg-slate-200 border border-transparent hover:bg-slate-300 text-slate-800 text-sm font-semibold rounded-lg shadow-sm transition-colors close-modal-btn-dynamic">Close</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    modalContent.innerHTML = pagesHTML + paginationHTML;
+                    
+                    // Re-bind close button logic to the newly injected close button
+                    modalContent.querySelector('.close-modal-btn-dynamic').addEventListener('click', closeModal);
+                    
+                    let currentPage = 0;
+                    const prevBtn = document.getElementById('prevPageBtn');
+                    const nextBtn = document.getElementById('nextPageBtn');
+                    const pageInd = document.getElementById('pageIndicator');
+                    const pages = modalContent.querySelectorAll('.data-page');
+                    
+                    function updatePagination() {
+                        pages.forEach((p, index) => {
+                            if(index === currentPage) p.classList.remove('hidden');
+                            else p.classList.add('hidden');
+                        });
+                        prevBtn.disabled = currentPage === 0;
+                        nextBtn.disabled = currentPage >= totalPages - 1;
+                        pageInd.textContent = 'Page ' + (currentPage + 1) + ' of ' + totalPages;
+                    }
+                    
+                    if (prevBtn) {
+                        prevBtn.addEventListener('click', () => {
+                            if (currentPage > 0) {
+                                currentPage--;
+                                updatePagination();
+                            }
+                        });
+                    }
+                    if (nextBtn) {
+                        nextBtn.addEventListener('click', () => {
+                            if (currentPage < totalPages - 1) {
+                                currentPage++;
+                                updatePagination();
+                            }
+                        });
+                    }
+                    updatePagination();
+                    openModal();
+                });
+            });
+
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', closeModal);
+            });
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
         });
     </script>
 @endsection

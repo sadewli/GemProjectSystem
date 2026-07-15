@@ -18,26 +18,24 @@ class LotSplitController extends Controller
     public function searchLot(Request $request)
     {
         $query = $request->input('q');
-        if (empty($query)) {
-            return response()->json([]);
-        }
-
         $lots = DB::table('tbl_products')
             ->leftJoin('tbl_product_pricing', 'tbl_products.idtbl_products', '=', 'tbl_product_pricing.idtbl_products')
             ->where('tbl_products.status', 1)
             ->where('tbl_products.inventory_type', 'lot')
-            ->where(function($q) use ($query) {
-                $q->where('tbl_products.sku_number', 'like', "%{$query}%")
-                  ->orWhere('tbl_products.product_title', 'like', "%{$query}%");
+            ->when(!empty($query), function ($q) use ($query) {
+                return $q->where(function($subQ) use ($query) {
+                    $subQ->where('tbl_products.sku_number', 'like', "%{$query}%")
+                         ->orWhere('tbl_products.product_title', 'like', "%{$query}%");
+                });
             })
             ->select(
                 'tbl_products.idtbl_products as id',
                 'tbl_products.sku_number',
                 'tbl_products.product_title',
-                'tbl_products.quantity',
-                'tbl_products.weight_ct',
+                'tbl_product_pricing.quantity',
+                'tbl_product_pricing.weight as weight_ct',
                 'tbl_product_pricing.total_cost',
-                'tbl_product_pricing.unit_cost'
+                'tbl_product_pricing.cost_per_unit'
             )
             ->limit(10)
             ->get();

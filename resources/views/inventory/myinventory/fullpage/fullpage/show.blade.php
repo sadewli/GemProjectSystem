@@ -164,7 +164,7 @@
             </div>
             <button type="submit" id="globalSaveBtn"
                 class="hidden bg-[#2563eb] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2 transition-colors shadow-sm">
-                Save
+                {{ isset($product) ? 'Update' : 'Save' }}
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M5 13l4 4L19 7" />
@@ -461,6 +461,23 @@
                     }
                 };
                 hydrateData(productData);
+
+                // Load existing media
+                if (productData.photos && productData.photos.length > 0) {
+                    if (typeof displaySavedPhotos === 'function') {
+                        displaySavedPhotos(productData.photos);
+                    }
+                }
+                if (productData.video) {
+                    if (typeof displaySavedVideo === 'function') {
+                        displaySavedVideo(productData.video);
+                    }
+                }
+                if (productData.view360) {
+                    if (typeof display360ViewSaved === 'function') {
+                        display360ViewSaved(productData.view360.file_path, productData.view360.file_name);
+                    }
+                }
             }
             // === CREATE NEW VALUE MODAL ===
             const createNewModal = document.getElementById('createNewModal');

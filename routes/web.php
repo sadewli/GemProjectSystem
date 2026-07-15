@@ -249,6 +249,13 @@ Route::prefix('Inventory/MyInventory')->name('inventory.myinventory.')->group(fu
     Route::delete('/{id}', [InventoryController::class, 'destroy'])->name('destroy');
 });
 
+Route::prefix('Inventory/CustomFields')->name('customfields.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\CustomFieldController::class, 'index'])->name('index');
+    Route::post('/', [\App\Http\Controllers\CustomFieldController::class, 'store'])->name('store');
+    Route::put('/{id}', [\App\Http\Controllers\CustomFieldController::class, 'update'])->name('update');
+    Route::delete('/{id}', [\App\Http\Controllers\CustomFieldController::class, 'destroy'])->name('destroy');
+});
+
 // Lot Split Routes
 Route::prefix('Inventory/LotSplit')->name('inventory.lotsplit.')->group(function () {
     Route::get('/', [\App\Http\Controllers\inventory\LotSplitController::class, 'index'])->name('index');

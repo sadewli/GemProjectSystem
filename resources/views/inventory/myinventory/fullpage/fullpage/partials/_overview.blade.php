@@ -1,4 +1,5 @@
 <div id="tab-overview" class="tab-content active flex flex-col gap-6">
+    <input type="hidden" name="inventerysavestatus" value="2">
     {{-- Inventory Type --}}
     <div class="card !mb-0">
         <h2 class="card-title mb-4" style="text-transform: uppercase;">Inventory Type</h2>

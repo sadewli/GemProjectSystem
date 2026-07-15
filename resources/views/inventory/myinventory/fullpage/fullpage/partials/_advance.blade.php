@@ -258,25 +258,6 @@
             </div>
         </div>
 
-        <div class="mt-10 mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <div>
-                    <h3 class="text-[15px] font-bold text-slate-800">Custom Fields</h3>
-                    <p class="text-[11px] text-slate-400">Additional product information and specifications</p>
-                </div>
-                <button type="button"
-                    class="px-3 py-1.5 bg-white border border-slate-200 text-[12px] text-slate-700 font-semibold rounded-lg hover:bg-slate-50 flex items-center gap-2">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    Create new custom field
-                </button>
-            </div>
-            <div class="border border-slate-100 rounded-lg p-8 text-center bg-slate-50/30">
-                <p class="text-slate-400 text-[13px]">No custom fields added yet.</p>
-            </div>
-        </div>
 
         <div class="mt-10 mb-6">
             <h3 class="text-[15px] font-bold text-slate-800">Traceability</h3>
@@ -337,6 +318,63 @@
                 </table>
             </div>
         </div>
+    </div>
+
+    <div class="card relative">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="card-title !mb-0" style="text-transform: uppercase;">Custom Fields</h2>
+                <span class="text-[11px] text-slate-400">Additional product information and specifications</span>
+            </div>
+            <a href="{{ route('customfields.index') }}" class="text-sm font-medium border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 px-3 py-1.5 rounded-md flex items-center gap-2 relative z-50 cursor-pointer" style="pointer-events: auto;">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                Create new custom field
+            </a>
+        </div>
+        
+        @if(isset($customFields) && count($customFields) > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 relative z-0">
+            @foreach($customFields as $field)
+                @php
+                    $val = isset($productCustomFields[$field->idtbl_custom_fields]) ? $productCustomFields[$field->idtbl_custom_fields] : '';
+                    $opts = json_decode($field->field_options, true) ?: [];
+                @endphp
+                <div class="form-group">
+                    <label>{{ $field->field_name }} {!! $field->is_required ? '<span class="text-red-500">*</span>' : '' !!}</label>
+                    @if($field->field_description)
+                        <span class="sub-label">{{ $field->field_description }}</span>
+                    @endif
+                    
+                    @if($field->field_type === 'text' || $field->field_type === 'url')
+                        <input type="{{ $field->field_type === 'url' ? 'url' : 'text' }}" name="custom_fields[{{ $field->idtbl_custom_fields }}]" class="form-control px-3" value="{{ $val }}" {{ $field->is_required ? 'required' : '' }}>
+                    @elseif($field->field_type === 'number')
+                        <input type="number" name="custom_fields[{{ $field->idtbl_custom_fields }}]" class="form-control px-3" value="{{ $val }}" {{ $field->is_required ? 'required' : '' }} step="any">
+                    @elseif($field->field_type === 'textarea')
+                        <textarea name="custom_fields[{{ $field->idtbl_custom_fields }}]" class="form-control px-3 py-2" rows="2" style="height: auto;" {{ $field->is_required ? 'required' : '' }}>{{ $val }}</textarea>
+                    @elseif($field->field_type === 'date')
+                        <input type="date" name="custom_fields[{{ $field->idtbl_custom_fields }}]" class="form-control px-3" value="{{ $val }}" {{ $field->is_required ? 'required' : '' }}>
+                    @elseif($field->field_type === 'checkbox')
+                        <div class="mt-2 flex items-center gap-2">
+                            <input type="hidden" name="custom_fields[{{ $field->idtbl_custom_fields }}]" value="0">
+                            <input type="checkbox" name="custom_fields[{{ $field->idtbl_custom_fields }}]" value="1" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500" {{ $val == '1' ? 'checked' : '' }}>
+                            <span class="text-[13px] text-slate-700">Yes</span>
+                        </div>
+                    @elseif($field->field_type === 'dropdown')
+                        <select name="custom_fields[{{ $field->idtbl_custom_fields }}]" class="form-control px-3 bg-white" {{ $field->is_required ? 'required' : '' }}>
+                            <option value="">Select {{ $field->field_name }}</option>
+                            @foreach($opts as $opt)
+                                <option value="{{ $opt }}" {{ $val == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                            @endforeach
+                        </select>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+        @else
+        <div class="border border-slate-100 rounded-lg p-6 text-center bg-slate-50/50 mt-2">
+            <p class="text-slate-400 text-[13px]">No custom fields added yet.</p>
+        </div>
+        @endif
     </div>
 
     {{-- Wizard Navigation --}}
