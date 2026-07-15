@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,17 @@ Route::get('Welcome', [WelcomeController::class, 'index']);
 Route::post('Welcome/getBranchesByCompany', [WelcomeController::class, 'getBranchesByCompany'])->name('welcome.getBranchesByCompany');
 Route::post('Welcome/LoginUser', [WelcomeController::class, 'LoginUser']);
 Route::get('Welcome/Logout', [WelcomeController::class, 'Logout']);
+
+// ─────────────────────────────────────────────────────────────────────────
+// Everything below this line requires an active login session.
+// This 'checklogin' middleware is the single, central place that enforces
+// Session::get('loggedin') for the whole app, so a route can never again
+// be added without a login check by accident (this is what caused the
+// old Lot Split bug: a route defined with no auth check at all).
+// ─────────────────────────────────────────────────────────────────────────
+Route::middleware('checklogin')->group(function () {
+
+Route::post('keep-alive', [WelcomeController::class, 'keepAlive'])->name('keep-alive');
 Route::get('Welcome/Dashboard', [WelcomeController::class, 'Dashboard']);
 
 Route::get('User/Useraccount', [UserController::class, 'Useraccount']);
@@ -345,5 +357,4 @@ Route::prefix('production')->name('production.')->group(function () {
     })->name('producttransfer');
 });
 
-
-
+}); // end of checklogin middleware group
