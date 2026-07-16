@@ -273,6 +273,7 @@ Route::prefix('Inventory/LotSplit')->name('inventory.lotsplit.')->group(function
     Route::get('/', [\App\Http\Controllers\inventory\LotSplitController::class, 'index'])->name('index');
     Route::get('/search', [\App\Http\Controllers\inventory\LotSplitController::class, 'searchLot'])->name('search');
     Route::post('/store', [\App\Http\Controllers\inventory\LotSplitController::class, 'store'])->name('store');
+    Route::post('/update-sku', [\App\Http\Controllers\inventory\LotSplitController::class, 'updateSku'])->name('update-sku');
 });
 
 Route::get('Inventory/MemoOut', [InventoryController::class, 'memoOut'])->name('inventory.memoout');

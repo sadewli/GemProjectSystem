@@ -12,7 +12,38 @@ class LotSplitController extends Controller
 {
     public function index()
     {
-        return view('inventory.lotsplit');
+        $initialLots = DB::table('tbl_products')
+            ->leftJoin('tbl_product_pricing', 'tbl_products.idtbl_products', '=', 'tbl_product_pricing.idtbl_products')
+            ->where('tbl_products.status', 1)
+            ->where('tbl_products.inventory_type', 'lot')
+            ->select(
+                'tbl_products.idtbl_products as id',
+                'tbl_products.sku_number',
+                'tbl_products.product_title',
+                'tbl_product_pricing.quantity',
+                'tbl_product_pricing.weight as weight_ct',
+                'tbl_product_pricing.total_cost',
+                'tbl_product_pricing.cost_per_unit'
+            )
+            ->orderBy('tbl_products.idtbl_products', 'desc')
+            ->limit(5)
+            ->get();
+
+        $lotSplits = DB::table('tbl_lot_split')
+            ->leftJoin('tbl_products as parent', 'tbl_lot_split.parent_product_id', '=', 'parent.idtbl_products')
+            ->leftJoin('tbl_products as child', 'tbl_lot_split.child_product_id', '=', 'child.idtbl_products')
+            ->select(
+                'tbl_lot_split.*',
+                'parent.sku_number as parent_sku',
+                'parent.product_title as parent_title',
+                'child.sku_number as child_sku',
+                'child.product_title as child_title'
+            )
+            ->orderBy('tbl_lot_split.id', 'desc')
+            ->limit(100)
+            ->get();
+
+        return view('inventory.lotsplit', compact('initialLots', 'lotSplits'));
     }
 
     public function searchLot(Request $request)
@@ -66,8 +97,10 @@ class LotSplitController extends Controller
 
             $parentPricing = DB::table('tbl_product_pricing')->where('idtbl_products', $parentId)->first();
             $parentCost = $parentPricing ? $parentPricing->total_cost : 0;
-
-            // Reconciliation Check
+            $parentQty = $parentPricing ? $parentPricing->quantity : 0;
+            $parentWeight = $parentPricing ? $parentPricing->weight : 0;
+            
+            // Calculate totals from splits
             $totalSplitQty = 0;
             $totalSplitWeight = 0;
             $totalSplitCost = 0;
@@ -78,48 +111,47 @@ class LotSplitController extends Controller
                 $totalSplitCost += $split['cost'];
             }
 
+            // Validation: Ensure split totals match the parent lot
             if (
-                $totalSplitQty != $parentProduct->quantity || 
-                abs($totalSplitWeight - $parentProduct->weight_ct) > 0.01 || 
+                $totalSplitQty != $parentQty || 
+                abs($totalSplitWeight - $parentWeight) > 0.01 || 
                 abs($totalSplitCost - $parentCost) > 0.01
             ) {
-                return response()->json(['success' => false, 'message' => 'Split totals must exactly match parent lot totals.']);
+                return response()->json([
+                    'success' => false, 
+                    'message' => "Split totals must exactly match parent lot totals. Parent: Qty $parentQty, Wt $parentWeight, Cost $parentCost. Split: Qty $totalSplitQty, Wt $totalSplitWeight, Cost $totalSplitCost."
+                ]);
             }
 
-            // Mark Parent as Inactive and Out of Stock
+            // Mark Parent as Inactive and Out of Stock (quantity is tracked in pricing)
             $parentProduct->status = 0;
-            $parentProduct->inventorystatus = 2; // Out of stock
-            $parentProduct->quantity = 0;
+            $parentProduct->inventorystatus = 3; // Archived
             $parentProduct->save();
+
+            // Zero out parent quantity in pricing table
+            DB::table('tbl_product_pricing')->where('idtbl_products', $parentId)->update([
+                'quantity' => 0
+            ]);
 
             // Create Production Sheet
             $productionSheetId = DB::table('tbl_production_sheets')->insertGetId([
                 'sheet_number' => 'SPLIT-' . date('YmdHis'),
-                'status' => 'completed',
-                'date_created' => Carbon::now(),
-                'created_by' => auth()->id() ?? 1,
+                'idtbl_production_types' => 1, // Re-assortment
+                'status' => 1,
+                'insertdatetime' => Carbon::now(),
+                'insertuser' => auth()->id() ?? 1,
             ]);
+
+            $splitIndex = 1;
 
             // Create Child Products
             foreach ($splits as $split) {
                 $child = $parentProduct->replicate();
                 
-                // Get next SKU
-                $typePrefix = DB::table('tbl_product_types')->where('idtbl_product_types', $child->idtbl_product_types)->first();
-                $prefix = $typePrefix ? $typePrefix->skuname : 'SPT';
+                // Get next SKU based on parent SKU
+                $child->sku_number = $parentProduct->sku_number . '-' . $splitIndex;
+                $splitIndex++;
                 
-                $counter = DB::table('tbl_sku_counters')->where('idtbl_product_types', $child->idtbl_product_types)->value('current_number');
-                if (!$counter) {
-                    $counter = 1;
-                    DB::table('tbl_sku_counters')->insert(['idtbl_product_types' => $child->idtbl_product_types, 'current_number' => $counter]);
-                } else {
-                    $counter++;
-                    DB::table('tbl_sku_counters')->where('idtbl_product_types', $child->idtbl_product_types)->update(['current_number' => $counter]);
-                }
-                
-                $child->sku_number = $prefix . str_pad($counter, 2, '0', STR_PAD_LEFT);
-                $child->quantity = $split['quantity'];
-                $child->weight_ct = $split['weight_ct'];
                 $child->inventory_type = $split['quantity'] > 1 ? 'lot' : 'individual';
                 $child->status = 1;
                 $child->inventorystatus = 1; // In stock
@@ -130,10 +162,12 @@ class LotSplitController extends Controller
                 // Copy Pricing and update
                 if ($parentPricing) {
                     $newPricing = (array) $parentPricing;
-                    unset($newPricing['id']); // remove auto-increment
+                    unset($newPricing['idtbl_product_pricing']); // remove auto-increment
                     $newPricing['idtbl_products'] = $childId;
+                    $newPricing['quantity'] = $split['quantity'];
+                    $newPricing['weight'] = $split['weight_ct'];
                     $newPricing['total_cost'] = $split['cost'];
-                    $newPricing['unit_cost'] = $split['quantity'] > 0 ? $split['cost'] / $split['quantity'] : 0;
+                    $newPricing['cost_per_unit'] = $split['quantity'] > 0 ? $split['cost'] / $split['quantity'] : 0;
                     DB::table('tbl_product_pricing')->insert($newPricing);
                 }
 
@@ -141,7 +175,7 @@ class LotSplitController extends Controller
                 $parentPurchasing = DB::table('tbl_product_purchasing')->where('idtbl_products', $parentId)->first();
                 if ($parentPurchasing) {
                     $newPurchasing = (array) $parentPurchasing;
-                    unset($newPurchasing['id']);
+                    unset($newPurchasing['idtbl_product_purchasing']); // remove auto-increment
                     $newPurchasing['idtbl_products'] = $childId;
                     DB::table('tbl_product_purchasing')->insert($newPurchasing);
                 }
@@ -174,6 +208,33 @@ class LotSplitController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
+    public function updateSku(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer',
+            'sku_number' => 'required|string|max:100',
+        ]);
+
+        try {
+            // Check if SKU already exists in other products
+            $exists = Product::where('sku_number', $request->sku_number)
+                             ->where('idtbl_products', '!=', $request->id)
+                             ->exists();
+            
+            if ($exists) {
+                return response()->json(['success' => false, 'message' => 'This SKU is already taken by another product.']);
+            }
+
+            $product = Product::findOrFail($request->id);
+            $product->sku_number = $request->sku_number;
+            $product->save();
+
+            return response()->json(['success' => true, 'message' => 'SKU updated successfully.']);
+        } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
