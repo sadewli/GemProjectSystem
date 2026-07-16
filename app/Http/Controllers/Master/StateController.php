@@ -26,22 +26,28 @@ class StateController extends Controller
                 'idtbl_state' => 'required|string|max:50|unique:tbl_state,idtbl_state',
                 'idtbl_country' => 'nullable|string|max:50|exists:tbl_country,idtbl_country',
                 'state_name' => 'required|max:100',
-                'value' => 'required|max:100',
+                'value' => 'nullable|max:100',
                 'sort_order' => 'nullable|integer',
             ]);
         } else {
             $request->validate([
                 'idtbl_country' => 'nullable|string|max:50|exists:tbl_country,idtbl_country',
                 'state_name' => 'required|max:100',
-                'value' => 'required|max:100',
+                'value' => 'nullable|max:100',
                 'sort_order' => 'nullable|integer',
             ]);
+        }
+
+        // Auto-generate value key from name if not provided
+        $value = $request->input('value');
+        if (empty($value)) {
+            $value = strtolower(preg_replace('/[^a-z0-9]+/i', '_', trim($request->input('state_name'))));
         }
 
         $data = [
             'idtbl_country' => $request->input('idtbl_country'),
             'state_name' => $request->input('state_name'),
-            'value' => $request->input('value'),
+            'value' => $value,
             'sort_order' => $request->input('sort_order', 0) ?: 0,
         ];
 

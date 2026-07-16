@@ -43,10 +43,6 @@
                     </svg>
                     Create new
                 </button>
-                <a href="{{ route('crm.companies.import') }}"
-                    class="inline-flex items-center gap-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium px-4 py-2.5 rounded-md transition-all duration-150">
-                    Import Companies
-                </a>
             </div>
         </div>
 
@@ -78,7 +74,7 @@
                                 </svg>
                                 <span id="companyTypeLabel">
                                     @php
-                                        $ctMap = [];
+                                        $ctMap = ['all' => 'All'];
                                         foreach ($companyTypes ?? [] as $ct) {
                                             $ctMap[$ct->value] = $ct->company_type;
                                         }
@@ -126,7 +122,7 @@
                                 </svg>
                                 <span id="statusLabel">
                                     @php
-                                        $stMap = ['active' => 'Active', 'inactive' => 'Inactive', 'pending' => 'Pending'];
+                                        $stMap = ['active' => 'Active', 'deleted' => 'Deleted'];
                                         echo request('status') ? ($stMap[request('status')] ?? 'Select status') : 'Select status';
                                     @endphp
                                 </span>
@@ -144,10 +140,8 @@
                                         data-value="" data-label="Select status">Select status</li>
                                     <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'active' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
                                         data-value="active" data-label="Active">Active</li>
-                                    <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'inactive' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="inactive" data-label="Inactive">Inactive</li>
-                                    <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'pending' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="pending" data-label="Pending">Pending</li>
+                                    <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'deleted' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
+                                        data-value="deleted" data-label="Deleted">Deleted</li>
                                 </ul>
                             </div>
                         </div>
@@ -196,7 +190,7 @@
 
                                 {{-- Dropdown panel --}}
                                 <div id="ownerDropdownPanel"
-                                    class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                                    class="filter-panel hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
 
                                     {{-- Search box --}}
                                     <div class="p-2 border-b border-slate-100">
@@ -246,21 +240,7 @@
         <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
 
             {{-- Table Toolbar --}}
-            <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <button
-                        class="inline-flex items-center gap-2 border border-slate-200 text-slate-600 text-sm font-medium px-3.5 py-2 rounded-md hover:bg-slate-50 transition-all duration-150">
-                        Manage Columns
-                    </button>
-                    <button title="Export"
-                        class="w-9 h-9 flex items-center justify-center border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all duration-150">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                        </svg>
-                    </button>
-                </div>
-
+            <div class="flex items-center justify-end px-5 py-3.5 border-b border-slate-100">
                 {{-- Search --}}
                 <div class="relative">
                     <input type="text" name="search" form="filterForm" value="{{ request('search') }}"
@@ -281,10 +261,6 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-100">
-                            <th class="w-10 px-4 py-3">
-                                <input type="checkbox"
-                                    class="w-4 h-4 rounded-md border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer">
-                            </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Name</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -315,15 +291,9 @@
                         @forelse($companies ?? [] as $company)
                             <tr class="hover:bg-slate-50 transition-colors duration-100 group">
                                 <td class="px-4 py-3.5">
-                                    <input type="checkbox"
-                                        class="w-4 h-4 rounded-md border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer">
-                                </td>
-                                <td class="px-4 py-3.5">
-                                    <a href="#"
-                                        class="btn-edit-company font-medium text-primary-600 hover:text-primary-800 hover:underline transition-colors"
-                                        data-id="{{ $company->idtbl_create_company }}">
+                                    <span class="font-medium text-slate-700">
                                         {{ $company->name ?? '--' }}
-                                    </a>
+                                    </span>
                                 </td>
                                 <td class="px-4 py-3.5 text-slate-600">{{ $company->reference ?? '--' }}</td>
                                 <td class="px-4 py-3.5 text-slate-600 capitalize">
@@ -331,20 +301,25 @@
                                 </td>
                                 <td class="px-4 py-3.5 text-slate-600">{{ $company->email ?? '--' }}</td>
                                 <td class="px-4 py-3.5">
-                                    @if($company->status === 'active')
+                                    @if($company->status == 1)
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">
                                             Active
                                         </span>
-                                    @elseif($company->status === 'inactive')
+                                    @elseif($company->status == 2)
                                         <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                                             Inactive
                                         </span>
-                                    @elseif($company->status === 'pending')
+                                    @elseif($company->status == 3)
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200">
                                             Pending
+                                        </span>
+                                    @elseif($company->status == 0)
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
+                                            Deleted
                                         </span>
                                     @else
                                         <span class="text-slate-400">--</span>
@@ -358,28 +333,49 @@
                                 <td class="px-4 py-3.5 text-slate-600">{{ $company->inactive_days ?? '--' }}</td>
                                 <td class="px-4 py-3.5 text-slate-600">
                                     <div class="flex items-center gap-2">
-                                        <a href="#"
-                                            class="btn-edit-company text-slate-400 hover:text-primary-600 transition-colors"
-                                            data-id="{{ $company->idtbl_create_company }}" title="Edit">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                        <form action="{{ route('crm.companies.destroy', $company->idtbl_create_company) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete this company?')"
-                                            class="inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-slate-400 hover:text-red-600 transition-colors"
-                                                title="Delete">
-                                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        @if($company->status == 0)
+                                            <a href="#"
+                                                class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed pointer-events-none"
+                                                title="Edit (Deleted)" onclick="event.preventDefault();">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
+                                            <button type="button" disabled
+                                                class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed"
+                                                title="Delete (Deleted)">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
-                                        </form>
+                                        @else
+                                            <a href="#"
+                                                class="btn-edit-company inline-flex items-center justify-center w-7 h-7 rounded text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors"
+                                                data-id="{{ $company->idtbl_create_company }}" title="Edit">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
+                                            <button type="button"
+                                                class="btn-delete-company inline-flex items-center justify-center w-7 h-7 rounded text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+                                                data-id="{{ $company->idtbl_create_company }}"
+                                                data-name="{{ $company->name }}"
+                                                title="Delete">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                            {{-- Hidden delete form, submitted by confirm modal --}}
+                                            <form id="delete-company-form-{{ $company->idtbl_create_company }}" action="{{ route('crm.companies.destroy', $company->idtbl_create_company) }}"
+                                                method="POST" class="hidden">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -844,6 +840,7 @@
                     <div id="contactsContainer">
                         {{-- First contact row --}}
                         <div class="contact-row grid grid-cols-2 gap-x-5 gap-y-4 mb-4">
+                            <input type="hidden" name="contacts[0][id]" value="">
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">First name:</label>
                                 <input type="text" name="contacts[0][first_name]" placeholder="Add first name"
@@ -984,6 +981,7 @@
                 const row = document.createElement('div');
                 row.className = 'contact-row grid grid-cols-2 gap-x-5 gap-y-4 mb-4 pt-4 border-t border-slate-100';
                 row.innerHTML = `
+                        <input type="hidden" name="contacts[${idx}][id]" value="${values && values.id ? values.id : ''}">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 mb-1.5">First name:</label>
                             <input type="text" name="contacts[${idx}][first_name]" placeholder="Add first name"
@@ -1188,7 +1186,7 @@
 
                         if (company.contacts && company.contacts.length > 0) {
                             company.contacts.forEach(contact => {
-                                addContactRow(contact);
+                                addContactRow(Object.assign({}, contact, { id: contact.idtbl_create_contact }));
                             });
                         } else {
                             addContactRow();
@@ -1267,6 +1265,9 @@
             // Toggle dropdown
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
+                document.querySelectorAll('.filter-panel').forEach(function (p) {
+                    if (p !== panel) p.classList.add('hidden');
+                });
                 const isOpen = !panel.classList.contains('hidden');
                 panel.classList.toggle('hidden', isOpen);
                 if (!isOpen) {
@@ -1309,6 +1310,7 @@
                 }
 
                 panel.classList.add('hidden');
+                document.getElementById('filterForm').submit();
             });
 
             // Close when clicking outside
@@ -1530,6 +1532,80 @@
 
             bindCountryStateFilter('modalCountryHidden', 'modalStateWrapper', 'modalStateHidden', 'modalStateLabel', 'modalStateList', 'modal-option-state');
             bindCountryStateFilter('modalDelCountryHidden', 'modalDelStateWrapper', 'modalDelStateHidden', 'modalDelStateLabel', 'modalDelStateList', 'modal-option-del_state');
+
+            // ===== Delete Company Confirm Modal =====
+            const deleteCompanyModal = document.getElementById('delete-company-modal');
+            const deleteCompanyLabel = document.getElementById('delete-company-label');
+            const btnDeleteCompanyCancel = document.getElementById('btn-delete-company-cancel');
+            const btnDeleteCompanyConfirm = document.getElementById('btn-delete-company-confirm');
+            let deleteCompanyFormTarget = null;
+
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.btn-delete-company');
+                if (!btn) return;
+                const name = btn.dataset.name;
+                const id = btn.dataset.id;
+                deleteCompanyFormTarget = document.getElementById('delete-company-form-' + id);
+                if (deleteCompanyLabel) deleteCompanyLabel.textContent = name;
+                if (deleteCompanyModal) {
+                    deleteCompanyModal.classList.remove('hidden');
+                    deleteCompanyModal.classList.add('flex');
+                }
+            });
+
+            if (btnDeleteCompanyCancel) {
+                btnDeleteCompanyCancel.addEventListener('click', function () {
+                    deleteCompanyModal.classList.add('hidden');
+                    deleteCompanyModal.classList.remove('flex');
+                    deleteCompanyFormTarget = null;
+                });
+            }
+            if (btnDeleteCompanyConfirm) {
+                btnDeleteCompanyConfirm.addEventListener('click', function () {
+                    if (deleteCompanyFormTarget) deleteCompanyFormTarget.submit();
+                });
+            }
+            deleteCompanyModal?.addEventListener('click', function (e) {
+                if (e.target === deleteCompanyModal) {
+                    deleteCompanyModal.classList.add('hidden');
+                    deleteCompanyModal.classList.remove('flex');
+                    deleteCompanyFormTarget = null;
+                }
+            });
         });
     </script>
+
+    {{-- ===== DELETE COMPANY CONFIRMATION MODAL ===== --}}
+    <div id="delete-company-modal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4"
+        style="background:rgba(0,0,0,0.5);">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-800">Delete Company</h3>
+                    <p class="text-sm text-slate-500">This action cannot be undone.</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600 mb-6">
+                Are you sure you want to delete
+                <span class="font-semibold text-slate-800" id="delete-company-label"></span>?
+                This company will be permanently removed.
+            </p>
+            <div class="flex items-center justify-end gap-3">
+                <button id="btn-delete-company-cancel"
+                    class="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="btn-delete-company-confirm"
+                    class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
 @endsection

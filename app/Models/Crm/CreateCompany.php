@@ -4,12 +4,14 @@ namespace App\Models\Crm;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Crm\CreateContact;
 
 class CreateCompany extends Model
 {
     protected $table = 'tbl_create_company';
     protected $primaryKey = 'idtbl_create_company';
     protected $guarded = [];
+    protected $casts = ['status' => 'integer'];
 
     /**
      * Get the owner (user) of the company.
@@ -24,6 +26,6 @@ class CreateCompany extends Model
      */
     public function contacts()
     {
-        return $this->hasMany(CreateCompanyContact::class, 'tbl_create_company_idtbl_create_company', 'idtbl_create_company');
+        return $this->hasMany(CreateContact::class, 'company_id', 'idtbl_create_company');
     }
 }

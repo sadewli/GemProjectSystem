@@ -28,10 +28,6 @@
                     </svg>
                     Create new
                 </button>
-                <a href="{{ route('crm.contacts.import') }}"
-                    class="inline-flex items-center gap-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium px-4 py-2.5 rounded-md transition-all duration-150">
-                    Import Contacts
-                </a>
             </div>
         </div>
 
@@ -63,7 +59,7 @@
                                 </svg>
                                 <span id="companyTypeLabel">
                                     @php
-                                        $ctMap = [];
+                                        $ctMap = ['all' => 'All'];
                                         foreach($companyTypes ?? [] as $ct) {
                                             $ctMap[$ct->value] = $ct->company_type;
                                         }
@@ -107,7 +103,7 @@
                                 </svg>
                                 <span id="statusLabel">
                                     @php
-                                        $stMap = ['active' => 'Active', 'inactive' => 'Inactive', 'pending' => 'Pending'];
+                                        $stMap = ['active' => 'Active', 'deleted' => 'Deleted'];
                                         echo request('status') ? ($stMap[request('status')] ?? 'Select status') : 'Select status';
                                     @endphp
                                 </span>
@@ -125,67 +121,63 @@
                                         data-value="" data-label="Select status">Select status</li>
                                     <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'active' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
                                         data-value="active" data-label="Active">Active</li>
-                                    <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'inactive' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="inactive" data-label="Inactive">Inactive</li>
-                                    <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'pending' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
-                                        data-value="pending" data-label="Pending">Pending</li>
+                                    <li class="st-option flex items-center px-4 py-2.5 text-sm cursor-pointer {{ request('status') === 'deleted' ? 'bg-blue-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50' }}"
+                                        data-value="deleted" data-label="Deleted">Deleted</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Owner + Buttons --}}
+                    {{-- Company + Buttons --}}
                     <div class="flex gap-3">
                         <div class="flex-1">
-                            <label class="block text-xs font-medium text-slate-500 mb-1.5">Owner:</label>
-
-                            {{-- Searchable Owner Dropdown --}}
-                            <div class="relative" id="ownerDropdownWrapper">
-                                <input type="hidden" name="owner" id="ownerHiddenInput" value="{{ request('owner') }}">
-                                <button type="button" id="ownerDropdownBtn"
+                            <label class="block text-xs font-medium text-slate-500 mb-1.5">Company:</label>
+                            <div class="relative" id="companyDropdownWrapper">
+                                <input type="hidden" name="company_id" id="companyHiddenInput" value="{{ request('company_id') }}">
+                                <button type="button" id="companyDropdownBtn"
                                     class="w-full flex items-center gap-2 pl-3 pr-8 py-2.5 text-sm text-slate-600 border-2 border-slate-200 rounded-md bg-white focus:outline-none focus:border-blue-500 cursor-pointer text-left hover:border-blue-400 transition-colors">
                                     <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                            d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                     </svg>
-                                    <span id="ownerDropdownLabel" class="truncate">
+                                    <span id="companyDropdownLabel" class="truncate">
                                         @php
-                                            $selectedOwnerName = 'Select owner';
-                                            if (request('owner')) {
-                                                $found = collect($owners ?? [])->firstWhere('id', request('owner'));
-                                                if ($found)
-                                                    $selectedOwnerName = $found->name;
+                                            $selectedCompanyName = 'Select company';
+                                            if (request('company_id')) {
+                                                $foundCompany = collect($companies_list ?? [])->firstWhere('id', request('company_id'));
+                                                if ($foundCompany) {
+                                                    $selectedCompanyName = $foundCompany->name;
+                                                }
                                             }
                                         @endphp
-                                        {{ $selectedOwnerName }}
+                                        {{ $selectedCompanyName }}
                                     </span>
                                 </button>
                                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
-                                <div id="ownerDropdownPanel"
-                                    class="hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
+                                <div id="companyDropdownPanel"
+                                    class="filter-panel hidden absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                     <div class="p-2 border-b border-slate-100">
-                                        <input type="text" id="ownerSearchInput" placeholder="Search owner..."
+                                        <input type="text" id="companySearchInput" placeholder="Search company..."
                                             class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             autocomplete="off">
                                     </div>
-                                    <ul id="ownerOptionsList" class="py-1 max-h-48 overflow-y-auto">
-                                        <li class="owner-option px-3 py-2 text-sm text-slate-400 italic cursor-pointer hover:bg-slate-50"
-                                            data-value="" data-label="Select owner">Select owner</li>
-                                        @foreach($owners ?? [] as $owner)
-                                            <li class="owner-option px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer {{ request('owner') == $owner->id ? 'bg-blue-50 text-blue-700 font-medium' : '' }}"
-                                                data-value="{{ $owner->id }}" data-label="{{ $owner->name }}">
-                                                {{ $owner->name }}
+                                    <ul id="companyOptionsList" class="py-1 max-h-48 overflow-y-auto">
+                                        <li class="company-option px-3 py-2 text-sm text-slate-400 italic cursor-pointer hover:bg-slate-50"
+                                            data-value="" data-label="Select company">Select company</li>
+                                        @foreach($companies_list ?? [] as $company)
+                                            <li class="company-option px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer {{ request('company_id') == $company->id ? 'bg-blue-50 text-blue-700 font-medium' : '' }}"
+                                                data-value="{{ $company->id }}" data-label="{{ $company->name }}">
+                                                {{ $company->name }}
                                             </li>
                                         @endforeach
-                                        <li id="ownerNoResults" class="hidden px-3 py-2 text-sm text-slate-400 italic">
-                                            No owners found
+                                        <li id="companyNoResults" class="hidden px-3 py-2 text-sm text-slate-400 italic">
+                                            No companies found
                                         </li>
                                     </ul>
                                 </div>
@@ -215,21 +207,7 @@
         <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
 
             {{-- Table Toolbar --}}
-            <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <button
-                        class="inline-flex items-center gap-2 border border-slate-200 text-slate-600 text-sm font-medium px-3.5 py-2 rounded-md hover:bg-slate-50 transition-all duration-150">
-                        Manage Columns
-                    </button>
-                    <button title="Export"
-                        class="w-9 h-9 flex items-center justify-center border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all duration-150">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                        </svg>
-                    </button>
-                </div>
-
+            <div class="flex items-center justify-end px-5 py-3.5 border-b border-slate-100">
                 {{-- Search --}}
                 <div class="relative">
                     <input type="text" name="search" form="filterForm" value="{{ request('search') }}"
@@ -250,15 +228,15 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="text-slate-500 text-xs uppercase tracking-wider">
-                                <th class="px-3 py-2">Ref</th>
-                                <th class="px-3 py-2">Name</th>
-                                <th class="px-3 py-2">Email</th>
-                                <th class="px-3 py-2">Phone</th>
-                                <th class="px-3 py-2">Company</th>
-                                <th class="px-3 py-2">Owner</th>
-                                <th class="px-3 py-2">Status</th>
-                                <th class="px-3 py-2">Actions</th>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Ref</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Company</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Owner</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -270,16 +248,65 @@
                                     <td class="px-3 py-3 align-top">{{ $contact->phone_code ? $contact->phone_code . ' ' : '' }}{{ $contact->phone }}</td>
                                     <td class="px-3 py-3 align-top">{{ optional($contact->company)->name ?? '' }}</td>
                                     <td class="px-3 py-3 align-top">{{ optional($contact->owner)->name ?? '' }}</td>
-                                    <td class="px-3 py-3 align-top">{{ ucfirst($contact->status ?? '') }}</td>
+                                    <td class="px-3 py-3 align-top">
+                                        @if($contact->status == 1)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">Active</span>
+                                        @elseif($contact->status == 0)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">Deleted</span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">{{ ucfirst($contact->status ?? '--') }}</span>
+                                        @endif
+                                    </td>
                                     <td class="px-3 py-3 align-top">
                                         <div class="flex items-center gap-2">
-                                            <button type="button" class="edit-contact inline-flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm text-slate-600 hover:bg-slate-50" data-id="{{ $contact->idtbl_create_contact }}">Edit</button>
-
-                                            <form action="{{ url('crm/contacts/' . $contact->idtbl_create_contact) }}" method="POST" onsubmit="return confirm('Delete this contact?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm text-red-600 hover:bg-red-50">Delete</button>
-                                            </form>
+                                            @if($contact->status == 0)
+                                                {{-- Deleted: faded disabled Edit button --}}
+                                                <button type="button" disabled
+                                                    class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed"
+                                                    title="Edit (Deleted)">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </button>
+                                                {{-- Deleted: faded disabled Delete button --}}
+                                                <button type="button" disabled
+                                                    class="inline-flex items-center justify-center w-7 h-7 rounded text-slate-400 bg-slate-50 border border-slate-200 opacity-50 cursor-not-allowed"
+                                                    title="Delete (Deleted)">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            @else
+                                                {{-- Active: fully clickable Edit button --}}
+                                                <button type="button"
+                                                    class="edit-contact inline-flex items-center justify-center w-7 h-7 rounded text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors"
+                                                    data-id="{{ $contact->idtbl_create_contact }}"
+                                                    title="Edit">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </button>
+                                                {{-- Active: Delete triggers confirm modal --}}
+                                                <button type="button"
+                                                    class="btn-delete-contact inline-flex items-center justify-center w-7 h-7 rounded text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+                                                    data-id="{{ $contact->idtbl_create_contact }}"
+                                                    data-name="{{ $contact->first_name }} {{ $contact->last_name }}"
+                                                    data-action="{{ url('crm/contacts/' . $contact->idtbl_create_contact) }}"
+                                                    title="Delete">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                                {{-- Hidden delete form, submitted by confirm modal --}}
+                                                <form id="delete-contact-form-{{ $contact->idtbl_create_contact }}" action="{{ url('crm/contacts/' . $contact->idtbl_create_contact) }}" method="POST" class="hidden">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -409,23 +436,12 @@
                                     <div id="modalContactTypePanel"
                                         class="hidden absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-200 rounded-md shadow-lg overflow-hidden">
                                         <ul class="py-1 max-h-48 overflow-y-auto">
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 bg-blue-600 text-white font-semibold"
-                                                data-value="" data-label="Select contact types">Select contact types</li>
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="customer" data-label="Customer">Customer</li>
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="supplier" data-label="Supplier">Supplier</li>
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="partner" data-label="Partner">Partner</li>
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="broker_sales_agent" data-label="Broker &amp; Sales Agent">Broker
-                                                &amp; Sales Agent</li>
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="contractor" data-label="Contractor">Contractor</li>
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="employee" data-label="Employee">Employee</li>
-                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50 "
-                                                data-value="all" data-label="All">All</li>
+                                            <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer bg-blue-600 text-white font-semibold"
+                                                data-value="" data-label="Select contact type">Select contact type</li>
+                                            @foreach($companyTypes ?? [] as $ct)
+                                                <li class="modal-option-contact_type flex items-center px-4 py-2.5 text-sm cursor-pointer text-slate-600 hover:bg-slate-50"
+                                                    data-value="{{ $ct->value }}" data-label="{{ $ct->company_type }}">{{ $ct->company_type }}</li>
+                                            @endforeach
                                         </ul>
                                     </div>
                                 </div>
@@ -821,10 +837,20 @@
                         state: 'modalStateLabel',
                         company_id: 'modalCompanyIdLabel'
                     };
+                    // Build a value->label map from contact_type options for display
+                    const ctLabelMap = {};
+                    document.querySelectorAll('.modal-option-contact_type').forEach(function(opt) {
+                        if (opt.dataset.value) ctLabelMap[opt.dataset.value] = opt.dataset.label;
+                    });
+
                     Object.keys(mapping).forEach(k => {
                         const lbl = document.getElementById(mapping[k]);
                         if (lbl) {
-                            lbl.textContent = data[k] ?? lbl.textContent;
+                            let displayVal = data[k] ?? '';
+                            if (k === 'contact_type' && displayVal && ctLabelMap[displayVal]) {
+                                displayVal = ctLabelMap[displayVal];
+                            }
+                            lbl.textContent = displayVal || lbl.textContent;
                         }
                     });
 
@@ -927,19 +953,24 @@
         makeFilterDropdown('companyTypeWrapper', 'companyTypeBtn', 'companyTypePanel', 'companyTypeHidden', 'companyTypeLabel', 'ct-option', 'filterForm');
         makeFilterDropdown('statusWrapper', 'statusBtn', 'statusPanel', 'statusHidden', 'statusLabel', 'st-option', 'filterForm');
 
+
+
         (function () {
-            const btn = document.getElementById('ownerDropdownBtn');
-            const panel = document.getElementById('ownerDropdownPanel');
-            const search = document.getElementById('ownerSearchInput');
-            const label = document.getElementById('ownerDropdownLabel');
-            const hidden = document.getElementById('ownerHiddenInput');
-            const options = document.querySelectorAll('.owner-option');
-            const noResults = document.getElementById('ownerNoResults');
+            const btn = document.getElementById('companyDropdownBtn');
+            const panel = document.getElementById('companyDropdownPanel');
+            const search = document.getElementById('companySearchInput');
+            const label = document.getElementById('companyDropdownLabel');
+            const hidden = document.getElementById('companyHiddenInput');
+            const options = document.querySelectorAll('.company-option');
+            const noResults = document.getElementById('companyNoResults');
 
             if (!btn) return;
 
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
+                document.querySelectorAll('.filter-panel').forEach(function (p) {
+                    if (p !== panel) p.classList.add('hidden');
+                });
                 const isOpen = !panel.classList.contains('hidden');
                 panel.classList.toggle('hidden', isOpen);
                 if (!isOpen) {
@@ -964,8 +995,8 @@
                 noResults.classList.toggle('hidden', visibleCount > 0);
             }
 
-            document.getElementById('ownerOptionsList').addEventListener('click', function (e) {
-                const opt = e.target.closest('.owner-option');
+            document.getElementById('companyOptionsList').addEventListener('click', function (e) {
+                const opt = e.target.closest('.company-option');
                 if (!opt) return;
                 hidden.value = opt.dataset.value;
                 label.textContent = opt.dataset.label;
@@ -976,10 +1007,11 @@
                     opt.classList.add('bg-blue-50', 'text-blue-700', 'font-medium');
                 }
                 panel.classList.add('hidden');
+                document.getElementById('filterForm').submit();
             });
 
             document.addEventListener('click', function (e) {
-                if (!document.getElementById('ownerDropdownWrapper').contains(e.target)) {
+                if (!document.getElementById('companyDropdownWrapper').contains(e.target)) {
                     panel.classList.add('hidden');
                 }
             });
@@ -1173,6 +1205,79 @@
             setupModalSearchableDropdown('CompanyId');
 
             bindCountryStateFilter('modalCountryHidden', 'modalStateWrapper', 'modalStateHidden', 'modalStateLabel', 'modalStateList', 'modal-option-state');
+            // ===== Delete Contact Confirm Modal =====
+            const deleteContactModal = document.getElementById('delete-contact-modal');
+            const deleteContactLabel = document.getElementById('delete-contact-label');
+            const btnDeleteContactCancel = document.getElementById('btn-delete-contact-cancel');
+            const btnDeleteContactConfirm = document.getElementById('btn-delete-contact-confirm');
+            let deleteContactFormTarget = null;
+
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.btn-delete-contact');
+                if (!btn) return;
+                const name = btn.dataset.name;
+                const id = btn.dataset.id;
+                deleteContactFormTarget = document.getElementById('delete-contact-form-' + id);
+                if (deleteContactLabel) deleteContactLabel.textContent = name;
+                if (deleteContactModal) {
+                    deleteContactModal.classList.remove('hidden');
+                    deleteContactModal.classList.add('flex');
+                }
+            });
+
+            if (btnDeleteContactCancel) {
+                btnDeleteContactCancel.addEventListener('click', function () {
+                    deleteContactModal.classList.add('hidden');
+                    deleteContactModal.classList.remove('flex');
+                    deleteContactFormTarget = null;
+                });
+            }
+            if (btnDeleteContactConfirm) {
+                btnDeleteContactConfirm.addEventListener('click', function () {
+                    if (deleteContactFormTarget) deleteContactFormTarget.submit();
+                });
+            }
+            deleteContactModal?.addEventListener('click', function (e) {
+                if (e.target === deleteContactModal) {
+                    deleteContactModal.classList.add('hidden');
+                    deleteContactModal.classList.remove('flex');
+                    deleteContactFormTarget = null;
+                }
+            });
         });
     </script>
+
+    {{-- ===== DELETE CONTACT CONFIRMATION MODAL ===== --}}
+    <div id="delete-contact-modal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4"
+        style="background:rgba(0,0,0,0.5);">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-800">Delete Contact</h3>
+                    <p class="text-sm text-slate-500">This action cannot be undone.</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600 mb-6">
+                Are you sure you want to delete
+                <span class="font-semibold text-slate-800" id="delete-contact-label"></span>?
+                This contact will be permanently removed.
+            </p>
+            <div class="flex items-center justify-end gap-3">
+                <button id="btn-delete-contact-cancel"
+                    class="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="btn-delete-contact-confirm"
+                    class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
 @endsection

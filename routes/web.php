@@ -278,15 +278,9 @@ Route::prefix('crm')->name('crm.')->group(function () {
     Route::get('/contacts', [\App\Http\Controllers\crm\ContactsController::class, 'index'])
         ->name('contacts.index');
 
-    Route::get('/contacts/import', [\App\Http\Controllers\crm\ContactsController::class, 'import'])
-        ->name('contacts.import');
-
     //Companies Routes
     Route::get('/companies', [\App\Http\Controllers\crm\CompaniesController::class, 'index'])
         ->name('companies.index');
-
-    Route::get('/companies/import', [\App\Http\Controllers\crm\CompaniesController::class, 'import'])
-        ->name('companies.import');
 
     Route::post('/companies', [\App\Http\Controllers\crm\CompaniesController::class, 'store'])
         ->name('companies.store');
