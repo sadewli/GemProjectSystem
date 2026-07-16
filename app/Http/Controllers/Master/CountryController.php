@@ -23,20 +23,26 @@ class CountryController extends Controller
             $request->validate([
                 'idtbl_country' => 'required|string|max:50|unique:tbl_country,idtbl_country',
                 'country_name' => 'required|max:100',
-                'value' => 'required|max:100',
+                'value' => 'nullable|max:100',
                 'sort_order' => 'nullable|integer',
             ]);
         } else {
             $request->validate([
                 'country_name' => 'required|max:100',
-                'value' => 'required|max:100',
+                'value' => 'nullable|max:100',
                 'sort_order' => 'nullable|integer',
             ]);
         }
 
+        // Auto-generate value key from name if not provided
+        $value = $request->input('value');
+        if (empty($value)) {
+            $value = strtolower(preg_replace('/[^a-z0-9]+/i', '_', trim($request->input('country_name'))));
+        }
+
         $data = [
             'country_name' => $request->input('country_name'),
-            'value' => $request->input('value'),
+            'value' => $value,
             'sort_order' => $request->input('sort_order', 0) ?: 0,
         ];
 

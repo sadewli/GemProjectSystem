@@ -27,16 +27,22 @@ class RoleController extends Controller
     {
         $request->validate([
             'role_name' => 'required|max:100',
-            'value' => 'required|max:100',
+            'value' => 'nullable|max:100',
             'sort_order' => 'nullable|integer',
         ]);
 
         $recordID = $request->input('recordID');
         $recordOption = $request->input('recordOption'); // 1 = Add, 2 = Edit
 
+        // Auto-generate value key from name if not provided
+        $value = $request->input('value');
+        if (empty($value)) {
+            $value = strtolower(preg_replace('/[^a-z0-9]+/i', '_', trim($request->input('role_name'))));
+        }
+
         $data = [
             'role_name' => $request->input('role_name'),
-            'value' => $request->input('value'),
+            'value' => $value,
             'sort_order' => $request->input('sort_order', 0) ?: 0,
         ];
 

@@ -10,6 +10,7 @@ class CreateContact extends Model
     protected $table = 'tbl_create_contact';
     protected $primaryKey = 'idtbl_create_contact';
     protected $guarded = [];
+    protected $casts = ['status' => 'integer'];
 
     /**
      * The user who owns this contact.

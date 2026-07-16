@@ -11,7 +11,7 @@ use App\Models\Country;
 use App\Models\PhoneCode;
 use App\Models\User;
 use App\Models\Crm\CreateCompany;
-use App\Models\Crm\CreateCompanyContact;
+use App\Models\Crm\CreateContact;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +55,7 @@ class CompaniesController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->where('status', $this->mapCompanyStatus($request->status));
         }
 
         if ($request->filled('owner')) {
@@ -129,7 +129,7 @@ class CompaniesController extends Controller
             'phone' => $request->phone,
             'profile_image' => $imagePath,
             'website' => $request->website,
-            'status' => $request->status ?? 'active',
+            'status' => $this->mapCompanyStatus($request->status ?? 'active'),
             'owner_id' => Session::get('userid'),
             'attention' => $request->attention,
             'address_line1' => $request->address_line1,
@@ -149,16 +149,19 @@ class CompaniesController extends Controller
         ]);
 
         // Save contacts
+        $newContactCount = 0;
         if ($request->has('contacts') && is_array($request->contacts)) {
             foreach ($request->contacts as $contactData) {
                 if (!empty($contactData['first_name']) || !empty($contactData['last_name']) || !empty($contactData['email'])) {
-                    CreateCompanyContact::create([
-                        'tbl_create_company_idtbl_create_company' => $company->idtbl_create_company,
+                    CreateContact::create([
+                        'company_id' => $company->idtbl_create_company,
+                        'reference' => $this->nextContactReference($newContactCount++),
                         'first_name' => $contactData['first_name'] ?? null,
                         'last_name' => $contactData['last_name'] ?? null,
                         'email' => $contactData['email'] ?? null,
                         'role' => $contactData['role'] ?? null,
-                        'primary' => isset($contactData['primary']) ? 1 : 0,
+                        'is_primary' => isset($contactData['primary']) ? 1 : 0,
+                        'status' => 1, // 1 = Active
                     ]);
                 }
             }
@@ -208,7 +211,7 @@ class CompaniesController extends Controller
             'phone' => $request->phone,
             'profile_image' => $imagePath,
             'website' => $request->website,
-            'status' => $request->status ?? $company->status,
+            'status' => $this->mapCompanyStatus($request->status ?? $company->status),
             'attention' => $request->attention,
             'address_line1' => $request->address_line1,
             'address_line2' => $request->address_line2,
@@ -226,19 +229,39 @@ class CompaniesController extends Controller
             'del_postal_code' => $request->del_postal_code,
         ]);
 
-        // Sync contacts: Delete existing contacts and insert new ones
-        CreateCompanyContact::where('tbl_create_company_idtbl_create_company', $company->idtbl_create_company)->delete();
-
+        // Sync contacts: Update existing or create new ones
+        $newContactCount = 0;
         if ($request->has('contacts') && is_array($request->contacts)) {
             foreach ($request->contacts as $contactData) {
                 if (!empty($contactData['first_name']) || !empty($contactData['last_name']) || !empty($contactData['email'])) {
-                    CreateCompanyContact::create([
-                        'tbl_create_company_idtbl_create_company' => $company->idtbl_create_company,
+                    $hasId = !empty($contactData['id']);
+
+                    if ($hasId) {
+                        $contact = CreateContact::where('company_id', $company->idtbl_create_company)
+                            ->where('idtbl_create_contact', $contactData['id'])
+                            ->first();
+                        if ($contact) {
+                            $contact->update([
+                                'first_name' => $contactData['first_name'] ?? null,
+                                'last_name' => $contactData['last_name'] ?? null,
+                                'email' => $contactData['email'] ?? null,
+                                'role' => $contactData['role'] ?? null,
+                                'is_primary' => isset($contactData['primary']) ? 1 : 0,
+                            ]);
+                            continue;
+                        }
+                    }
+
+                    // Create new contact if no ID matching this company is found
+                    CreateContact::create([
+                        'company_id' => $company->idtbl_create_company,
+                        'reference' => $this->nextContactReference($newContactCount++),
                         'first_name' => $contactData['first_name'] ?? null,
                         'last_name' => $contactData['last_name'] ?? null,
                         'email' => $contactData['email'] ?? null,
                         'role' => $contactData['role'] ?? null,
-                        'primary' => isset($contactData['primary']) ? 1 : 0,
+                        'is_primary' => isset($contactData['primary']) ? 1 : 0,
+                        'status' => 1, // 1 = Active
                     ]);
                 }
             }
@@ -252,23 +275,44 @@ class CompaniesController extends Controller
     {
         $company = CreateCompany::findOrFail($id);
 
-        // Delete profile image
-        if ($company->profile_image && File::exists(public_path($company->profile_image))) {
-            File::delete(public_path($company->profile_image));
-        }
+        // Soft-delete: just mark status as 0 (Deleted), keep the row in DB
+        $company->status = 0;
+        $company->save();
 
-        // Delete contacts
-        CreateCompanyContact::where('tbl_create_company_idtbl_create_company', $company->idtbl_create_company)->delete();
+        // Also soft-delete all contacts associated with this company
+        $company->contacts()->update(['status' => 0]);
 
-        // Delete company
-        $company->delete();
-
-        Session::flash('success', 'Company deleted successfully.');
+        Session::flash('success', 'Company and all associated contacts marked as deleted.');
         return redirect()->route('crm.companies.index');
     }
 
-    public function import()
+
+    /**
+     * Generate the next P-1xx format contact reference.
+     */
+    private function nextContactReference($offset = 0)
     {
-        return view('crm.companies-import');
+        $nextId    = 1;
+        $latestRef = DB::table('tbl_create_contact')
+            ->where('reference', 'like', 'P-%')
+            ->orderByRaw('CAST(SUBSTRING(reference, 3) AS UNSIGNED) DESC')
+            ->value('reference');
+        if ($latestRef) {
+            $num    = intval(substr($latestRef, 2));
+            $nextId = ($num - 100) + 1;
+        } else {
+            $latest = DB::table('tbl_create_contact')->latest('idtbl_create_contact')->first();
+            if ($latest) {
+                $nextId = $latest->idtbl_create_contact + 1;
+            }
+        }
+        return 'P-' . (100 + $nextId + $offset);
+    }
+    /**
+     * Map status string to tinyint: active=1, deleted/anything else=0
+     */
+    private function mapCompanyStatus($status): int
+    {
+        return ($status === 'active' || $status === 1 || $status === '1') ? 1 : 0;
     }
 }

@@ -49,13 +49,21 @@ class ContactsController extends Controller
         $query = CreateContact::with(['owner', 'company']);
 
         if ($request->filled('company_type') && $request->company_type !== 'all') {
-            $query->where('contact_type', $request->company_type);
+            $query->where(function ($q) use ($request) {
+                $q->where('contact_type', $request->company_type)
+                  ->orWhereHas('company', function ($q2) use ($request) {
+                      $q2->where('company_type', $request->company_type);
+                  });
+            });
         }
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->where('status', $this->mapContactStatus($request->status));
         }
         if ($request->filled('owner')) {
             $query->where('owned_by', $request->owner);
+        }
+        if ($request->filled('company_id')) {
+            $query->where('company_id', $request->company_id);
         }
         if ($request->filled('search')) {
             $s = $request->search;
@@ -129,7 +137,7 @@ class ContactsController extends Controller
             'state'         => $request->state,
             'postal_code'   => $request->postal_code,
             'company_id'    => $request->company_id ?: null,
-            'status'        => $request->status ?? 'active',
+            'status'        => $this->mapContactStatus($request->status ?? 'active'),
         ]);
 
         Session::flash('success', 'Contact created successfully.');
@@ -180,7 +188,7 @@ class ContactsController extends Controller
             'state'         => $request->state,
             'postal_code'   => $request->postal_code,
             'company_id'    => $request->company_id ?: null,
-            'status'        => $request->status ?? $contact->status,
+            'status'        => $this->mapContactStatus($request->status ?? $contact->status),
         ]);
 
         Session::flash('success', 'Contact updated successfully.');
@@ -191,18 +199,20 @@ class ContactsController extends Controller
     {
         $contact = CreateContact::findOrFail($id);
 
-        if ($contact->profile_image && File::exists(public_path($contact->profile_image))) {
-            File::delete(public_path($contact->profile_image));
-        }
+        // Soft-delete: mark status as 0 (Deleted), keep the row in DB
+        $contact->status = 0;
+        $contact->save();
 
-        $contact->delete();
-
-        Session::flash('success', 'Contact deleted successfully.');
+        Session::flash('success', 'Contact marked as deleted.');
         return redirect()->route('crm.contacts.index');
     }
 
-    public function import()
+
+    /**
+     * Map status string to tinyint: active=1, deleted/anything else=0
+     */
+    private function mapContactStatus($status): int
     {
-        return view('crm.contacts-import');
+        return ($status === 'active' || $status === 1 || $status === '1') ? 1 : 0;
     }
 }
