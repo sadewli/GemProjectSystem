@@ -615,5 +615,66 @@
                 });
             });
         });
+
+        // Populate fields if editing an existing product
+        @if(isset($product))
+            document.addEventListener("DOMContentLoaded", function() {
+                const product = @json($product);
+                
+                // Update button text
+                const saveBtn = document.querySelector('.btn-save');
+                if (saveBtn) {
+                    saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Update';
+                }
+                
+                const populateFields = (data) => {
+                    for (const key in data) {
+                        if (data[key] !== null) {
+                            const input = document.querySelector(`[name="${key}"]`);
+                            if (input) {
+                                if (input.type === 'radio' || input.type === 'checkbox') {
+                                    const el = document.querySelector(`[name="${key}"][value="${data[key]}"]`);
+                                    if(el) {
+                                        el.checked = true;
+                                        // Manually trigger change to update styles
+                                        el.dispatchEvent(new Event('change'));
+                                    }
+                                } else {
+                                    input.value = data[key];
+                                    
+                                    // Handle custom dropdowns
+                                    if (input.type === 'hidden') {
+                                        const wrapper = input.closest('.relative');
+                                        if (wrapper) {
+                                            const textSpan = wrapper.querySelector('.selected-text-span');
+                                            const ddItem = wrapper.querySelector(`.dd-item[data-value="${data[key]}"]`);
+                                            if (textSpan && ddItem) {
+                                                textSpan.innerText = ddItem.innerText || ddItem.textContent;
+                                                textSpan.classList.remove('text-slate-400');
+                                                textSpan.classList.add('text-slate-800');
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                if (product) populateFields(product);
+                if (product.pricing) populateFields(product.pricing);
+                if (product.purchasing) populateFields(product.purchasing);
+                if (product.advance) populateFields(product.advance);
+                
+                // Populate custom fields
+                const customFields = @json($productCustomFields ?? []);
+                for (const fieldId in customFields) {
+                    const input = document.querySelector(`[name="custom_fields[${fieldId}]"]`);
+                    if (input) {
+                        input.value = customFields[fieldId];
+                    }
+                }
+            });
+        @endif
     </script>
 @endsection
