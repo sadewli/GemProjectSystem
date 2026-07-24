@@ -60,18 +60,18 @@
                                     </td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1" 
+                                            <button type="button" class="btn btn-outline-primary btn-sm btnEdit" 
                                                 data-id="{{ $lab->idtbl_certificate_labs }}" 
                                                 data-name="{{ $lab->lab_name }}" 
                                                 title="Edit">
                                                 <i class="fas fa-pen"></i>
                                             </button>
                                             @if($lab->status == 1)
-                                            <button type="button" class="btn btn-success btn-sm mr-1 btnStatus" data-id="{{ $lab->idtbl_certificate_labs }}" title="Active - click to deactivate"><i class="fas fa-check"></i></button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm btnStatus" data-id="{{ $lab->idtbl_certificate_labs }}" title="Active - click to deactivate"><i class="fas fa-toggle-on"></i></button>
                                             @else
-                                            <button type="button" class="btn btn-warning btn-sm mr-1 btnStatus" data-id="{{ $lab->idtbl_certificate_labs }}" title="Inactive - click to activate"><i class="fas fa-times"></i></button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm btnStatus" data-id="{{ $lab->idtbl_certificate_labs }}" title="Inactive - click to activate"><i class="fas fa-toggle-off"></i></button>
                                             @endif
-                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $lab->idtbl_certificate_labs }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btnDelete" data-id="{{ $lab->idtbl_certificate_labs }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>

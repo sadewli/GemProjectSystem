@@ -90,35 +90,35 @@
                                         <td class="py-3 px-3 text-right">
                                             <div class="btn-group btn-group-sm">
                                                 {{-- Edit Button --}}
-                                                <button class="btn btn-primary btn-sm btnEdit mr-1.5 rounded"
+                                                <button class="btn btn-outline-primary btn-sm btnEdit"
                                                         data-id="{{ $role->idtbl_role }}"
                                                         data-name="{{ $role->role_name }}"
                                                         data-value="{{ $role->value }}"
                                                         data-order="{{ $role->sort_order }}"
                                                         title="Edit Role">
-                                                    <i class="fas fa-pen text-xs"></i>
+                                                    <i class="fas fa-pen"></i>
                                                 </button>
                                                 
                                                 {{-- Toggle Status Button --}}
                                                 @if($role->status == 1)
                                                     <a href="{{ route('master.role.status', [$role->idtbl_role, $role->status]) }}" 
                                                        onclick="return confirm('Are you sure you want to deactivate this role?')"
-                                                       class="btn btn-warning btn-sm rounded mr-1.5" title="Deactivate">
-                                                        <i class="fas fa-times text-xs"></i>
+                                                       class="btn btn-outline-secondary btn-sm" title="Active – click to deactivate">
+                                                        <i class="fas fa-toggle-on"></i>
                                                     </a>
                                                 @else
                                                     <a href="{{ route('master.role.status', [$role->idtbl_role, $role->status]) }}" 
                                                        onclick="return confirm('Are you sure you want to activate this role?')"
-                                                       class="btn btn-success btn-sm rounded mr-1.5" title="Activate">
-                                                        <i class="fas fa-check text-xs"></i>
+                                                       class="btn btn-outline-warning btn-sm" title="Inactive – click to activate">
+                                                        <i class="fas fa-toggle-off"></i>
                                                     </a>
                                                 @endif
 
                                                 {{-- Delete Button --}}
-                                                <button type="button" class="btn btn-danger btn-sm btnDelete rounded"
+                                                <button type="button" class="btn btn-outline-danger btn-sm btnDelete"
                                                         data-id="{{ $role->idtbl_role }}"
                                                         title="Delete Role">
-                                                    <i class="fas fa-trash-alt text-xs"></i>
+                                                    <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
                                         </td>

@@ -61,8 +61,8 @@
                                     <td>{{ $cut->name }}</td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $cut->idtbl_cuts }}"><i class="fas fa-pen"></i></button>
-                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $cut->idtbl_cuts }}"><i class="fas fa-trash-alt"></i></button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm btnEdit" data-id="{{ $cut->idtbl_cuts }}" title="Edit"><i class="fas fa-pen"></i></button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btnDelete" data-id="{{ $cut->idtbl_cuts }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>

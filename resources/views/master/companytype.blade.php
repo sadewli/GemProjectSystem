@@ -95,35 +95,35 @@
                                         <td class="py-3 px-3 text-right">
                                             <div class="btn-group btn-group-sm">
                                                 {{-- Edit Button --}}
-                                                <button class="btn btn-primary btn-sm btnEdit mr-1.5 rounded"
+                                                <button class="btn btn-outline-primary btn-sm btnEdit"
                                                         data-id="{{ $type->idtbl_company_type }}"
                                                         data-name="{{ $type->company_type }}"
                                                         data-value="{{ $type->value }}"
                                                         data-order="{{ $type->sort_order }}"
                                                         title="Edit Type">
-                                                    <i class="fas fa-pen text-xs"></i>
+                                                    <i class="fas fa-pen"></i>
                                                 </button>
                                                 
                                                 {{-- Toggle Status Button --}}
                                                 @if($type->status == 1)
                                                     <a href="{{ route('master.companytype.status', [$type->idtbl_company_type, $type->status]) }}" 
                                                        onclick="return confirm('Are you sure you want to deactivate this company type?')"
-                                                       class="btn btn-warning btn-sm rounded mr-1.5" title="Deactivate">
-                                                        <i class="fas fa-times text-xs"></i>
+                                                       class="btn btn-outline-secondary btn-sm" title="Active – click to deactivate">
+                                                        <i class="fas fa-toggle-on"></i>
                                                     </a>
                                                 @else
                                                     <a href="{{ route('master.companytype.status', [$type->idtbl_company_type, $type->status]) }}" 
                                                        onclick="return confirm('Are you sure you want to activate this company type?')"
-                                                       class="btn btn-success btn-sm rounded mr-1.5" title="Activate">
-                                                        <i class="fas fa-check text-xs"></i>
+                                                       class="btn btn-outline-warning btn-sm" title="Inactive – click to activate">
+                                                        <i class="fas fa-toggle-off"></i>
                                                     </a>
                                                 @endif
 
                                                 {{-- Delete Button --}}
-                                                <button type="button" class="btn btn-danger btn-sm btnDelete rounded"
+                                                <button type="button" class="btn btn-outline-danger btn-sm btnDelete"
                                                         data-id="{{ $type->idtbl_company_type }}"
                                                         title="Delete Type">
-                                                    <i class="fas fa-trash-alt text-xs"></i>
+                                                    <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
                                         </td>

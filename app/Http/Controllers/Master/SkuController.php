@@ -32,7 +32,8 @@ class SkuController extends Controller
                 ->exists();
 
             if ($exists) {
-                return redirect('Master/Sku?action=5')->withInput();
+                Session::flash('msg', json_encode($this->makeActionResponse(false, 'SKU Name already exists.', 'warning')));
+                return redirect('Master/Sku')->withInput();
             }
 
             Sku::create([
@@ -41,12 +42,14 @@ class SkuController extends Controller
                 'created_by' => Session::get('userid'),
             ]);
 
-            return redirect('Master/Sku?action=4');
+            Session::flash('msg', json_encode($this->makeActionResponse(true, 'Record Added Successfully', 'success')));
+            return redirect('Master/Sku');
         }
 
         $sku = Sku::find($data['recordID']);
         if (!$sku) {
-            return redirect('Master/Sku?action=5');
+            Session::flash('msg', json_encode($this->makeActionResponse(false, 'Record not found', 'danger')));
+            return redirect('Master/Sku');
         }
 
         $exists = Sku::where('idtbl_skus', '!=', $data['recordID'])
@@ -54,12 +57,14 @@ class SkuController extends Controller
             ->exists();
 
         if ($exists) {
-            return redirect('Master/Sku?action=5')->withInput();
+            Session::flash('msg', json_encode($this->makeActionResponse(false, 'SKU Name already exists.', 'warning')));
+            return redirect('Master/Sku')->withInput();
         }
 
         $sku->update(['sku_name' => $normalizedName]);
 
-        return redirect('Master/Sku?action=6');
+        Session::flash('msg', json_encode($this->makeActionResponse(true, 'Record Updated Successfully', 'primary')));
+        return redirect('Master/Sku');
     }
 
     public function edit(Request $request)
@@ -75,10 +80,12 @@ class SkuController extends Controller
         $data = $request->validate(['recordID' => 'required|integer']);
         $sku = Sku::find($data['recordID']);
         if (!$sku) {
-            return redirect('Master/Sku?action=5');
+            Session::flash('msg', json_encode($this->makeActionResponse(false, 'Record not found', 'danger')));
+            return redirect('Master/Sku');
         }
         $sku->delete();
-        return redirect('Master/Sku?action=3');
+        Session::flash('msg', json_encode($this->makeActionResponse(true, 'Record Deleted Successfully', 'danger')));
+        return redirect('Master/Sku');
     }
 
     public function status(Request $request)
@@ -90,14 +97,14 @@ class SkuController extends Controller
         
         $sku = Sku::find($data['recordID']);
         if (!$sku) {
-            return redirect('Master/Sku?action=5');
+            Session::flash('msg', json_encode($this->makeActionResponse(false, 'Record not found', 'danger')));
+            return redirect('Master/Sku');
         }
         
         $sku->update(['status' => $data['status']]);
         
-        // Use action 1 for activate, 2 for deactivate
-        $action = $data['status'] == 1 ? 1 : 2;
-        return redirect('Master/Sku?action=' . $action);
+        Session::flash('msg', json_encode($this->makeActionResponse(true, 'Status Updated Successfully', 'info')));
+        return redirect('Master/Sku');
     }
 
     private function makeActionResponse(bool $success, string $message, string $class): array

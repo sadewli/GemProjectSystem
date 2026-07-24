@@ -61,8 +61,8 @@
                                     <td>{{ $grade->clarity_grade_name }}</td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $grade->idtbl_clarity_grade }}"><i class="fas fa-pen"></i></button>
-                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $grade->idtbl_clarity_grade }}"><i class="fas fa-trash-alt"></i></button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm btnEdit" data-id="{{ $grade->idtbl_clarity_grade }}" title="Edit"><i class="fas fa-pen"></i></button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btnDelete" data-id="{{ $grade->idtbl_clarity_grade }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>

@@ -84,7 +84,7 @@
                                     </td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-primary btn-sm btnEdit mr-1" 
+                                            <button type="button" class="btn btn-outline-primary btn-sm btnEdit" 
                                                 data-id="{{ $color->idtbl_colors }}" 
                                                 data-product-type="{{ $color->idtbl_product_types }}"
                                                 data-name="{{ $color->color_name }}" 
@@ -93,11 +93,11 @@
                                                 <i class="fas fa-pen"></i>
                                             </button>
                                             @if($color->status == 1)
-                                            <button type="button" class="btn btn-success btn-sm mr-1 btnStatus" data-id="{{ $color->idtbl_colors }}" title="Active - click to deactivate"><i class="fas fa-check"></i></button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm btnStatus" data-id="{{ $color->idtbl_colors }}" title="Active - click to deactivate"><i class="fas fa-toggle-on"></i></button>
                                             @else
-                                            <button type="button" class="btn btn-warning btn-sm mr-1 btnStatus" data-id="{{ $color->idtbl_colors }}" title="Inactive - click to activate"><i class="fas fa-times"></i></button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm btnStatus" data-id="{{ $color->idtbl_colors }}" title="Inactive - click to activate"><i class="fas fa-toggle-off"></i></button>
                                             @endif
-                                            <button type="button" class="btn btn-danger btn-sm btnDelete" data-id="{{ $color->idtbl_colors }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btnDelete" data-id="{{ $color->idtbl_colors }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>

@@ -44,10 +44,9 @@
                                     <td>{{ $variety->productType ? $variety->productType->name : 'N/A' }}</td>
                                     <td class="text-right">
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-info btn-sm btnView mr-1" data-id="{{ $variety->idtbl_varieties }}" data-name="{{ $variety->name }}" data-category="{{ $variety->productType ? $variety->productType->name : 'N/A' }}"><i class="fas fa-eye"></i></button>
-                                            <button class="btn btn-primary btn-sm btnEdit mr-1" data-id="{{ $variety->idtbl_varieties }}" data-name="{{ $variety->name }}" data-category="{{ $variety->idtbl_product_types }}"><i class="fas fa-pen"></i></button>
-                                            <button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>
-                                            <button class="btn btn-danger btn-sm btnDelete"><i class="fas fa-trash-alt"></i></button>
+                                            <button class="btn btn-outline-info btn-sm btnView" data-id="{{ $variety->idtbl_varieties }}" data-name="{{ $variety->name }}" data-category="{{ $variety->productType ? $variety->productType->name : 'N/A' }}" title="View"><i class="fas fa-eye"></i></button>
+                                            <button class="btn btn-outline-primary btn-sm btnEdit" data-id="{{ $variety->idtbl_varieties }}" data-name="{{ $variety->name }}" data-category="{{ $variety->idtbl_product_types }}" title="Edit"><i class="fas fa-pen"></i></button>
+                                            <button class="btn btn-outline-danger btn-sm btnDelete" data-id="{{ $variety->idtbl_varieties }}" title="Delete"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                 </tr>

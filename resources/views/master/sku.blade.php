@@ -10,8 +10,8 @@
                 <h1 class="page-header-title font-weight-light mb-1">SKU Management</h1>
             </div>
             <div>
-                <button class="btn btn-primary btn-sm shadow-sm" data-toggle="modal" data-target="#skuModal" onclick="resetForm()">
-                    <i data-feather="plus" class="mr-1"></i> Create New SKU
+                <button class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#skuModal" onclick="resetForm()">
+                    Save
                 </button>
             </div>
         </div>
@@ -19,14 +19,26 @@
 </div>
 
 <div class="container-fluid">
-    @if(Session::has('msg'))
-        <div class="alert alert-{{ json_decode(Session::get('msg'))->class }} alert-dismissible fade show" role="alert">
-            {{ json_decode(Session::get('msg'))->message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
+@if(Session::has('msg'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @php $msg = json_decode(Session::get('msg')); @endphp
+            @php
+                $iconMap = ['success' => 'success', 'danger' => 'error', 'warning' => 'warning', 'primary' => 'success', 'info' => 'info'];
+                $icon = $iconMap[$msg->class] ?? 'info';
+            @endphp
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: '{{ $icon }}',
+                title: '{{ $msg->message }}',
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+            });
+        });
+    </script>
+@endif
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
@@ -64,38 +76,17 @@
                             </td>
                             <td>{{ \Carbon\Carbon::parse($sku->insertdatetime ?? $sku->created_at)->format('Y-m-d H:i:s') }}</td>
                             <td>
-                                <button class="btn btn-sm btn-outline-info py-0 px-2" onclick="viewSku({{ $sku->idtbl_skus }})">View</button>
-                                <button class="btn btn-sm btn-outline-primary py-0 px-2" onclick="editSku({{ $sku->idtbl_skus }})">Edit</button>
-                                <button class="btn btn-sm btn-outline-warning py-0 px-2" onclick="statusSku({{ $sku->idtbl_skus }})">Status</button>
-                                <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="deleteSku({{ $sku->idtbl_skus }})">Delete</button>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-info py-0 px-2" onclick="viewSku({{ $sku->idtbl_skus }})" title="View"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-outline-primary py-0 px-2" onclick="editSku({{ $sku->idtbl_skus }})" title="Edit"><i class="fas fa-pen"></i></button>
+                                    <button class="btn btn-outline-warning py-0 px-2" onclick="statusSku({{ $sku->idtbl_skus }})" title="Status"><i class="fas fa-toggle-on"></i></button>
+                                    <button class="btn btn-outline-danger py-0 px-2" onclick="deleteSku({{ $sku->idtbl_skus }})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
-                        @if($skus->isEmpty())
-                        <tr>
-                            <td colspan="5" class="text-muted py-3">No data available in table</td>
-                        </tr>
-                        @endif
                     </tbody>
                 </table>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <div class="text-sm">
-                    Show 
-                    <select class="custom-select custom-select-sm d-inline-block" style="width: auto;">
-                        <option>10</option>
-                        <option>25</option>
-                        <option>50</option>
-                    </select> 
-                    entries
-                </div>
-                <div class="text-sm text-muted">Showing 1 to {{ $skus->count() }} of {{ $skus->count() }} entries</div>
-                <div class="btn-group">
-                    <button class="btn btn-outline-secondary btn-sm" disabled>Previous</button>
-                    <button class="btn btn-primary btn-sm">1</button>
-                    <button class="btn btn-outline-secondary btn-sm" disabled>Next</button>
-                </div>
             </div>
         </div>
     </div>
@@ -109,7 +100,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-light">
                     <h5 class="modal-title font-weight-bold" id="skuModalLabel">Add / Edit SKU</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -123,7 +114,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
@@ -143,7 +134,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h5 class="modal-title font-weight-bold" id="viewSkuModalLabel">View SKU Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -178,7 +169,7 @@
                 </table>
             </div>
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -192,7 +183,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-light">
                     <h5 class="modal-title font-weight-bold" id="statusSkuModalLabel">Change SKU Status</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -218,7 +209,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
@@ -226,40 +217,33 @@
     </div>
 </div>
 
-<!-- Message Modal -->
-<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
-        <div class="modal-content text-center">
-            <div class="modal-body py-4">
-                <i id="messageModalIcon" class="fas fa-check-circle fa-4x mb-3 text-success"></i>
-                <h5 class="modal-title font-weight-bold mb-2" id="messageModalTitle"></h5>
-                <p class="mb-0" id="messageModalBody"></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 @endsection
 
 @section('script')
     <script>
+        function openModal(id) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById(id));
+                modal.show();
+            } else {
+                $('#' + id).modal('show');
+            }
+        }
+
         $(document).ready(function() {
             if (typeof feather !== 'undefined') { feather.replace(); }
             
-            if (typeof window.actionJSONData !== 'undefined' && window.actionJSONData !== '') {
-                let actionData = window.actionJSONData;
-                $('#messageModalTitle').text(actionData.title || (actionData.type === 'success' ? 'Success!' : 'Notice'));
-                $('#messageModalBody').text(actionData.message);
-                
-                // Update icon based on type
-                $('#messageModalIcon').attr('class', actionData.icon + ' fa-4x mb-3 text-' + actionData.type);
-                
-                $('#messageModal').modal('show');
-                setTimeout(function() {
-                    $('#messageModal').modal('hide');
-                }, 2000);
-            }
+            var table = $('#skuTable').DataTable({
+                responsive: true,
+                order: [[0, "asc"]],
+                columnDefs: [
+                    { targets: -1, orderable: false, searchable: false }
+                ]
+            });
+
+            $('#searchInput').on('keyup', function() {
+                table.search(this.value).draw();
+            });
         });
 
         function resetForm() {
@@ -282,7 +266,7 @@
                     $('#recordID').val(response.idtbl_skus);
                     $('#sku_name').val(response.sku_name);
                     $('#skuModalLabel').text('Edit SKU');
-                    $('#skuModal').modal('show');
+                    openModal('skuModal');
                 },
                 error: function() {
                     alert('Error retrieving data.');
@@ -316,7 +300,7 @@
                     $('#view_sku_insert').text(insertDate);
                     $('#view_sku_update').text(updateDate);
                     
-                    $('#viewSkuModal').modal('show');
+                    openModal('viewSkuModal');
                 },
                 error: function() {
                     alert('Error retrieving data.');
@@ -344,7 +328,7 @@
                         $('#statusInactive').prop('checked', true);
                     }
                     
-                    $('#statusSkuModal').modal('show');
+                    openModal('statusSkuModal');
                 },
                 error: function() {
                     alert('Error retrieving data.');
